@@ -14,10 +14,10 @@
         </div>
 
         <div class="items-center hidden gap-8 text-sm font-semibold text-gray-500 lg:flex dark:text-gray-400">
-            <a wire:navigate href="{{ route('Home') }}" class="text-brand-red">Home</a>
-            <a wire:navigate href="{{ route('Order') }}" class="transition-colors hover:text-brand-red">Menu & Pesan</a>
-            <a wire:navigate href="{{ route('Riwayat') }}" class="transition-colors hover:text-brand-red">Riwayat</a>
-            {{-- <a href="profile.html" class="transition-colors hover:text-brand-red">Akun Saya</a> --}}
+            <a wire:navigate href="{{ route('Home') }}" class="{{ $active == 'Home' ? 'text-brand-red' : 'transition-colors hover:text-brand-red' }}">Home</a>
+            <a wire:navigate href="{{ route('Order') }}" class="{{ $active == 'Order' ? 'text-brand-red' : 'transition-colors hover:text-brand-red' }}">Menu & Pesan</a>
+            <a wire:navigate href="{{ route('Riwayat') }}" class="{{ $active == 'Riwayat' ? 'text-brand-red' : 'transition-colors hover:text-brand-red' }}">Riwayat</a>
+            {{-- <a href="profile.html" class="{{ $active == 'Home' ? 'text-brand-red' : 'transition-colors hover:text-brand-red' }}">Akun Saya</a> --}}
         </div>
 
         <div class="flex items-center gap-3">
@@ -58,21 +58,21 @@
         class="lg:hidden absolute top-[60px] left-0 right-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-xl transform scale-y-0 origin-top transition-transform duration-200 ease-out z-[-1]">
         <div class="flex flex-col gap-2 p-4">
             <a wire:navigate href="{{ route('Home') }}"
-                class="flex items-center gap-3 p-3 font-semibold rounded-xl bg-red-50 dark:bg-red-900/20 text-brand-red">
+                class="{{ $active == 'Home' ? 'flex items-center gap-3 p-3 font-semibold rounded-xl bg-red-50 dark:bg-red-900/20 text-brand-red' : 'flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                 <i class="w-6 text-center fa-solid fa-house"></i> Home
             </a>
             <a wire:navigate href="{{ route('Order') }}"
-                class="flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                class="{{ $active == 'Order' ? 'flex items-center gap-3 p-3 font-semibold rounded-xl bg-red-50 dark:bg-red-900/20 text-brand-red' : 'flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                 <i class="w-6 text-center fa-solid fa-utensils"></i> Menu & Pesan
             </a>
             <a wire:navigate href="{{ route('Riwayat') }}"
-                class="flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                class="{{ $active == 'Riwayat' ? 'flex items-center gap-3 p-3 font-semibold rounded-xl bg-red-50 dark:bg-red-900/20 text-brand-red' : 'flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                 <i class="w-6 text-center fa-solid fa-clock-rotate-left"></i> Riwayat
             </a>
-            <a href="{{ route('Profile') }}" wire:navigate class="flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+            <a href="{{ route('Profile') }}" wire:navigate class="{{ $active == 'Profile' ? 'flex items-center gap-3 p-3 font-semibold rounded-xl bg-red-50 dark:bg-red-900/20 text-brand-red' : 'flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                     <i class="w-6 text-center fa-solid fa-user"></i> Akun Saya
             </a>
-            <a href="{{ route('Auth') }}" wire:navigate class="flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+            <a href="{{ route('Auth') }}" wire:navigate class="{{ $active == 'Auth' ? 'flex items-center gap-3 p-3 font-semibold rounded-xl bg-red-50 dark:bg-red-900/20 text-brand-red' : 'flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                     <i class="w-6 text-center fa-solid fa-right-from-bracket"></i> Login
             </a>
         </div>

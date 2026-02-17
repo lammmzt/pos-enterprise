@@ -1,6 +1,6 @@
 <div>
     {{-- include header --}}
-    @include('livewire.landing-page.layout.header')
+    @include('livewire.landing-page.layout.header', ['active' => $active])
     <header class="sticky top-[61px] z-30 glass-header shadow-sm border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
         <div class="mx-auto max-w-7xl">
             <div class="flex items-center justify-between px-4 py-3 lg:px-8">

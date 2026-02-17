@@ -10,6 +10,6 @@ class Payment extends Component
     {
         $data['title'] = 'Payment';
         $data['active'] = 'Payment';
-        return view('livewire.landing-page.payment', compact('data'));
+        return view('livewire.landing-page.payment', $data)->layout('components.layouts.app', $data);
     }
 }

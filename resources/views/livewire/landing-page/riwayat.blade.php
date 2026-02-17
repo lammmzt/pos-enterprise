@@ -1,5 +1,6 @@
 <div>
-    @include('livewire.landing-page.layout.header')
+    {{-- include header --}}
+    @include('livewire.landing-page.layout.header', ['active' => $active])
     <!-- Main Content -->
     <main class="flex-1 w-full max-w-md p-4 pb-24 mx-auto">
         

@@ -10,6 +10,6 @@ class Auth extends Component
     {
         $data['title'] = 'Auth';
         $data['active'] = 'Auth';
-        return view('livewire.landing-page.auth', compact('data'));
+        return view('livewire.landing-page.auth', $data)->layout('components.layouts.app', $data);
     }
 }

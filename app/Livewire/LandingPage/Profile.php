@@ -10,6 +10,6 @@ class Profile extends Component
     {
         $data['title'] = 'Profile';
         $data['active'] = 'Profile';
-        return view('livewire.landing-page.profile', compact('data'));
+        return view('livewire.landing-page.profile', $data)->layout('components.layouts.app', $data);
     }
 }
