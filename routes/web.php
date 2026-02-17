@@ -1,11 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\LandingPage\Home;
+use App\Livewire\LandingPage\Order;
+use App\Livewire\LandingPage\Auth;
+use App\Livewire\LandingPage\Riwayat;
 
-Route::get('/', function () {
-    return view('LandingPage/HomeView');
-    });
-    
-Route::get('/login', function () {
-    return view('LandingPage/LoginView');
-});
+Route::get('/', Home::class)->name('Home');
+Route::get('Order', Order::class)->name('Order');
+Route::get('Auth', Auth::class)->name('Auth');
+Route::get('Riwayat', Riwayat::class)->name('Riwayat');

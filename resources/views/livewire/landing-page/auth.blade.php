@@ -1,4 +1,4 @@
-<x-layouts.landing>
+<div>
     <div
         class="relative flex flex-col items-center justify-center min-h-screen overflow-hidden font-sans text-gray-800 transition-colors duration-300 select-none bg-gray-50 dark:bg-gray-900 dark:text-gray-100 tap-highlight-transparent">
         <div class="relative flex flex-col items-center justify-center overflow-hidden">
@@ -13,7 +13,7 @@
             <nav
                 class="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 border-b border-gray-200 glass-header dark:border-gray-800">
                 <div class="flex items-center justify-between max-w-md px-4 py-3 mx-auto">
-                    <a href="index.html"
+                    <a wire:navigate href="{{ route('Order') }}"
                         class="flex items-center gap-2 text-gray-600 transition-colors dark:text-gray-300 hover:text-brand-red">
                         <i class="fa-solid fa-arrow-left"></i>
                         <span class="text-sm font-bold">Kembali</span>
@@ -315,7 +315,8 @@
             </div>
         </div>
     </div>
-     <!-- JAVASCRIPT LOGIC -->
+</div>
+<!-- JAVASCRIPT LOGIC -->
     <script>
         let currentOtpAction = 'register'; // 'register' or 'reset'
         // --- Tab Switching Logic ---
@@ -468,6 +469,3 @@
             document.getElementById('otp-modal').classList.add('hidden');
         }
     </script>
-
-
-</x-layouts.landing>

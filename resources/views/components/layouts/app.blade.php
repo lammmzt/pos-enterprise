@@ -14,7 +14,16 @@
     
     <!-- FontAwesome Icons (CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+    <style type="text/css">
+         html {
+            --livewire-progress-bar-color: #E11D48 !important;
+        }
+
+        [wire\:navigate-progress-bar] {
+            height: 4px !important;
+            box-shadow: 0 0 12px var(--livewire-progress-bar-color) !important;
+        }
+
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -57,6 +66,8 @@
     </style>
     <!-- Scripts & Styles via Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @livewireStyles
 </head>
 <body class="font-sans text-gray-800 transition-colors duration-300 select-none bg-gray-50 dark:bg-gray-900 dark:text-gray-100 tap-highlight-transparent">
     
@@ -72,13 +83,16 @@
             <div id="modal-body" class="p-0"></div>
         </div>
     </div>
+
+    @livewireScripts
     
     <script type="text/javascript">
         let isDarkMode = false;
         let isMenuOpen = false;
         function initAPP() {
-            const theme = localStorage.getItem('seblakTheme');
+            const theme = localStorage.getItem('appThems');
             if (theme === 'dark') {
+                isDarkMode = false;
                 toggleDarkMode();
             }
         }
@@ -90,11 +104,11 @@
             if (isDarkMode) {
                 html.classList.add('dark');
                 icon.classList.replace('fa-moon', 'fa-sun');
-                localStorage.setItem('seblakTheme', 'dark');
+                localStorage.setItem('appThems', 'dark');
             } else {
                 html.classList.remove('dark');
                 icon.classList.replace('fa-sun', 'fa-moon');
-                localStorage.setItem('seblakTheme', 'light');
+                localStorage.setItem('appThems', 'light');
             }
         }
 
@@ -121,6 +135,11 @@
 
         // --- INIT ---
         initAPP();
+        
+        // Pemicu inisialisasi yang tahan terhadap wire:navigate
+        document.addEventListener('livewire:navigated', () => {
+            initAPP();
+        });
     </script>
     <!-- Stack Scripts untuk Javascript per halaman -->
     @stack('scripts')

@@ -1,5 +1,4 @@
-<x-layouts.landing>
-   
+<div>
     <!-- NAVBAR -->
     <nav class="sticky top-0 z-50 transition-colors duration-300 border-b border-gray-200 glass-nav dark:border-gray-800">
         <div class="flex items-center justify-between px-4 py-4 mx-auto max-w-7xl lg:px-8">
@@ -26,7 +25,7 @@
                 <button onclick="toggleDarkMode()" class="flex items-center justify-center w-10 h-10 text-gray-500 transition-all bg-gray-100 border border-transparent rounded-full dark:bg-gray-800 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95 dark:border-gray-700">
                     <i id="dark-mode-icon" class="text-sm fa-solid fa-moon"></i>
                 </button>
-                <a href="index.html" class="hidden sm:flex px-6 py-2.5 rounded-full bg-brand-red text-white text-sm font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 active:scale-95 items-center gap-2">
+                <a href="{{ route('Order') }}" wire:navigate class="hidden sm:flex px-6 py-2.5 rounded-full bg-brand-red text-white text-sm font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 active:scale-95 items-center gap-2">
                     <span>Pesan Online</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
@@ -52,11 +51,11 @@
                         Bebas pilih topping sesuka hati, tentukan level pedasmu, dan nikmati kuah rempah asli yang bikin kamu bucin sama rasanya. Mulai dari Rp 1.000-an aja!
                     </p>
                     <div class="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
-                        <a href="index.html" class="flex items-center justify-center gap-2 px-8 py-4 text-lg font-bold text-white transition-all shadow-xl rounded-2xl bg-brand-red shadow-red-500/30 hover:bg-red-700 hover:scale-105">
+                        <a wire:navigate href="{{ route('Order') }}" class="flex items-center justify-center gap-2 px-8 py-4 text-lg font-bold text-white transition-all shadow-xl rounded-2xl bg-brand-red shadow-red-500/30 hover:bg-red-700 hover:scale-105">
                             <i class="fa-solid fa-utensils"></i>
                             Mulai Pesan
                         </a>
-                        <a href="index.html" class="flex items-center justify-center gap-2 px-8 py-4 text-lg font-bold text-gray-700 transition-all bg-white border border-gray-200 rounded-2xl dark:bg-gray-800 dark:text-white dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <a wire:navigate href="{{ route('Order') }}" class="flex items-center justify-center gap-2 px-8 py-4 text-lg font-bold text-gray-700 transition-all bg-white border border-gray-200 rounded-2xl dark:bg-gray-800 dark:text-white dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                             Lihat Menu
                         </a>
                     </div>
@@ -272,7 +271,7 @@
         <div class="relative z-10 max-w-4xl px-4 mx-auto text-center">
             <h2 class="mb-6 text-3xl font-extrabold text-white md:text-5xl">Udah Ngiler Belum? 🤤</h2>
             <p class="max-w-2xl mx-auto mb-8 text-lg text-white/80">Jangan cuma dibayangin, yuk langsung pilih topping favoritmu sekarang. Mumpung stok masih lengkap!</p>
-            <a href="index.html" class="inline-flex items-center gap-3 px-8 py-4 text-lg font-bold transition-all bg-white shadow-xl rounded-2xl text-brand-red hover:bg-gray-100 hover:scale-105">
+            <a wire:navigate href="{{ route('Order') }}" class="inline-flex items-center gap-3 px-8 py-4 text-lg font-bold transition-all bg-white shadow-xl rounded-2xl text-brand-red hover:bg-gray-100 hover:scale-105">
                 <span>Pesan Sekarang</span>
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
@@ -306,9 +305,9 @@
                     <h3 class="mb-6 font-bold text-gray-900 dark:text-white">Navigasi</h3>
                     <ul class="space-y-4 text-sm text-gray-500 dark:text-gray-400">
                         <li><a href="#home" class="transition-colors hover:text-brand-red">Home</a></li>
-                        <li><a href="index.html" class="transition-colors hover:text-brand-red">Menu & Pesan</a></li>
                         <li><a href="#about" class="transition-colors hover:text-brand-red">Tentang Kami</a></li>
                         <li><a href="#reviews" class="transition-colors hover:text-brand-red">Testimoni</a></li>
+                        <li><a wire:navigate href="{{ route('Order') }}" class="transition-colors hover:text-brand-red">Menu & Pesan</a></li>
                         <li><a href="#reviews" class="transition-colors hover:text-brand-red">Login Admin</a></li>
                     </ul>
                 </div>
@@ -337,8 +336,8 @@
             </div>
         </div>
     </footer>
-
-    <!-- Scripts -->
+</div>
+<!-- Scripts -->
     <script>
         
         // Testimonial Scroll Logic
@@ -356,4 +355,3 @@
         }
 
     </script>
-</x-layouts.landing>

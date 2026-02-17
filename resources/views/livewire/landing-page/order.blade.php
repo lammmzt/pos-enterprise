@@ -1,7 +1,6 @@
-<x-layouts.landing>
+<div>
     {{-- include header --}}
-    @include('LandingPage.layout.header')
-    
+    @include('livewire.landing-page.layout.header')
     <header class="sticky top-[61px] z-30 glass-header shadow-sm border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
         <div class="mx-auto max-w-7xl">
             <div class="flex items-center justify-between px-4 py-3 lg:px-8">
@@ -89,7 +88,8 @@
 
     <div id="overlay-backdrop" onclick="toggleCart(false)" class="fixed inset-0 z-40 hidden transition-opacity duration-300 opacity-0 bg-black/50 backdrop-blur-sm lg:hidden"></div>
 
-    <script type="text/javascript">
+</div>
+    <script data-navigate-once type="text/javascript">
         // --- DATA MASTER ---
         const MENU_DATA = [
             { id: 1, name: "Kerupuk Mawar", category: "kerupuk", price: 1000, image: "Kerupuk+Mawar", desc: "Kerupuk warna-warni klasik dengan tekstur renyah yang menyerap kuah sempurna." },
@@ -142,9 +142,10 @@
             
             // Atur event untuk handle responsivitas Desktop vs Mobile
             window.addEventListener('resize', handleResize);
+            
             handleResize(); // Eksekusi langsung
         }
-
+        
         // --- SAVE STATE ---
         function saveData() {
             localStorage.setItem('pos-enterprise', JSON.stringify(appState));
@@ -561,5 +562,10 @@
         }
 
         homeInit();
+        // Pemicu inisialisasi yang tahan terhadap wire:navigate
+        document.addEventListener('livewire:navigated', () => {
+            if (document.getElementById('cart-sheet')) {
+                homeInit();
+            }
+        });
     </script>
-</x-layouts.landing>
