@@ -25,7 +25,23 @@
                 class="flex items-center justify-center text-gray-500 transition-all bg-gray-100 border border-transparent rounded-full w-9 h-9 dark:bg-gray-800 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95 dark:border-gray-700">
                 <i id="dark-mode-icon" class="text-sm fa-solid fa-moon"></i>
             </button>
-
+            <!-- Profile Icon with Dropdown (Desktop Only) -->
+            <div class="relative hidden lg:block">
+                <button onclick="toggleProfileDropdown()" class="flex items-center justify-center text-white transition-all rounded-full shadow-md w-9 h-9 bg-brand-red hover:bg-red-700 active:scale-95 shadow-red-500/30">
+                    <i class="text-sm fa-solid fa-user"></i>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div id="profile-dropdown" class="absolute right-0 z-50 flex-col hidden w-48 mt-2 overflow-hidden bg-white border border-gray-100 shadow-xl dark:bg-gray-800 rounded-xl dark:border-gray-700 animate-fade-in">
+                    <a href="{{ route('Profile') }}" wire:navigate class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 transition-colors dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <i class="text-xs fa-solid fa-user"></i> Akun Saya
+                    </a>
+                    <div class="h-px bg-gray-100 dark:bg-gray-700"></div>
+                    <button onclick="handleLogout()" class="flex items-center w-full gap-2 px-4 py-3 text-sm text-left text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/20">
+                        <i class="text-xs fa-solid fa-right-from-bracket"></i> Keluar
+                    </button>
+                </div>
+            </div>
             <button onclick="toggleMenu()"
                 class="flex items-center justify-center text-white transition-all rounded-full shadow-md lg:hidden w-9 h-9 bg-brand-red hover:bg-red-700 active:scale-95 shadow-red-500/30">
                 <i id="menu-icon" class="text-sm fa-solid fa-bars"></i>
@@ -52,6 +68,12 @@
             <a wire:navigate href="{{ route('Riwayat') }}"
                 class="flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
                 <i class="w-6 text-center fa-solid fa-clock-rotate-left"></i> Riwayat
+            </a>
+            <a href="{{ route('Profile') }}" wire:navigate class="flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                    <i class="w-6 text-center fa-solid fa-user"></i> Akun Saya
+            </a>
+            <a href="{{ route('Auth') }}" wire:navigate class="flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                    <i class="w-6 text-center fa-solid fa-right-from-bracket"></i> Login
             </a>
         </div>
     </div>

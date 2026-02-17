@@ -84,40 +84,102 @@
         </div>
     </div>
 
+    
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center px-4">
+        <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm"></div>
+        <div class="relative z-10 w-full max-w-sm p-6 text-center transition-all transform scale-95 bg-white border border-gray-100 shadow-2xl dark:bg-gray-800 rounded-3xl dark:border-gray-700">
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-3xl text-green-600 bg-green-100 rounded-full dark:bg-green-900/30 animate-bounce">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="mb-2 text-xl font-bold text-gray-800 dark:text-white">Berhasil Disimpan!</h3>
+            <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">Data profil Anda telah diperbarui.</p>
+            <button onclick="closeModals()" class="w-full py-3 font-bold text-gray-800 transition-colors bg-gray-100 dark:bg-gray-700 dark:text-white rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- Alert Modal (Replaces alert()) -->
+    <div id="alert-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center px-4">
+        <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" onclick="closeAlertModal()"></div>
+        <div class="relative z-10 w-full max-w-sm p-6 text-center transition-all transform scale-95 bg-white border border-gray-100 shadow-2xl dark:bg-gray-800 rounded-3xl dark:border-gray-700 animate-fade-in">
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-3xl bg-red-100 rounded-full dark:bg-red-900/30 text-brand-red">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="mb-2 text-xl font-bold text-gray-800 dark:text-white">Perhatian</h3>
+            <p id="alert-message" class="mb-6 text-sm text-gray-500 dark:text-gray-400">Pesan alert disini.</p>
+            <button onclick="closeAlertModal()" class="w-full py-3 font-bold text-gray-800 transition-colors bg-gray-100 dark:bg-gray-700 dark:text-white rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal (Replaces confirm()) -->
+    <div id="confirm-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center px-4">
+        <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" onclick="closeConfirmModal()"></div>
+        <div class="relative z-10 w-full max-w-sm p-6 text-center transition-all transform scale-95 bg-white border border-gray-100 shadow-2xl dark:bg-gray-800 rounded-3xl dark:border-gray-700 animate-fade-in">
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-3xl bg-orange-100 rounded-full dark:bg-orange-900/30 text-brand-orange">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <h3 id="confirm-title" class="mb-2 text-xl font-bold text-gray-800 dark:text-white">Konfirmasi</h3>
+            <p id="confirm-message" class="mb-6 text-sm text-gray-500 dark:text-gray-400">Apakah Anda yakin?</p>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal()" class="flex-1 py-3 font-bold text-gray-800 transition-colors bg-gray-100 dark:bg-gray-700 dark:text-white rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600">
+                    Batal
+                </button>
+                <button id="confirm-yes-btn" class="flex-1 py-3 font-bold text-white transition-colors shadow-lg bg-brand-red rounded-xl hover:bg-red-700 shadow-red-500/20">
+                    Ya, Lanjutkan
+                </button>
+            </div>
+        </div>
+    </div>
+
     @livewireScripts
     
-    <script type="text/javascript">
-        let isDarkMode = false;
-        let isMenuOpen = false;
+    <script data-navigate-once type="text/javascript">
+        // 1. Gunakan 'window.' sebagai pengganti 'let' agar kebal terhadap error redeklarasi Livewire
+        window.isDarkMode = window.isDarkMode || false;
+        window.isMenuOpen = false;
+
         function initAPP() {
             const theme = localStorage.getItem('appThems');
-            if (theme === 'dark') {
-                isDarkMode = false;
-                toggleDarkMode();
-            }
+            window.isDarkMode = (theme === 'dark');
+            applyTheme(); // Terapkan tema, BUKAN membalikkannya (toggle)
         }
-        // --- DARK MODE SYSTEM ---
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
+
+        // --- FUNGSI KHUSUS UNTUK MENERAPKAN TEMA ---
+        function applyTheme() {
             const html = document.documentElement;
             const icon = document.getElementById('dark-mode-icon');
-            if (isDarkMode) {
+            
+            if (!icon) return; // Mencegah error jika elemen tidak ada di halaman tertentu
+
+            if (window.isDarkMode) {
                 html.classList.add('dark');
                 icon.classList.replace('fa-moon', 'fa-sun');
-                localStorage.setItem('appThems', 'dark');
             } else {
                 html.classList.remove('dark');
                 icon.classList.replace('fa-sun', 'fa-moon');
-                localStorage.setItem('appThems', 'light');
             }
+        }
+
+        // --- FUNGSI SAAT TOMBOL DIKLIK ---
+        function toggleDarkMode() {
+            window.isDarkMode = !window.isDarkMode; // Balikkan status
+            localStorage.setItem('appThems', window.isDarkMode ? 'dark' : 'light');
+            applyTheme();
         }
 
         // --- MOBILE MENU TOGGLE ---
         function toggleMenu() {
-            isMenuOpen = !isMenuOpen;
+            window.isMenuOpen = !window.isMenuOpen;
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('menu-icon');
-            if (isMenuOpen) {
+            
+            if (!menu || !icon) return;
+
+            if (window.isMenuOpen) {
                 menu.classList.remove('scale-y-0');
                 icon.classList.replace('fa-bars', 'fa-xmark');
             } else {
@@ -131,15 +193,42 @@
             document.getElementById('modal-body').innerHTML = html;
             document.getElementById('modal-container').classList.remove('hidden');
         }
-        function closeModal() { document.getElementById('modal-container').classList.add('hidden'); }
+        
+        function closeModal() { 
+            document.getElementById('modal-container').classList.add('hidden'); 
+        }
 
-        // --- INIT ---
+        // --- Profile Dropdown Logic (Desktop) ---
+        let isProfileOpen = false;
+        function toggleProfileDropdown() {
+            isProfileOpen = !isProfileOpen;
+            const dropdown = document.getElementById('profile-dropdown');
+            if (isProfileOpen) {
+                dropdown.classList.remove('hidden');
+                dropdown.classList.add('flex');
+            } else {
+                dropdown.classList.add('hidden');
+                dropdown.classList.remove('flex');
+            }
+        }
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('profile-dropdown');
+            const button = document.querySelector('[onclick="toggleProfileDropdown()"]');
+            if (isProfileOpen && !dropdown.contains(e.target) && !button.contains(e.target)) {
+                toggleProfileDropdown();
+            }
+        });
+        // --- INIT PERTAMA KALI MUAT ---
         initAPP();
         
-        // Pemicu inisialisasi yang tahan terhadap wire:navigate
+        // --- INIT SAAT PINDAH HALAMAN (wire:navigate) ---
         document.addEventListener('livewire:navigated', () => {
-            initAPP();
+            window.isMenuOpen = false; // Pastikan menu mobile tertutup saat ganti halaman
+            initAPP(); // Panggil initAPP agar mengecek memori, bukan toggleDarkMode
         });
+
+        
     </script>
     <!-- Stack Scripts untuk Javascript per halaman -->
     @stack('scripts')

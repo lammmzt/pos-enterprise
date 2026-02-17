@@ -89,9 +89,9 @@
     <div id="overlay-backdrop" onclick="toggleCart(false)" class="fixed inset-0 z-40 hidden transition-opacity duration-300 opacity-0 bg-black/50 backdrop-blur-sm lg:hidden"></div>
 
 </div>
-    <script data-navigate-once type="text/javascript">
+    <script type="text/javascript">
         // --- DATA MASTER ---
-        const MENU_DATA = [
+        const MENU_DATA = window.MENU_DATA || [
             { id: 1, name: "Kerupuk Mawar", category: "kerupuk", price: 1000, image: "Kerupuk+Mawar", desc: "Kerupuk warna-warni klasik dengan tekstur renyah yang menyerap kuah sempurna." },
             { id: 2, name: "Kerupuk Oren", category: "kerupuk", price: 1000, image: "Kerupuk+Oren", desc: "Kerupuk kanji oren khas seblak, kenyal saat direbus." },
             { id: 3, name: "Makaroni Spiral", category: "kerupuk", price: 1000, image: "Makaroni", desc: "Makaroni spiral premium, tidak mudah hancur." },
@@ -108,7 +108,7 @@
             { id: 14, name: "Mie Kuning", category: "kerupuk", price: 1500, image: "Mie", desc: "Mie kuning basah kenyal." },
             { id: 15, name: "Batagor Kering", category: "kerupuk", price: 1500, image: "Batagor", desc: "Batagor mini kering yang gurih." },
             { id: 16, name: "Chikwa", category: "seafood", price: 2500, image: "Chikwa", desc: "Olahan ikan bentuk tabung khas Jepang." },
-        ];
+        ] ;
 
         const CATEGORIES = [
             { id: 'all', label: 'Semua' },
@@ -232,7 +232,7 @@
         }
 
         // --- executeReset ---
-        function executeReset() { localStorage.removeItem('pos-enterprise'); location.reload(); }
+        function executeReset() { localStorage.removeItem('pos-enterprise'); Livewire.navigate('Order');; }
 
         // --- ITEMS & PREFS ---
         function updateItem(itemId, change) {
@@ -547,18 +547,13 @@
                         <button onclick="closeModal()" class="flex-1 py-2.5 bg-gray-100 dark:bg-gray-700 rounded-xl text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-200 transition-colors">
                             Batal
                         </button>
-                        <button onclick="goToPayment()" class="flex-1 py-2.5 bg-brand-red text-white rounded-xl font-bold shadow-lg shadow-red-500/20 hover:bg-red-700 transition-colors">
+                        <a href="{{ route('Payment') }}" wire:navigate class="flex-1 py-2.5 bg-brand-red text-white rounded-xl font-bold shadow-lg shadow-red-500/20 hover:bg-red-700 transition-colors">
                             Ya, Bayar
-                        </button>
+                        </a>
                     </div>
                 </div>
             `;
             showModal(content);
-        }
-
-        function goToPayment() {
-            saveData(); 
-            window.location.href = 'payment.html';
         }
 
         homeInit();
