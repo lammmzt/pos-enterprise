@@ -318,7 +318,7 @@
 </div>
 <!-- JAVASCRIPT LOGIC -->
     <script>
-        let currentOtpAction = 'register'; // 'register' or 'reset'
+        window.currentOtpAction = window.currentOtpAction || 'register';
         // --- Tab Switching Logic ---
         function switchTab(tab) {
             const loginForm = document.getElementById('form-login');

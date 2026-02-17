@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'Seblak Bucin') }}</title>
+    
+    <title>{{ $title ?? '' }} {{ config('app.name', 'Seblak Bucin') }}</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -218,6 +218,31 @@
             if (isProfileOpen && !dropdown.contains(e.target) && !button.contains(e.target)) {
                 toggleProfileDropdown();
             }
+        });
+
+        // --- Modal Logic ---
+        function showAlert(message) {
+            document.getElementById('alert-message').innerText = message;
+            document.getElementById('alert-modal').classList.remove('hidden');
+        }
+        function closeAlertModal() {
+            document.getElementById('alert-modal').classList.add('hidden');
+        }
+        let confirmCallback = null;
+        function showConfirm(title, message, callback) {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-message').innerText = message;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+            confirmCallback = callback;
+        }
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            confirmCallback = null;
+        }
+        // Attach listener for confirm yes button once
+        document.getElementById('confirm-yes-btn').addEventListener('click', function() {
+            if (confirmCallback) confirmCallback();
+            closeConfirmModal();
         });
         // --- INIT PERTAMA KALI MUAT ---
         initAPP();

@@ -134,7 +134,7 @@
 <script type="text/javascript">
     
      // --- Payment Logic ---
-    let paymentState = { bowls: [] };
+    window.paymentState = window.paymentState || { bowls: [] };
 
      function initPayment() {
 
@@ -165,7 +165,7 @@
     }
 
      // Menu Data (Harus sinkron dengan index.html untuk kalkulasi)
-    const data_menu = [
+    window.MENU_DATA = window.MENU_DATA || [
         { id: 1, name: "Kerupuk Mawar", price: 1000 },
         { id: 2, name: "Kerupuk Oren", price: 1000 },
         { id: 3, name: "Makaroni Spiral", price: 1000 },
@@ -187,7 +187,7 @@
      function getGrandTotal() {
         return paymentState.bowls.reduce((sum, bowl) => {
             return sum + Object.entries(bowl.items).reduce((s, [id, qty]) => {
-                return s + (data_menu.find(i => i.id == id)?.price || 0) * qty;
+                return s + (MENU_DATA.find(i => i.id == id)?.price || 0) * qty;
             }, 0);
         }, 0);
     }
@@ -211,7 +211,7 @@
                     </div>
                 `;
                 for(const [id, qty] of Object.entries(bowl.items)) {
-                    const item = data_menu.find(i => i.id == id);
+                    const item = MENU_DATA.find(i => i.id == id);
                     html += `
                     <div class="flex justify-between pl-4 mb-1 text-xs text-gray-500 dark:text-gray-400 last:mb-0">
                         <span>${qty}x ${item.name}</span>

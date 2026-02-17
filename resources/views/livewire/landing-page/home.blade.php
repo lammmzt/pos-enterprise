@@ -279,7 +279,7 @@
     </section>
 
     <!-- FOOTER -->
-    <footer class="pt-16 pb-8 transition-colors border-t border-gray-200 bg-gray-50 dark:bg-gray-900 dark:border-gray-800">
+    <footer id="lokasi" class="pt-16 pb-8 transition-colors border-t border-gray-200 bg-gray-50 dark:bg-gray-900 dark:border-gray-800">
         <div class="px-4 mx-auto max-w-7xl lg:px-8">
             <div class="grid gap-12 mb-12 md:grid-cols-4">
                 <div class="col-span-1 md:col-span-2">

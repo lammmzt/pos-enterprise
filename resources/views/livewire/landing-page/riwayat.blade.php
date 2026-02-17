@@ -37,12 +37,12 @@
 
     <!-- Detail Modal -->
     <div id="detail-modal" class="fixed inset-0 z-[60] hidden flex items-end sm:items-center justify-center sm:px-4">
-        <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" onclick="closedModal()"></div>
         
         <div class="bg-white dark:bg-gray-900 w-full max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl transform transition-transform duration-300 translate-y-full sm:translate-y-0 sm:scale-95 h-[85vh] sm:h-auto sm:max-h-[80vh] flex flex-col relative z-10 border-t sm:border border-gray-100 dark:border-gray-800" id="modal-content">
             
             <!-- Handle for mobile -->
-            <div class="flex justify-center w-full pt-3 pb-1 cursor-pointer sm:hidden" onclick="closeModal()">
+            <div class="flex justify-center w-full pt-3 pb-1 cursor-pointer sm:hidden" onclick="closedModal()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
             </div>
 
@@ -52,7 +52,7 @@
                     <h3 class="text-lg font-bold text-gray-800 dark:text-white">Rincian Pesanan</h3>
                     <p id="modal-order-id" class="text-xs text-gray-500 dark:text-gray-400">ORD-xxxxxx</p>
                 </div>
-                <button onclick="closeModal()" class="flex items-center justify-center w-8 h-8 text-gray-500 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
+                <button onclick="closedModal()" class="flex items-center justify-center w-8 h-8 text-gray-500 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -137,7 +137,7 @@
 <!-- JAVASCRIPT LOGIC -->
 <script>
     // --- Mock Data ---
-    const mockOrders = [
+    window.mockOrders = window.mockOrders || [
         {
             id: 'ORD-882190',
             date: 'Hari ini, 14:30',
@@ -166,10 +166,13 @@
             bowls: [{ name: 'Pesanan Saya', detail: 'Kuah Kacang, Lvl 0', items: '1x Batagor Kering, 1x Siomay, 1x Air Mineral' }]
         }
     ];
-    let currentFilter = 'all';
+    
+    window.currentFilter = window.currentFilter || 'all';
+
     function renderOrders() {
         const container = document.getElementById('order-list');
         const emptyState = document.getElementById('empty-state');
+        if (!container || !emptyState) return;
         container.innerHTML = '';
         const filteredOrders = mockOrders.filter(order => {
             if (currentFilter === 'all') return true;
@@ -227,6 +230,7 @@
             });
         }
     }
+    
     function filterOrders(filter) {
         currentFilter = filter;
         const tabs = ['all', 'active', 'completed'];
@@ -277,14 +281,16 @@
         modal.classList.remove('hidden');
         setTimeout(() => content.classList.remove('translate-y-full'), 10);
     }
-    function closeModal() {
+
+    function closedModal() {
         const modal = document.getElementById('detail-modal');
         const content = document.getElementById('modal-content');
         content.classList.add('translate-y-full');
         setTimeout(() => modal.classList.add('hidden'), 300);
     }
+    
     // --- Review Modal Logic ---
-    let currentRating = 0;
+    window.currentRating = window.currentRating || 0;
     function openReviewModal(orderId) {
         document.getElementById('review-modal').classList.remove('hidden');
         setRating(0); // Reset

@@ -112,30 +112,7 @@
             icon.classList.add('fa-eye');
         }
     }
-    // --- Modal Logic ---
-    function showAlert(message) {
-        document.getElementById('alert-message').innerText = message;
-        document.getElementById('alert-modal').classList.remove('hidden');
-    }
-    function closeAlertModal() {
-        document.getElementById('alert-modal').classList.add('hidden');
-    }
-    let confirmCallback = null;
-    function showConfirm(title, message, callback) {
-        document.getElementById('confirm-title').innerText = title;
-        document.getElementById('confirm-message').innerText = message;
-        document.getElementById('confirm-modal').classList.remove('hidden');
-        confirmCallback = callback;
-    }
-    function closeConfirmModal() {
-        document.getElementById('confirm-modal').classList.add('hidden');
-        confirmCallback = null;
-    }
-    // Attach listener for confirm yes button once
-    document.getElementById('confirm-yes-btn').addEventListener('click', function() {
-        if (confirmCallback) confirmCallback();
-        closeConfirmModal();
-    });
+    
     // --- Form Handling ---
     function handleSaveProfile(e) {
         e.preventDefault();

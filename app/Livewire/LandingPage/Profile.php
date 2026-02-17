@@ -8,6 +8,8 @@ class Profile extends Component
 {
     public function render()
     {
-        return view('livewire.landing-page.profile');
+        $data['title'] = 'Profile';
+        $data['active'] = 'Profile';
+        return view('livewire.landing-page.profile', compact('data'));
     }
 }

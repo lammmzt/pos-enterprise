@@ -8,6 +8,8 @@ class Order extends Component
 {
     public function render()
     {
-        return view('livewire.landing-page.order');
+        $data['title'] = 'Order';
+        $data['active'] = 'Order';
+        return view('livewire.landing-page.order', compact('data'));
     }
 }

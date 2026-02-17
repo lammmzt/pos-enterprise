@@ -8,6 +8,8 @@ class Auth extends Component
 {
     public function render()
     {
-        return view('livewire.landing-page.auth');
+        $data['title'] = 'Auth';
+        $data['active'] = 'Auth';
+        return view('livewire.landing-page.auth', compact('data'));
     }
 }

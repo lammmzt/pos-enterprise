@@ -8,6 +8,8 @@ class Riwayat extends Component
 {
     public function render()
     {
-        return view('livewire.landing-page.riwayat');
+        $data['title'] = 'Riwayat';
+        $data['active'] = 'Riwayat';
+        return view('livewire.landing-page.riwayat', compact('data'));
     }
 }
