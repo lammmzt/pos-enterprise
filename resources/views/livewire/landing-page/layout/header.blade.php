@@ -1,3 +1,4 @@
+
 <nav
     class="sticky top-0 z-50 transition-colors duration-300 border-b border-gray-200 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md dark:border-gray-800">
     <div class="flex items-center justify-between px-4 py-3 mx-auto max-w-7xl lg:px-8">

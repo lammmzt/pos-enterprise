@@ -18,8 +18,10 @@ return new class extends Migration
             $table->string('nomor_invoice')->unique();
             $table->decimal('total_harga', 15, 2);
             $table->enum('status_pembayaran', ['belum_bayar', 'lunas', 'gagal', 'refund'])->default('belum_bayar');
+            $table->enum('status_pesanan', ['proses', 'selesai', 'dibatalkan'])->default('proses');
+            $table->enum('tipe_pesanan', ['takeaway', 'dinein', 'delivery', ])->default('dinein');
             $table->string('metode_pembayaran')->nullable(); // midtrans, tunai, transfer
-            $table->enum('tipe_pesanan', ['online', 'pos']);
+            $table->text('link_delivery')->nullable();
             $table->text('catatan')->nullable();
             $table->timestamps();
         });

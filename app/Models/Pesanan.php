@@ -9,16 +9,36 @@ class Pesanan extends Model
     protected $table = 'pesanan';
     protected $primaryKey = 'id_pesanan';
     protected $guarded = [];
-
-    public function pelanggan() {
+    protected $fillable = [
+        'id_user',
+        'id_kasir',
+        'nomor_invoice',
+        'total_harga',
+        'status_pembayaran',
+        'status_pesanan',
+        'tipe_pesanan',
+        'metode_pembayaran',
+        'link_delivery',
+        'catatan',
+    ];
+    // Relasi
+    public function pelanggan()
+    {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 
-    public function kasir() {
+    public function kasir()
+    {
         return $this->belongsTo(User::class, 'id_kasir', 'id_user');
     }
 
-    public function detailPesanan() {
+    public function detailPesanan()
+    {
         return $this->hasMany(DetailPesanan::class, 'id_pesanan', 'id_pesanan');
+    }
+
+    public function testimoni()
+    {
+        return $this->hasOne(Testimoni::class, 'id_pesanan', 'id_pesanan');
     }
 }

@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Filament\Admin\Resources\Testimonis;
+
+use App\Filament\Admin\Resources\Testimonis\Pages\CreateTestimoni;
+use App\Filament\Admin\Resources\Testimonis\Pages\EditTestimoni;
+use App\Filament\Admin\Resources\Testimonis\Pages\ListTestimonis;
+use App\Filament\Admin\Resources\Testimonis\Schemas\TestimoniForm;
+use App\Filament\Admin\Resources\Testimonis\Tables\TestimonisTable;
+use App\Models\Testimoni;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class TestimoniResource extends Resource
+{
+    protected static ?string $model = Testimoni::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return TestimoniForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return TestimonisTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListTestimonis::route('/'),
+            'create' => CreateTestimoni::route('/create'),
+            'edit' => EditTestimoni::route('/{record}/edit'),
+        ];
+    }
+}

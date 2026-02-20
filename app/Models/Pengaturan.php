@@ -9,4 +9,9 @@ class Pengaturan extends Model
     protected $table = 'pengaturan';
     protected $primaryKey = 'id_pengaturan';
     protected $guarded = [];
+
+    protected $fillable = [
+        'kunci',
+        'nilai',
+    ];
 }

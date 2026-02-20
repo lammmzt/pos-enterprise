@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('testimonis', function (Blueprint $table) {
             $table->id('id_testimoni');
             // Relasi ke pelanggan yang memberikan ulasan
-            $table->foreignId('id_user')->constrained('users', 'id_user')->cascadeOnDelete();
+            $table->foreignId('id_pesanan')->constrained('pesanan', 'id_pesanan')->cascadeOnDelete();
             
             $table->integer('rating')->default(5); // Bintang 1 sampai 5
             $table->text('ulasan')->nullable();

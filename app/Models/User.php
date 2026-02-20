@@ -4,13 +4,15 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -18,13 +20,17 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $table = 'users';
-    protected $primaryKey = 'id_user'; // Sesuaikan dengan migration
+    protected $primaryKey = 'id_user';
+    
+    
     protected $fillable = [
         'nama',
         'username',
         'alamat',
         'catatan',
+        'status',
         'password',
+        'role',
     ];
 
     /**
@@ -47,5 +53,32 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    // --- Relasi ---
+    public function pembelian()
+    {
+        return $this->hasMany(Pembelian::class, 'id_user', 'id_user');
+    }
+
+    public function mutasiStok()
+    {
+        return $this->hasMany(MutasiStok::class, 'id_user', 'id_user');
+    }
+
+    public function pesananSebagaiPelanggan()
+    {
+        return $this->hasMany(Pesanan::class, 'id_user', 'id_user');
+    }
+
+    public function pesananSebagaiKasir()
+    {
+        return $this->hasMany(Pesanan::class, 'id_kasir', 'id_user');
+    }
+
+
+    public function verifikasiOtp()
+    {
+        return $this->hasMany(VerifikasiOtp::class, 'id_user', 'id_user');
     }
 }

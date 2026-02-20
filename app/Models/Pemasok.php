@@ -9,7 +9,13 @@ class Pemasok extends Model
     protected $table = 'pemasok';
     protected $primaryKey = 'id_pemasok';
     protected $guarded = [];
-
+    protected $fillable = [
+        'nama',
+        'telepon',
+        'email',
+        'alamat',
+    ];
+    
     public function pembelian() {
         return $this->hasMany(Pembelian::class, 'id_pemasok', 'id_pemasok');
     }
