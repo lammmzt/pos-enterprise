@@ -23,16 +23,6 @@ class UserForm
                 Textarea::make('alamat')
                     ->required()
                     ->columnSpanFull(),
-                Select::make('role')
-                    ->options([
-            'kasir' => 'Kasir',
-            'pelanggan' => 'Pelanggan',
-            'owner' => 'Owner',
-            'admin' => 'Admin',
-            'antrean' => 'Antrean',
-        ])
-                    ->default('pelanggan')
-                    ->required(),
                 Select::make('status')
                     ->options(['aktif' => 'Aktif', 'tidak_aktif' => 'Tidak aktif'])
                     ->default('aktif')

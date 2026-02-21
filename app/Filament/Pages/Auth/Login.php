@@ -2,30 +2,29 @@
 
 namespace App\Filament\Pages\Auth;
 
-use Filament\Pages\Auth\Login as BaseAuth;
-use Filament\Forms\Form;
+use Filament\Auth\Pages\Login as BaseLogin; // <-- Namespace BARU di Filament v4
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Component;
+use Filament\Schemas\Schema; // <-- Di v4 menggunakan Schema
+use Illuminate\Validation\ValidationException;
 
-class Login extends BaseAuth
+class Login extends BaseLogin
 {
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 $this->getUsernameFormComponent(),
                 $this->getPasswordFormComponent(),
                 $this->getRememberFormComponent(),
-            ])
-            ->statePath('data');
+            ]);
     }
 
-    protected function getUsernameFormComponent(): Component
+    protected function getUsernameFormComponent(): TextInput
     {
         return TextInput::make('username')
             ->label('Username')
             ->required()
-            ->autocomplete()
+            ->autocomplete('username')
             ->autofocus()
             ->extraInputAttributes(['tabindex' => 1]);
     }
@@ -36,5 +35,13 @@ class Login extends BaseAuth
             'username' => $data['username'],
             'password' => $data['password'],
         ];
+    }
+
+    // Supaya kalau salah password, error-nya merah di kolom Username (bukan kolom email yang sudah tidak ada)
+    protected function throwFailureValidationException(): never
+    {
+        throw ValidationException::withMessages([
+            'data.username' => __('Username atau password salah'),
+        ]);
     }
 }

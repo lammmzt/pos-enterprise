@@ -18,8 +18,6 @@ class UsersTable
                     ->searchable(),
                 TextColumn::make('username')
                     ->searchable(),
-                TextColumn::make('role')
-                    ->badge(),
                 TextColumn::make('status')
                     ->badge(),
                 TextColumn::make('catatan')

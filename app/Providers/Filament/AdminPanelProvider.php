@@ -28,8 +28,8 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            // ->login()
-            // ->login(\App\Filament\Pages\Auth\Login::class)
+            ->login()
+            ->login(\App\Filament\Pages\Auth\Login::class) // <-- Langsung tembak lokasinya di sini)
             ->colors([
                 'primary' => Color::Amber,
             ])

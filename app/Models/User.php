@@ -9,50 +9,55 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
-{
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+// Tambahan untuk Hak Akses & Filament
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName; // <-- 1. Tambahkan import ini
+use Filament\Panel;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+class User extends Authenticatable implements FilamentUser, HasName // <-- Implementasikan FilamentUser
+{
+    use HasFactory, Notifiable, HasRoles; // <-- Tambahkan HasRoles
+
     protected $table = 'users';
     protected $primaryKey = 'id_user';
-    
-    
+
     protected $fillable = [
         'nama',
         'username',
-        'alamat',
-        'catatan',
-        'status',
         'password',
-        'role',
+        'alamat',
+        // 'role', // Ini kolom enum dari migration kamu
+        'status',
+        'catatan',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'password' => 'hashed',
         ];
+    }
+
+    // --- Konfigurasi Akses Panel Filament ---
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Hanya yang statusnya 'aktif' yang bisa login
+        if ($this->status !== 'aktif') {
+            return false;
+        }
+
+        // Pelanggan dan Antrean TIDAK BOLEH masuk ke admin panel (back-office)
+        if (in_array($this->role, ['pelanggan', 'antrean'])) {
+            return false;
+        }
+
+        // Owner, Admin, dan Kasir diizinkan masuk
+        return true;
     }
 
     // --- Relasi ---
@@ -80,5 +85,11 @@ class User extends Authenticatable
     public function verifikasiOtp()
     {
         return $this->hasMany(VerifikasiOtp::class, 'id_user', 'id_user');
+    }
+
+    public function getFilamentName(): string
+    {
+        // Beri tahu Filament untuk memakai kolom 'nama' dari database kita
+        return $this->nama; 
     }
 }
