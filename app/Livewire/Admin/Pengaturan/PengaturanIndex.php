@@ -1,30 +1,28 @@
 <?php
 
-namespace App\Livewire\Admin\User;
+namespace App\Livewire\Admin\Pengaturan;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\User;
-use App\Livewire\Forms\Admin\User\UserForm;
+use App\Models\Pengaturan;
+use App\Livewire\Forms\Admin\Pengaturan\PengaturanForm;
 
-class UserIndex extends Component
+class PengaturanIndex extends Component
 {
     use WithPagination;
 
-    public UserForm $form;
+    public PengaturanForm $form;
 
     // Filter & Datatable State
     public $search = '';
     public $view = 5; // Item per page
-    public $sortColumn = 'nama';
+    public $sortColumn = 'kunci';
     public $sortDirection = 'asc';
 
     // Modal State
     public $isModalOpen = false;
     public $isDeleteModalOpen = false;
-    public $userIdToDelete = null;
-
-    protected $paginationTheme = 'tailwind';
+    public $pengaturanIdToDelete = null;
 
     // Reset pagination saat pencarian atau view berubah
     public function updatingSearch() { $this->resetPage(); }
@@ -42,15 +40,13 @@ class UserIndex extends Component
 
     public function render()
     {
-        
-        $data['users'] = User::where('nama', 'like', '%' . $this->search . '%')
-            ->orWhere('username', 'like', '%' . $this->search . '%')
-            ->orWhere('alamat', 'like', '%' . $this->search . '%')
+        $data['pengaturans'] = Pengaturan::where('kunci', 'like', '%' . $this->search . '%')
+            ->orWhere('nilai', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortColumn, $this->sortDirection)
             ->paginate($this->view);
-        $data['title'] = 'Manajemen Pengguna';
-        $data['desc_page'] = 'Kelola master data pengguna, hak akses, dan status akun di sini.';
-        return view('livewire.admin.user.user-index', $data)->layout('components.layouts.app', $data);
+        $data['title'] = 'Manajemen Pengaturan';
+        $data['desc_page'] = 'Kelola master data pengaturan.';
+        return view('livewire.admin.pengaturan.pengaturan-index', $data)->layout('components.layouts.app', $data);
     }
 
     public function create()
@@ -60,31 +56,31 @@ class UserIndex extends Component
         $this->isModalOpen = true;
     }
 
-    public function edit(User $user)
+    public function edit(Pengaturan $pengaturan)
     {
         $this->form->resetValidation();
-        $this->form->setForm($user);
+        $this->form->setForm($pengaturan);
         $this->isModalOpen = true;
     }
 
     public function save()
     {
         $this->form->store();
-        $this->dispatch('toast', type: 'success', message: 'Data pengguna berhasil disimpan!');
+        $this->dispatch('toast', type: 'success', message: 'Data pengaturan berhasil disimpan!');
         $this->isModalOpen = false;
     }
 
     public function deleteConfirm($id)
     {
-        $this->userIdToDelete = $id;
+        $this->pengaturanIdToDelete = $id;
         $this->isDeleteModalOpen = true;
     }
 
     public function destroy()
     {
-        if ($this->userIdToDelete) {
-            User::findOrFail($this->userIdToDelete)->delete();
-            $this->dispatch('toast', type: 'success', message: 'Data user berhasil dihapus!');
+        if ($this->pengaturanIdToDelete) {
+            Pengaturan::findOrFail($this->pengaturanIdToDelete)->delete();
+            $this->dispatch('toast', type: 'success', message: 'Data pengaturan berhasil dihapus!');
         }
         $this->isDeleteModalOpen = false;
     }

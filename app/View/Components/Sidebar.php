@@ -39,8 +39,8 @@ class Sidebar extends Component
                         'icon' => 'shopping-cart', 
                         'activePattern' => 'ecommerce.*',
                         'subItems' => [
-                            ['name' => 'Product List', 'route' => 'admin.dashboard'],
-                            ['name' => 'Add Product', 'route' => 'admin.dashboard'],
+                            ['name' => 'Kategori', 'route' => 'admin.kategori'],
+                            ['name' => 'Produk', 'route' => 'admin.produk'],
                             ['name' => 'My Cart', 'route' => 'admin.dashboard'],
                         ]
                     ],
@@ -54,6 +54,18 @@ class Sidebar extends Component
                         'icon' => 'users', 
                         'activePattern' => 'admin.user',
                         'route' => 'admin.user' // Single menu tanpa sub-item
+                    ],
+                    
+                ]
+            ],
+             [
+                'title' => 'Pengaturan',
+                'items' => [
+                    [
+                        'name' => 'Pengaturan', 
+                        'icon' => 'settings', 
+                        'activePattern' => 'admin.pengaturan',
+                        'route' => 'admin.pengaturan' // Single menu tanpa sub-item
                     ],
                     
                 ]

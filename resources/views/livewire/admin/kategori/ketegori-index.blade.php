@@ -16,7 +16,7 @@
                 <div class="row">
                     <div class="flex flex-col items-center justify-end p-4 border-b border-gray-100 col-12 dark:border-gray-800 md:flex-row">
                         <button wire:click="create" class="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 text-sm font-bold text-white transition-all bg-gray-100  rounded-xl">
-                            <i class="mr-2 ti ti-plus"></i> Tambah Pengguna
+                            <i class="mr-2 ti ti-plus"></i> Tambah Kategori
                         </button>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
 
                     <div class="relative w-full md:w-80">
                         <i class="absolute text-gray-400 -translate-y-1/2 ti ti-search left-4 top-1/2"></i>
-                        <input type="text" wire:model.live.debounce.300ms="search" class="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-2xl pl-11 pr-4 py-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all" placeholder="Cari nama, username...">
+                        <input type="text" wire:model.live.debounce.300ms="search" class="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-2xl pl-11 pr-4 py-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all" placeholder="Cari nama, deskripsi...">
                     </div>
                 </div>
 
@@ -56,44 +56,31 @@
                         <thead>
                             <tr class="border-b border-gray-100 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-800">
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('nama')">
-                                    <div class="flex items-center gap-2">Pengguna <i class="opacity-50 ti ti-arrows-sort"></i></div>
+                                    <div class="flex items-center gap-2">Nama Kategori <i class="opacity-50 ti ti-arrows-sort"></i></div>
                                 </th>
-                                <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('username')">
-                                    <div class="flex items-center gap-2">Username <i class="opacity-50 ti ti-arrows-sort"></i></div>
+                                <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('nama')">
+                                    <div class="flex items-center gap-2">Deskripsi Kategori <i class="opacity-50 ti ti-arrows-sort"></i></div>
                                 </th>
-                                <th class="px-6 py-4 font-bold text-gray-400 uppercase">Role</th>
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase">Status</th>
                                 <th class="px-6 py-4 font-bold text-center text-gray-400 uppercase">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                            @forelse ($users as $user)
+                            @forelse ($kategoris as $kategori)
                                 <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/40 group">
+                                    <td class="px-6 py-4 font-bold text-gray-600 dark:text-gray-400">{{ $kategori->nama }}</td>
+                                    <td class="px-6 py-4 font-bold text-gray-600 dark:text-gray-400">{{ $kategori->deskripsi }}</td>
                                     <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="flex items-center justify-center w-8 h-8 font-bold text-indigo-600 rounded-full bg-indigo-50 dark:bg-indigo-900/30">
-                                                {{ strtoupper(substr($user->nama, 0, 2)) }}
-                                            </div>
-                                            <div>
-                                                <p class="font-bold dark:text-white">{{ $user->nama }}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 font-bold text-gray-600 dark:text-gray-400">{{ $user->username }}</td>
-                                    <td class="px-6 py-4">
-                                        <span class="font-bold text-indigo-600 uppercase">{{ $user->role }}</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 rounded-full text-[9px] font-bold uppercase {{ $user->status === 'aktif' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600' : 'bg-amber-50 dark:bg-amber-500/10 text-amber-600' }}">
-                                            {{ str_replace('_', ' ', $user->status) }}
+                                        <span class="px-3 py-1 rounded-full text-[9px] font-bold uppercase {{ $kategori->status === 'aktif' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600' : 'bg-amber-50 dark:bg-amber-500/10 text-amber-600' }}">
+                                            {{ str_replace('_', ' ', $kategori->status) }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button wire:click="edit({{ $user->id_user }})" class="p-2 text-blue-500 transition-colors bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50">
+                                            <button wire:click="edit({{ $kategori->id_kategori }})" class="p-2 text-blue-500 transition-colors bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50">
                                                 <i class="ti ti-pencil"></i>
                                             </button>
-                                            <button wire:click="deleteConfirm({{ $user->id_user }})" class="p-2 text-red-500 transition-colors bg-red-100 rounded-lg hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50">
+                                            <button wire:click="deleteConfirm({{ $kategori->id_kategori }})" class="p-2 text-red-500 transition-colors bg-red-100 rounded-lg hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50">
                                                 <i class="ti ti-trash"></i>
                                             </button>
                                         </div>
@@ -111,7 +98,7 @@
                 </div>
 
                 <div class="p-6 border-t border-gray-100 dark:border-gray-800">
-                    {{ $users->links() }}
+                    {{ $kategoris->links() }}
                 </div>
             </div>
         </section>
@@ -125,62 +112,32 @@
                 
                 <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="relative w-full max-w-2xl bg-white dark:bg-gray-900 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-800 shadow-2xl">
                     <div class="flex items-center justify-between mb-6">
-                        <h4 class="text-xl font-bold text-gray-900 dark:text-white">{{ $form->user ? 'Edit Pengguna' : 'Tambah Pengguna Baru' }}</h4>
-                        <button wire:click="closeModal" class="p-1 text-gray-400 transition-colors rounded-lg hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"><i class="ti ti-x"></i></button>
+                        <h4 class="text-xl font-bold text-gray-900 dark:text-white">{{ $form->kategori ? 'Edit Kategori' : 'Tambah Kategori Baru' }}</h4>
+                        <button wire:click="closeModal" class="p-1 text-gray-400 transition-colors rounded-lg hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"><i class="ti ti-x text-lg"></i></button>
                     </div>
                     
                     <form wire:submit="save" class="space-y-4 font-mono text-sm">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300">Nama Lengkap</label>
-                                <input type="text" wire:model="form.nama" placeholder="Nama Lengkap" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
+                                <label class="block font-bold text-gray-700 dark:text-gray-300">Nama Kategori</label>
+                                <input type="text" wire:model="form.nama" placeholder="nama" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
                                 @error('form.nama') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                             </div>
                             <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300">Username</label>
-                                <input type="text" wire:model="form.username" placeholder="Username" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
-                                @error('form.username') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                                <label class="block font-bold text-gray-700 dark:text-gray-300">Deskripsi</label>
+                                <textarea type="text" wire:model="form.deskripsi" placeholder="deskripsi" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white"> </textarea>
+                                @error('form.deskripsi') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300">Password</label>
-                                <input type="password" wire:model="form.password" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white" placeholder="{{ $form->user ? 'Kosongkan jika tidak diganti' : 'Minimal 6 karakter' }}">
-                                @error('form.password') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300">No. WA</label>
-                                <input type="text" wire:model="form.no_hp" placeholder="No Whatsapp" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
-                                @error('form.no_hp') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300">Hak Akses (Role)</label>
-                                <select wire:model="form.role" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
-                                    <option value="kasir">Kasir</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="owner">Owner</option>
-                                    <option value="pelanggan">Pelanggan</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300">Status Akun</label>
+                                <label class="block font-bold text-gray-700 dark:text-gray-300">Status Kategori</label>
                                 <select wire:model="form.status" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
                                     <option value="aktif">Aktif</option>
                                     <option value="tidak_aktif">Tidak Aktif</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300">Catatan</label>
-                                <input type="text" wire:model="form.catatan" placeholder="catatan" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
-                                @error('form.catatan') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                            
                         </div>
 
                         <div class="flex justify-end gap-3 pt-4 mt-8 border-t dark:border-gray-800">
@@ -207,7 +164,7 @@
                     <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full dark:bg-red-900/30">
                         <i class="text-3xl text-red-600 ti ti-alert-triangle">!</i>
                     </div>
-                    <h4 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Hapus Pengguna?</h4>
+                    <h4 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Hapus Kategori?</h4>
                     <p class="font-medium text-gray-500 dark:text-gray-400">Tindakan ini tidak dapat dibatalkan. Data yang terhapus akan hilang selamanya.</p>
                     
                     <div class="flex justify-center gap-3 mt-8">

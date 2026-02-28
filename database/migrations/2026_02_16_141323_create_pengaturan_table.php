@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('id_pengaturan');
             $table->string('kunci')->unique();
             $table->text('nilai')->nullable();
+            $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
             $table->timestamps();
         });
     }

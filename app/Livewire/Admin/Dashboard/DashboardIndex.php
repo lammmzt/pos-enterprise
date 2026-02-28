@@ -9,7 +9,7 @@ class DashboardIndex extends Component
     public function render()
     {
         $data['title'] = 'Dashboard';
-        $data['active'] = 'Dashboard';
-        return view('livewire.admin.dashboard.dashboard-index')->layout('components.layouts.app', $data);
+        $data['desc_page'] = 'Ringkasan penjualan, inventaris, dan performa toko Anda hari ini.';
+        return view('livewire.admin.dashboard.dashboard-index',$data)->layout('components.layouts.app', $data);
     }
 }

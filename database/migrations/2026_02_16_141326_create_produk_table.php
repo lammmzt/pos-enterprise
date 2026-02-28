@@ -16,13 +16,12 @@ return new class extends Migration
             // Relasi ke tabel kategori
             $table->foreignId('id_kategori')->constrained('kategori', 'id_kategori')->cascadeOnDelete();
             $table->string('nama');
-            $table->string('slug')->unique();
             $table->string('sku')->unique()->nullable(); // Stock Keeping Unit 
             $table->text('deskripsi')->nullable();
             $table->decimal('harga_dasar', 15, 2)->default(0); // HPP
             $table->decimal('harga_jual', 15, 2);
             $table->string('gambar')->nullable();
-            $table->boolean('status_aktif')->default(true);
+            $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
             $table->timestamps();
         });
     }

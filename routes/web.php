@@ -10,6 +10,9 @@ use App\Livewire\LandingPage\Profile;
 use App\Livewire\Admin\Auth\Login;
 use App\Livewire\Admin\Dashboard\DashboardIndex;
 use App\Livewire\Admin\User\UserIndex;
+use App\Livewire\Admin\Pengaturan\PengaturanIndex;
+use App\Livewire\Admin\Kategori\KategoriIndex;
+use App\Livewire\Admin\Produk\ProdukIndex;
 
 use App\Http\Controllers\AuthController; // Import Auth Controller Custom kita
 use App\Http\Controllers\FrontController;
@@ -72,8 +75,17 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,owner,kasir'])->group(fu
     // Dashboard
     Route::get('/dashboard', DashboardIndex::class)->name('admin.dashboard');
 
-    // Dashboard
+    // user
     Route::get('/user', UserIndex::class)->name('admin.user');
+
+    // pengaturan
+    Route::get('/pengaturan', PengaturanIndex::class)->name('admin.pengaturan');
+
+    // kategori
+    Route::get('/kategori', KategoriIndex::class)->name('admin.kategori');
+
+    // produk
+    Route::get('/produk', ProdukIndex::class)->name('admin.produk');
 
     // POS Kasir
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
@@ -83,17 +95,17 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,owner,kasir'])->group(fu
     Route::get('/pesanan/{id}', [PesananController::class, 'show'])->name('admin.pesanan.show');
 
     // Area Khusus Admin & Owner
-    Route::middleware(['role:admin,owner'])->group(function () {
-        Route::resource('kategori', KategoriController::class);
-        Route::resource('produk', ProdukController::class);
-        Route::resource('pemasok', PemasokController::class);
-        Route::resource('pembelian', PembelianController::class);
-        Route::resource('mutasi-stok', MutasiStokController::class);
-    });
+    // Route::middleware(['role:admin,owner'])->group(function () {
+    //     Route::resource('kategori', KategoriController::class);
+    //     Route::resource('produk', ProdukController::class);
+    //     Route::resource('pemasok', PemasokController::class);
+    //     Route::resource('pembelian', PembelianController::class);
+    //     Route::resource('mutasi-stok', MutasiStokController::class);
+    // });
 
     // Area Khusus Owner
-    Route::middleware(['role:owner'])->group(function () {
-        Route::get('/laporan/keuangan', [LaporanController::class, 'keuangan'])->name('laporan.keuangan');
-        Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok');
-    });
+    // Route::middleware(['role:owner'])->group(function () {
+    //     Route::get('/laporan/keuangan', [LaporanController::class, 'keuangan'])->name('laporan.keuangan');
+    //     Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok');
+    // });
 });

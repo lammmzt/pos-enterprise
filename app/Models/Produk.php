@@ -15,13 +15,12 @@ class Produk extends Model
     protected $fillable = [
         'id_kategori',
         'nama',
-        'slug',
         'sku',
         'deskripsi',
         'harga_dasar',
         'harga_jual',
         'gambar',
-        'status_aktif',
+        'status',
     ];
     
     // Relasi

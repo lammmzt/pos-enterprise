@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Livewire\Admin\User;
+namespace App\Livewire\Admin\Kategori;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\User;
-use App\Livewire\Forms\Admin\User\UserForm;
+use App\Models\Kategori;
+use App\Livewire\Forms\Admin\Kategori\KategoriForm;
 
-class UserIndex extends Component
+class KategoriIndex extends Component
 {
     use WithPagination;
 
-    public UserForm $form;
+    public KategoriForm $form;
 
     // Filter & Datatable State
     public $search = '';
@@ -22,9 +22,7 @@ class UserIndex extends Component
     // Modal State
     public $isModalOpen = false;
     public $isDeleteModalOpen = false;
-    public $userIdToDelete = null;
-
-    protected $paginationTheme = 'tailwind';
+    public $kategoriIdToDelete = null;
 
     // Reset pagination saat pencarian atau view berubah
     public function updatingSearch() { $this->resetPage(); }
@@ -42,15 +40,13 @@ class UserIndex extends Component
 
     public function render()
     {
-        
-        $data['users'] = User::where('nama', 'like', '%' . $this->search . '%')
-            ->orWhere('username', 'like', '%' . $this->search . '%')
-            ->orWhere('alamat', 'like', '%' . $this->search . '%')
+        $data['kategoris'] =  Kategori::where('nama', 'like', '%' . $this->search . '%')
+            ->orWhere('deskripsi', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortColumn, $this->sortDirection)
             ->paginate($this->view);
-        $data['title'] = 'Manajemen Pengguna';
-        $data['desc_page'] = 'Kelola master data pengguna, hak akses, dan status akun di sini.';
-        return view('livewire.admin.user.user-index', $data)->layout('components.layouts.app', $data);
+        $data['title'] = 'Manajemen Kategori';
+        $data['desc_page'] = 'Kelola master data kategori.';
+        return view('livewire.admin.kategori.ketegori-index', $data)->layout('components.layouts.app', $data);
     }
 
     public function create()
@@ -60,31 +56,31 @@ class UserIndex extends Component
         $this->isModalOpen = true;
     }
 
-    public function edit(User $user)
+    public function edit(Kategori $kategori)
     {
         $this->form->resetValidation();
-        $this->form->setForm($user);
+        $this->form->setForm($kategori);
         $this->isModalOpen = true;
     }
 
     public function save()
     {
         $this->form->store();
-        $this->dispatch('toast', type: 'success', message: 'Data pengguna berhasil disimpan!');
+        $this->dispatch('toast', type: 'success', message: 'Data kategori berhasil disimpan!');
         $this->isModalOpen = false;
     }
 
     public function deleteConfirm($id)
     {
-        $this->userIdToDelete = $id;
+        $this->kategoriIdToDelete = $id;
         $this->isDeleteModalOpen = true;
     }
 
     public function destroy()
     {
-        if ($this->userIdToDelete) {
-            User::findOrFail($this->userIdToDelete)->delete();
-            $this->dispatch('toast', type: 'success', message: 'Data user berhasil dihapus!');
+        if ($this->kategoriIdToDelete) {
+            Kategori::findOrFail($this->kategoriIdToDelete)->delete();
+            session()->flash('success', 'Data kategori berhasil dihapus.');
         }
         $this->isDeleteModalOpen = false;
     }

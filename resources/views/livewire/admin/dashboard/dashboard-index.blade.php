@@ -2,9 +2,8 @@
     <div class="pb-12 space-y-8">
     <div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-            <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">E-commerce Dashboard</h1>
-            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Ringkasan penjualan, inventaris, dan
-                performa toko Anda hari ini.</p>
+            <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">{{$title}}</h1>
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{$desc_page}}</p>
         </div>
 
         <div class="flex items-center gap-3">

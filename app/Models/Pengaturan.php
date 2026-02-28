@@ -13,5 +13,6 @@ class Pengaturan extends Model
     protected $fillable = [
         'kunci',
         'nilai',
+        'status'
     ];
 }
