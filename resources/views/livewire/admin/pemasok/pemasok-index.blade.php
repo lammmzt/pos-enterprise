@@ -16,7 +16,7 @@
                 <div class="row">
                     <div class="flex flex-col items-center justify-end p-4 border-b border-gray-100 col-12 dark:border-gray-800 md:flex-row">
                         <button wire:click="create" class="px-6 py-3 text-sm font-bold text-white transition-all bg-gray-100 bg-indigo-600 hover:bg-indigo-700 rounded-xl">
-                            <i class="mr-2 ti ti-plus"></i> Tambah Pengaturan
+                            <i class="mr-2 ti ti-plus"></i> Tambah Pemasok
                         </button>
                     </div>
                 </div>
@@ -56,31 +56,34 @@
                         <thead>
                             <tr class="border-b border-gray-100 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-800">
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('nama')">
-                                    <div class="flex items-center gap-2">Pengaturan <i class="opacity-50 ti ti-arrows-sort"></i></div>
+                                    <div class="flex items-center gap-2">Pemasok <i class="opacity-50 ti ti-arrows-sort"></i></div>
                                 </th>
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('kunci')">
-                                    <div class="flex items-center gap-2">Kunci <i class="opacity-50 ti ti-arrows-sort"></i></div>
+                                    <div class="flex items-center gap-2">Telepon <i class="opacity-50 ti ti-arrows-sort"></i></div>
                                 </th>
-                                <th class="px-6 py-4 font-bold text-gray-400 uppercase">Status</th>
+                                <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('kunci')">
+                                    <div class="flex items-center gap-2">Alamat</div>
+                                </th>
                                 <th class="px-6 py-4 font-bold text-center text-gray-400 uppercase">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                            @forelse ($pengaturans as $pengaturan)
+                            @forelse ($pemasoks as $pemasok)
                                 <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/40 group">
-                                    <td class="px-6 py-4 font-bold text-gray-600 dark:text-gray-400">{{ $pengaturan->kunci }}</td>
-                                    <td class="px-6 py-4 font-bold text-gray-600 dark:text-gray-400">{{ $pengaturan->nilai }}</td>
                                     <td class="px-6 py-4">
-                                        <span class="px-3 py-1 rounded-full text-[9px] font-bold uppercase {{ $pengaturan->status === 'aktif' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600' : 'bg-amber-50 dark:bg-amber-500/10 text-amber-600' }}">
-                                            {{ str_replace('_', ' ', $pengaturan->status) }}
-                                        </span>
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-indigo-600">{{ $pemasok->nama }}</span>
+                                            <span class="text-[10px] text-gray-400"><i class="ti ti-email"></i> {{ $pemasok->email }}</span>
+                                        </div>
                                     </td>
+                                    <td class="px-6 py-4 font-bold text-gray-600 dark:text-gray-400">{{ $pemasok->email }}</td>
+                                    <td class="px-6 py-4 font-bold text-gray-600 dark:text-gray-400">{{ $pemasok->alamat }}</td>
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button wire:click="edit({{ $pengaturan->id_pengaturan }})" class="p-2 text-blue-500 transition-colors bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50">
+                                            <button wire:click="edit({{ $pemasok->id_pemasok }})" class="p-2 text-blue-500 transition-colors bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50">
                                                 <i class="ti ti-pencil"></i>
                                             </button>
-                                            <button wire:click="deleteConfirm({{ $pengaturan->id_pengaturan }})" class="p-2 text-red-500 transition-colors bg-red-100 rounded-lg hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50">
+                                            <button wire:click="deleteConfirm({{ $pemasok->id_pemasok }})" class="p-2 text-red-500 transition-colors bg-red-100 rounded-lg hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50">
                                                 <i class="ti ti-trash"></i>
                                             </button>
                                         </div>
@@ -98,7 +101,7 @@
                 </div>
 
                 <div class="p-6 border-t border-gray-100 dark:border-gray-800">
-                    {{ $pengaturans->links() }}
+                    {{ $pemasoks->links() }}
                 </div>
             </div>
         </section>
@@ -112,31 +115,35 @@
                 
                 <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="relative w-full max-w-2xl bg-white dark:bg-gray-900 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-800 shadow-2xl">
                     <div class="flex items-center justify-between mb-6">
-                        <h4 class="text-xl font-bold text-gray-900 dark:text-white">{{ $form->pengaturan ? 'Edit Pengaturan' : 'Tambah Pengaturan Baru' }}</h4>
+                        <h4 class="text-xl font-bold text-gray-900 dark:text-white">{{ $form->pemasok ? 'Edit Pemasok' : 'Tambah Pemasok Baru' }}</h4>
                         <button wire:click="closeModal" class="p-1 text-gray-400 transition-colors rounded-lg hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"><i class="ti ti-x"></i></button>
                     </div>
                     
                     <form wire:submit="save" class="space-y-4 font-mono text-sm">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300">Kunci</label>
-                                <input type="text" wire:model="form.kunci" placeholder="Kunci" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
-                                @error('form.kunci') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                                <label class="block font-bold text-gray-700 dark:text-gray-300">Nama pemasok</label>
+                                <input type="text" wire:model="form.nama" placeholder="Nama pemasok" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
+                                @error('form.nama') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                             </div>
                             <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300">Nilai</label>
-                                <input type="text" wire:model="form.nilai" placeholder="Nilai" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
-                                @error('form.nilai') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                                <label class="block font-bold text-gray-700 dark:text-gray-300">Email</label>
+                                <input type="email" wire:model="form.email" placeholder="email" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
+                                @error('form.email') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                             </div>
+                            
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
+                          <div>
+                                <label class="block font-bold text-gray-700 dark:text-gray-300">Telepon</label>
+                                <input type="text" wire:model="form.telepon" placeholder="Telepon pemasok" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
+                                @error('form.telepon') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                            </div>
                             <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300">Status Pengaturan</label>
-                                <select wire:model="form.status" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
-                                    <option value="aktif">Aktif</option>
-                                    <option value="tidak_aktif">Tidak Aktif</option>
-                                </select>
+                                <label class="block font-bold text-gray-700 dark:text-gray-300">Alamat</label>
+                                <textarea type="alamat" wire:model="form.alamat" placeholder="Masukan alaamat" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white"></textarea>
+                                @error('form.alamat') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
@@ -164,7 +171,7 @@
                     <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full dark:bg-red-900/30">
                         <i class="text-3xl text-red-600 ti ti-alert-triangle">!</i>
                     </div>
-                    <h4 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Hapus Pengaturan?</h4>
+                    <h4 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Hapus pemasok?</h4>
                     <p class="font-medium text-gray-500 dark:text-gray-400">Tindakan ini tidak dapat dibatalkan. Data yang terhapus akan hilang selamanya.</p>
                     
                     <div class="flex justify-center gap-3 mt-8">

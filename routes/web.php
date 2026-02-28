@@ -13,18 +13,12 @@ use App\Livewire\Admin\User\UserIndex;
 use App\Livewire\Admin\Pengaturan\PengaturanIndex;
 use App\Livewire\Admin\Kategori\KategoriIndex;
 use App\Livewire\Admin\Produk\ProdukIndex;
+use App\Livewire\Admin\Pemasok\PemasokIndex;
+use App\Livewire\Admin\Stok\PembelianIndex;
 
 use App\Http\Controllers\AuthController; // Import Auth Controller Custom kita
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\PosController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\KategoriController;
-use App\Http\Controllers\Admin\ProdukController;
-use App\Http\Controllers\Admin\PemasokController;
-use App\Http\Controllers\Admin\PembelianController;
-use App\Http\Controllers\Admin\MutasiStokController;
-use App\Http\Controllers\Admin\PesananController;
-use App\Http\Controllers\Admin\LaporanController;
 
 
 
@@ -86,6 +80,12 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,owner,kasir'])->group(fu
 
     // produk
     Route::get('/produk', ProdukIndex::class)->name('admin.produk');
+
+    // pemasok
+    Route::get('/pemasok', PemasokIndex::class)->name('admin.pemasok');
+
+    // pembelian
+    Route::get('/pembelian', PembelianIndex::class)->name('admin.pembelian');
 
     // POS Kasir
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');

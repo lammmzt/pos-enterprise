@@ -16,17 +16,47 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    {{-- Theme Initializer --}}
-    <script>
-        (function () {
+    <script data-navigate-once>
+        function applyTheme() {
             const savedTheme = localStorage.getItem('theme') || 'light';
             if (savedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark');
             }
-        })();
+        }
 
+        // Jalankan saat pertama kali muat
+        applyTheme();
+
+        // Pastikan tema tetap terkunci setiap kali Livewire selesai berpindah halaman
+        document.addEventListener('livewire:navigated', applyTheme);
+        
+    </script>
+    
+    {{-- Theme Initializer --}}
+    <script data-navigate-once>
+        document.addEventListener('alpine:init', () => {
+
+            /* ===============================
+            THEME STORE
+            =============================== */
+            Alpine.store('theme', {
+                theme: localStorage.getItem('theme') || 'light',
+
+                init() {
+                    applyTheme();
+                },
+
+                toggle() {
+                    this.theme = this.theme === 'light' ? 'dark' : 'light';
+                    localStorage.setItem('theme', this.theme);
+                    applyTheme();
+                }
+            });
+
+
+        });
     </script>
 
     <style>
@@ -82,8 +112,9 @@
                             }));
                             
                             setTimeout(function() {
-                                window.location.href = "{{ route('admin.dashboard') }}";
-                            }, 5000); // Beri waktu 5 detik agar toast terlihat
+                                // add wire navigation
+                               Livewire.navigate("{{ route('admin.dashboard') }}")
+                            }, 3000); // Beri waktu 3 detik agar toast terlihat
                             
                         } else {
                             $("#btn_login").removeAttr("disabled");

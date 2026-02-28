@@ -14,7 +14,7 @@ class Sidebar extends Component
     {
         $this->menuGroups = [
             [
-                'title' => 'Main Menu',
+                'title' => 'Menu Utama',
                 'items' => [
                     [
                         'name' => 'Dashboard', 
@@ -26,39 +26,6 @@ class Sidebar extends Component
                 ]
             ],
             [
-                'title' => 'Application',
-                'items' => [
-                    [
-                        'name' => 'Point of Sale', 
-                        'icon' => 'device-laptop', 
-                        'activePattern' => 'pages.apps.pos',
-                        'route' => 'admin.dashboard' // Single menu tanpa sub-item
-                    ],
-                    [
-                        'name' => 'E-Commerce', 
-                        'icon' => 'shopping-cart', 
-                        'activePattern' => 'ecommerce.*',
-                        'subItems' => [
-                            ['name' => 'Kategori', 'route' => 'admin.kategori'],
-                            ['name' => 'Produk', 'route' => 'admin.produk'],
-                            ['name' => 'My Cart', 'route' => 'admin.dashboard'],
-                        ]
-                    ],
-                ]
-            ],
-             [
-                'title' => 'User management',
-                'items' => [
-                    [
-                        'name' => 'Users', 
-                        'icon' => 'users', 
-                        'activePattern' => 'admin.user',
-                        'route' => 'admin.user' // Single menu tanpa sub-item
-                    ],
-                    
-                ]
-            ],
-             [
                 'title' => 'Pengaturan',
                 'items' => [
                     [
@@ -70,6 +37,41 @@ class Sidebar extends Component
                     
                 ]
             ],
+            [
+                'title' => 'Aplikasi',
+                'items' => [
+                    [
+                        'name' => 'Point of Sale', 
+                        'icon' => 'device-laptop', 
+                        'activePattern' => 'pages.apps.pos',
+                        'route' => 'admin.dashboard' // Single menu tanpa sub-item
+                    ],
+                    [
+                        'name' => 'Manajemen Produk',
+                        'icon' => 'shopping-cart', 
+                        'activePattern' => 'ecommerce.*',
+                        'subItems' => [
+                            ['name' => 'Kategori', 'route' => 'admin.kategori'],
+                            ['name' => 'Produk', 'route' => 'admin.produk'],
+                            ['name' => 'Pemasok', 'route' => 'admin.pemasok'],
+                            ['name' => 'Pembelian', 'route' => 'admin.pembelian'],
+                        ]
+                    ],
+                ]
+            ],
+             [
+                'title' => 'Manajemen Pengguna',
+                'items' => [
+                    [
+                        'name' => 'Users', 
+                        'icon' => 'users', 
+                        'activePattern' => 'admin.user',
+                        'route' => 'admin.user' // Single menu tanpa sub-item
+                    ],
+                    
+                ]
+            ],
+             
         ];
     }
 

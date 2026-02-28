@@ -44,7 +44,7 @@
                     </div>
                 </div>
 
-                <div class="overflow-x-auto font-mono text-md relative min-h-[300px]">
+                <div class="overflow-x-auto font-mono text-sm relative min-h-[300px]">
                     
                     <div wire:loading.flex class="absolute inset-0 bg-white/50 dark:bg-gray-900/50 backdrop-blur-[2px] z-10 items-center justify-center transition-all">
                         <div class="flex flex-col items-center gap-2">
@@ -86,7 +86,7 @@
                                             <span class="text-[10px] text-gray-500 dark:text-gray-400">SKU: {{ $item->sku }}</span>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">{{ $item->kategori->nama_kategori ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">{{ $item->kategori->nama ?? '-' }}</td>
                                     <td class="px-6 py-4">
                                         <div class="flex flex-col">
                                             <span class="font-bold text-indigo-600">Rp {{ number_format($item->harga_jual, 0, ',', '.') }}</span>

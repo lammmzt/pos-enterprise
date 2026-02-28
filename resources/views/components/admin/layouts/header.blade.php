@@ -130,13 +130,13 @@
                     </div>
 
                     <div class="space-y-1">
-                        <a href="#" class="flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold text-gray-600 transition-colors hover:bg-indigo-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-indigo-500/10 dark:hover:text-indigo-400">
+                        {{-- <a href="#" class="flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold text-gray-600 transition-colors hover:bg-indigo-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-indigo-500/10 dark:hover:text-indigo-400">
                             <i class="text-lg text-indigo-500 ti ti-user-circle"></i> Profil Saya
                         </a>
                         <a href="#" class="flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold text-gray-600 transition-colors hover:bg-indigo-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-indigo-500/10 dark:hover:text-indigo-400">
                             <i class="text-lg text-indigo-500 ti ti-settings"></i> Pengaturan
                         </a>
-                        <hr class="mx-4 my-2 border-gray-50 dark:border-gray-900">
+                        <hr class="mx-4 my-2 border-gray-50 dark:border-gray-900"> --}}
                         {{-- <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-bold text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10">
                             <i class="text-lg ti ti-logout-2"></i> Keluar Sistem
                         </button> --}}

@@ -80,7 +80,7 @@
             </div>
             <div x-show="expanded" x-transition class="flex flex-col">
                 <span class="text-lg font-bold leading-none dark:text-white">
-                    SEBLAK<span class="text-indigo-600 dark:text-white">BUCIN</span>
+                    SEBLAK<span class="text-indigo-600 ">BUCIN</span>
                 </span>
                 <span class="text-sm font-semibold text-gray-400">Admin Panel</span>
             </div>
