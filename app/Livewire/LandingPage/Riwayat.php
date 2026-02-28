@@ -10,6 +10,6 @@ class Riwayat extends Component
     {
         $data['title'] = 'Riwayat';
         $data['active'] = 'Riwayat';
-        return view('livewire.landing-page.riwayat', $data)->layout('components.layouts.app', $data);
+        return view('livewire.landing-page.riwayat', $data)->layout('components.layouts.guest', $data);
     }
 }
