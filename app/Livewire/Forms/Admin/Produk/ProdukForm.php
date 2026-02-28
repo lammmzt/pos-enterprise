@@ -15,6 +15,7 @@ class ProdukForm extends Form
     public $deskripsi;
     public $harga_dasar;
     public $harga_jual;
+    public $stok;
     public $gambar;
     public $status = 'aktif';
 
@@ -29,6 +30,7 @@ class ProdukForm extends Form
             'deskripsi' => 'required|string',
             'harga_dasar' => 'required|numeric|min:0',
             'harga_jual' => 'required|numeric|min:0',
+            'stok' => 'required|numeric|min:0',
             // Gambar tidak perlu divalidasi di sini jika sudah divalidasi di Component (gambar_baru)
             'status' => 'required|in:aktif,tidak_aktif',
         ];
@@ -45,6 +47,7 @@ class ProdukForm extends Form
         $this->deskripsi = $produk->deskripsi;
         $this->harga_dasar = $produk->harga_dasar;
         $this->harga_jual = $produk->harga_jual;
+        $this->stok = $produk->stok;
         $this->status = $produk->status;
         $this->gambar = $produk->gambar;
     }
@@ -66,6 +69,7 @@ class ProdukForm extends Form
             'deskripsi'=> $this->deskripsi,
             'harga_dasar'=> $this->harga_dasar,
             'harga_jual'=> $this->harga_jual,
+            'stok'=> $this->stok,
             'status'=> $this->status,
         ];
 

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('deskripsi')->nullable();
             $table->decimal('harga_dasar', 15, 2)->default(0); // HPP
             $table->decimal('harga_jual', 15, 2);
+            $table->integer('stok')->default(0);
             $table->string('gambar')->nullable();
             $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
             $table->timestamps();

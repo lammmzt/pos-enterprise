@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Models\Produk;
 use App\Models\Kategori;
+use App\Models\BatchProduk;
 use App\Livewire\Forms\Admin\Produk\ProdukForm;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -24,22 +25,22 @@ class ProdukIndex extends Component
 
     public $isModalOpen = false;
     public $isDeleteModalOpen = false;
+    public $isDetailModalOpen = false;
+
     public $produkIdToDelete = null;
+    public $detailProduk = null;
+    public $detailBatches = [];
+
     public $gambar_baru; 
 
     public function updatingSearch() { $this->resetPage(); }
     public function updatingView() { $this->resetPage(); }
 
-    // Fitur: Auto Generate SKU saat Kategori Dipilih
     public function updatedFormIdKategori($value)
     {
-        // Hanya generate jika sedang tambah data baru (bukan edit)
-        // Atau jika Anda ingin tetap berubah saat edit, hapus kondisi is_null ini
         if (is_null($this->form->produk) && $value) {
             $kategori = Kategori::find($value);
             if ($kategori) {
-                // Format: PREFIX_KATEGORI-TAHUNBULAN-RANDOM
-                // Contoh: MNN-2310-4829 (MNN dari Minuman)
                 $prefix = strtoupper(Str::limit($kategori->nama ?? 'PRD', 3, ''));
                 $this->form->sku = $prefix . '-' . date('ym') . '-' . mt_rand(1000, 9999);
             }
@@ -58,19 +59,28 @@ class ProdukIndex extends Component
 
     public function render()
     {
-        // Gunakan with('kategori') untuk eager loading (N+1 Query fix)
+        // Fitur Baru: Menjumlahkan stok dari Batch yang BELUM expired
         $data['produks'] = Produk::with('kategori')
-            ->where('nama', 'like', '%' . $this->search . '%')
-            ->orWhere('deskripsi', 'like', '%' . $this->search . '%')
-            ->orWhere('sku', 'like', '%' . $this->search . '%')
+            ->withSum(['batchProduk as stok_batch_valid' => function ($query) {
+                $query->where('jumlah', '>', 0)
+                      ->where(function ($q) {
+                          // Belum expired (tgl kedaluwarsa >= hari ini) ATAU tidak ada tgl kedaluwarsa
+                          $q->whereNull('tanggal_kedaluwarsa')
+                            ->orWhereDate('tanggal_kedaluwarsa', '>=', now());
+                      });
+            }], 'jumlah')
+            ->where(function($query) {
+                $query->where('nama', 'like', '%' . $this->search . '%')
+                      ->orWhere('deskripsi', 'like', '%' . $this->search . '%')
+                      ->orWhere('sku', 'like', '%' . $this->search . '%');
+            })
             ->orderBy($this->sortColumn, $this->sortDirection)
             ->paginate($this->view);
             
-        // Kirim data kategori ke View untuk dropdown
         $data['kategoris'] = Kategori::all();
 
         $data['title'] = 'Manajemen Produk';
-        $data['desc_page'] = 'Kelola master data produk.';
+        $data['desc_page'] = 'Kelola master data produk dan pantau kesesuaian stok dengan batch (FEFO).';
         
         return view('livewire.admin.produk.produk-index', $data)->layout('components.layouts.app', $data);
     }
@@ -91,6 +101,20 @@ class ProdukIndex extends Component
         $this->isModalOpen = true;
     }
 
+    public function showDetail($id)
+    {
+        $this->detailProduk = Produk::with('kategori')->find($id);
+        
+        if ($this->detailProduk) {
+            $this->detailBatches = BatchProduk::where('id_produk', $id)
+                                    ->where('jumlah', '>', 0)
+                                    ->orderBy('tanggal_kedaluwarsa', 'asc')
+                                    ->get();
+            
+            $this->isDetailModalOpen = true;
+        }
+    }
+
     public function save()
     {
         $pathGambar = null;
@@ -104,7 +128,6 @@ class ProdukIndex extends Component
             }
         }
 
-        // Jika ada gambar baru, assign ke form. Jika tidak, abaikan (pakai gambar lama)
         if ($pathGambar) {
             $this->form->gambar = $pathGambar;
         }
@@ -122,7 +145,6 @@ class ProdukIndex extends Component
 
     public function destroy()
     {
-        // Perbaikan: Sebelumnya $this->deleteId, diubah menjadi $this->produkIdToDelete
         $produk = Produk::find($this->produkIdToDelete);
         
         if ($produk) {
@@ -141,6 +163,7 @@ class ProdukIndex extends Component
     {
         $this->isModalOpen = false;
         $this->isDeleteModalOpen = false;
+        $this->isDetailModalOpen = false;
         $this->reset('gambar_baru');
     }
 }

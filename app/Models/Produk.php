@@ -16,6 +16,7 @@ class Produk extends Model
         'id_kategori',
         'nama',
         'sku',
+        'stok',
         'deskripsi',
         'harga_dasar',
         'harga_jual',
@@ -48,4 +49,5 @@ class Produk extends Model
     {
         return $this->hasMany(DetailPesanan::class, 'id_produk', 'id_produk');
     }
+    
 }

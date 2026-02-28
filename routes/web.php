@@ -15,6 +15,7 @@ use App\Livewire\Admin\Kategori\KategoriIndex;
 use App\Livewire\Admin\Produk\ProdukIndex;
 use App\Livewire\Admin\Pemasok\PemasokIndex;
 use App\Livewire\Admin\Stok\PembelianIndex;
+use App\Livewire\Admin\Stok\MutasiStokIndex;
 
 use App\Http\Controllers\AuthController; // Import Auth Controller Custom kita
 use App\Http\Controllers\FrontController;
@@ -86,6 +87,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,owner,kasir'])->group(fu
 
     // pembelian
     Route::get('/pembelian', PembelianIndex::class)->name('admin.pembelian');
+
+    // pembelian
+    Route::get('/mutasi-stok', MutasiStokIndex::class)->name('admin.mutasi-stok');
 
     // POS Kasir
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');

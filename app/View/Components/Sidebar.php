@@ -55,6 +55,7 @@ class Sidebar extends Component
                             ['name' => 'Produk', 'route' => 'admin.produk'],
                             ['name' => 'Pemasok', 'route' => 'admin.pemasok'],
                             ['name' => 'Pembelian', 'route' => 'admin.pembelian'],
+                            ['name' => 'Mutasi Stok', 'route' => 'admin.mutasi-stok'],
                         ]
                     ],
                 ]

@@ -9,7 +9,7 @@
             <div class="overflow-hidden transition-all bg-white border border-gray-200 shadow-sm dark:bg-gray-900 rounded-3xl dark:border-gray-800">
                 <div class="row">
                     <div class="flex flex-col items-center justify-end p-4 border-b border-gray-100 col-12 dark:border-gray-800 md:flex-row">
-                        <button wire:click="create" class="px-6 py-3 text-sm font-bold text-gray-700 transition-all bg-gray-100 dark:bg-gray-800 dark:text-white rounded-xl hover:bg-gray-200">
+                        <button wire:click="create" class="px-6 py-3 text-sm font-bold text-white transition-all bg-indigo-600 rounded-xl hover:bg-indigo-700">
                             <i class="mr-2 ti ti-plus"></i> Buat PO (Pembelian) Baru
                         </button>
                     </div>

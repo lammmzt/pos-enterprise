@@ -74,7 +74,7 @@
 
     {{-- Logo Area --}}
     <div class="flex items-center p-4 overflow-hidden h-18 shrink-0">
-        <a href="/" class="flex items-center gap-4 group shrink-0">
+        <a href="{{ route('admin.dashboard') }}" wire:navigate class="flex items-center gap-4 group shrink-0">
             <div class="relative w-12 h-12 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:rotate-[10deg] group-hover:scale-110">
                 <i class="text-2xl text-white ti ti-shopping-cart"></i>
             </div>

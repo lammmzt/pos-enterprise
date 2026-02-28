@@ -16,7 +16,7 @@ class PembelianIndex extends Component
     public PembelianForm $form;
 
     public $search = '';
-    public $view = 10;
+    public $view = 5;
     
     public $isModalOpen = false;
     public $isConfirmModalOpen = false;

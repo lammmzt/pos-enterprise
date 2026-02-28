@@ -70,6 +70,7 @@ class PembelianForm extends Form
                     $produk->update([
                         'harga_dasar' => $item['harga_satuan'],
                         'harga_jual' => $item['harga_jual'],
+                        'stok' => $produk->stok + $item['jumlah'],
                     ]);
                 }
 
