@@ -134,7 +134,7 @@
             </div>
         </div>
     </div>
-
+    <x-toast />
     @livewireScripts
     
     <script data-navigate-once type="text/javascript">

@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Livewire\LandingPage\Home;
 use App\Livewire\LandingPage\Order;
-use App\Livewire\LandingPage\Auth_landing;
+use App\Livewire\LandingPage\AuthLanding;
 use App\Livewire\LandingPage\Riwayat;
 use App\Livewire\LandingPage\Payment;
 use App\Livewire\LandingPage\Profile;
@@ -38,7 +38,7 @@ use App\Http\Controllers\Admin\LaporanController;
 */
 Route::get('/', Home::class)->name('Home');
 Route::get('Order', Order::class)->name('Order');
-Route::get('Auth_landing', Auth_landing::class)->name('Auth_landing');
+Route::get('/Auth', AuthLanding::class)->name('Auth');
 Route::get('Riwayat', Riwayat::class)->name('Riwayat');
 Route::get('Payment', Payment::class)->name('Payment');
 Route::get('Profile', Profile::class)->name('Profile');

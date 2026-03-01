@@ -46,7 +46,7 @@
                     </div>
                 </div>
 
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left border-collapse whitespace-nowrap">
                     <thead>
                         <tr class="border-b border-gray-100 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-800">
                             <th class="px-6 py-4 font-bold text-gray-400 uppercase">Waktu / Invoice</th>

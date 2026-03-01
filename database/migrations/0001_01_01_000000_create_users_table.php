@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('role', ['kasir', 'pelanggan', 'owner', 'admin'])->default('pelanggan');
             $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
             $table->string('no_hp')->nullable();
-            $table->string('catatan');
+            $table->string('catatan')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

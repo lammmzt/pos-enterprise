@@ -1,26 +1,44 @@
 <div class="pb-20 space-y-8">
     
-    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-            <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{{ $title }}</h1>
-            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $desc_page }}</p>
+     <div class="flex flex-col w-full gap-4 md:flex-row md:items-end md:justify-between">
+        {{-- Bagian Teks --}}
+        <div class="w-full min-w-0">
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900 truncate sm:text-3xl dark:text-white">
+                {{ $title }}</h1>
+            <p class="text-xs font-medium text-gray-500 truncate sm:text-sm dark:text-gray-400">{{ $desc_page }}</p>
         </div>
-        
-        <div class="flex items-center gap-3">
-            <div class="flex items-center gap-3 p-2 transition-all bg-white border border-gray-200 shadow-sm dark:bg-gray-900 dark:border-gray-800 rounded-2xl">
-                <div class="flex flex-col px-2">
-                    <span class="text-[10px] font-bold text-gray-400 uppercase">Dari Tanggal</span>
-                    <input type="date" wire:model.live="tanggalMulai" class="p-0 text-sm font-bold text-gray-700 bg-transparent border-none outline-none cursor-pointer dark:text-gray-200 focus:ring-0">
+
+        {{-- Bagian Kontrol (Filter & Tombol) --}}
+        <div class="flex flex-col items-center w-full gap-3 sm:flex-row md:w-auto shrink-0">
+
+            {{-- Kotak Filter Tanggal --}}
+            <div
+                class="flex flex-col w-full gap-2 p-2 bg-white border border-gray-200 shadow-sm sm:flex-row sm:items-center sm:gap-3 sm:w-auto dark:bg-gray-900 dark:border-gray-800 rounded-xl sm:rounded-2xl">
+
+                <div class="flex flex-col w-full px-2 sm:w-auto">
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Dari Tanggal</span>
+                    <input type="date" wire:model.live="tanggalMulai"
+                        class="w-full p-0 text-sm font-bold text-gray-700 bg-transparent border-none outline-none cursor-pointer dark:text-gray-200 focus:ring-0">
                 </div>
-                <div class="w-px h-8 bg-gray-200 dark:bg-gray-700"></div>
-                <div class="flex flex-col px-2">
-                    <span class="text-[10px] font-bold text-gray-400 uppercase">Sampai Tanggal</span>
-                    <input type="date" wire:model.live="tanggalAkhir" class="p-0 text-sm font-bold text-gray-700 bg-transparent border-none outline-none cursor-pointer dark:text-gray-200 focus:ring-0">
+
+                {{-- Garis Pembatas (Responsive) --}}
+                <div class="hidden w-px h-8 bg-gray-200 sm:block dark:bg-gray-700"></div>
+                {{-- Vertikal untuk Desktop --}}
+                <div class="w-full h-px my-1 bg-gray-100 sm:hidden dark:bg-gray-800"></div>
+                {{-- Horizontal untuk Mobile --}}
+
+                <div class="flex flex-col w-full px-2 sm:w-auto">
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Sampai Tanggal</span>
+                    <input type="date" wire:model.live="tanggalAkhir"
+                        class="w-full p-0 text-sm font-bold text-gray-700 bg-transparent border-none outline-none cursor-pointer dark:text-gray-200 focus:ring-0">
                 </div>
+
             </div>
 
-            <button wire:click="cetakLaporan" class="px-5 py-3.5 text-sm font-bold text-white transition-all bg-indigo-600 rounded-2xl hover:bg-indigo-700 shadow-sm flex items-center gap-2">
-                <i class="ti ti-printer"></i> Cetak PDF
+            {{-- Tombol Cetak --}}
+            <button wire:click="cetakLaporan"
+                class="flex items-center justify-center w-full gap-2 px-5 py-3 text-sm font-bold text-white transition-all bg-indigo-600 sm:py-3.5 sm:w-auto rounded-xl sm:rounded-2xl hover:bg-indigo-700 shadow-sm">
+                <i class="text-lg ti ti-printer"></i> Cetak PDF
             </button>
         </div>
     </div>

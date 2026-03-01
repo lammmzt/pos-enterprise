@@ -55,7 +55,7 @@
             </button>
 
             {{-- NOTIFICATIONS --}}
-            <div class="relative" x-data="{ open: false }">
+            {{-- <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open"
                     class="relative flex items-center justify-center w-10 h-10 text-gray-500 transition-all rounded-xl hover:bg-gray-100 active:scale-95 dark:text-gray-400 dark:hover:bg-gray-900">
                     <i class="text-xl ti ti-bell"></i>
@@ -100,7 +100,7 @@
                         <x-button variant="secondary" class="w-full py-2.5 text-xs font-bold ">Tandai Semua Terbaca</x-button>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="w-px h-6 mx-1 bg-gray-200 dark:bg-gray-800"></div>
 
