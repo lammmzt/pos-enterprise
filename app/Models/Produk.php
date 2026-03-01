@@ -15,13 +15,13 @@ class Produk extends Model
     protected $fillable = [
         'id_kategori',
         'nama',
-        'slug',
         'sku',
+        'stok',
         'deskripsi',
         'harga_dasar',
         'harga_jual',
         'gambar',
-        'status_aktif',
+        'status',
     ];
     
     // Relasi
@@ -49,4 +49,5 @@ class Produk extends Model
     {
         return $this->hasMany(DetailPesanan::class, 'id_produk', 'id_produk');
     }
+    
 }

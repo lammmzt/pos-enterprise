@@ -308,7 +308,7 @@
                         <li><a href="#about" class="transition-colors hover:text-brand-red">Tentang Kami</a></li>
                         <li><a href="#reviews" class="transition-colors hover:text-brand-red">Testimoni</a></li>
                         <li><a wire:navigate href="{{ route('Order') }}" class="transition-colors hover:text-brand-red">Menu & Pesan</a></li>
-                        <li><a href="#reviews" class="transition-colors hover:text-brand-red">Login Admin</a></li>
+                        <li><a href="{{ route('login') }}" wire:navigate class="transition-colors hover:text-brand-red">Login Admin</a></li>
                     </ul>
                 </div>
 

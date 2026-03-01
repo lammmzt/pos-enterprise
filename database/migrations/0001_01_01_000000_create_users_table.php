@@ -16,9 +16,10 @@ return new class extends Migration
             $table->string('nama');
             $table->string('username')->unique();
             $table->string('password');
-            $table->text('alamat');
-            // $table->enum('role', ['kasir', 'pelanggan', 'owner', 'admin','antrean'])->default('pelanggan');
+            $table->text('alamat')->nullable();
+            $table->enum('role', ['kasir', 'pelanggan', 'owner', 'admin'])->default('pelanggan');
             $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
+            $table->string('no_hp')->nullable();
             $table->string('catatan');
             $table->rememberToken();
             $table->timestamps();

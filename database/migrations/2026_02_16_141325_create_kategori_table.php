@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('kategori', function (Blueprint $table) {
             $table->id('id_kategori');
             $table->string('nama');
-            $table->string('slug')->unique();
-            $table->boolean('status_aktif')->default(true);
+            $table->string('deskripsi')->nullable();
+            $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
             $table->timestamps();
         });
     }

@@ -1,0 +1,66 @@
+@import "tailwindcss";
+/* darkMode: 'class', */
+@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+    /* -- Font Family -- */
+    --font-sans: "Plus Jakarta Sans", sans-serif;
+
+    /* -- Custom Colors (Brand) -- */
+    /* Penggunaan di HTML: bg-brand-red, text-brand-orange, dll */
+    --color-brand-red: #E11D48;
+    --color-brand-orange: #F97316;
+    --color-brand-dark: #1F2937;
+
+    /* -- Custom Colors (Dark Mode Helper) -- */
+    --color-dark-bg: #111827;
+    --color-dark-card: #1F2937;
+    --color-dark-text: #F3F4F6;
+    --color-dark-muted: #9CA3AF;
+
+    /* -- Custom Animations -- */
+    --animate-fade-in: fadeIn 0.2s ease-out forwards;
+    --animate-slide-up: slideUp 0.3s ease-out forwards;
+    --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+    @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        0% { transform: translateY(100%); }
+        100% { transform: translateY(0); }
+    }
+}
+@layer theme {
+    .dark {
+        --color-dark-bg: #111827;
+        --color-dark-card: #1F2937;
+        --color-dark-text: #F3F4F6;
+        --color-dark-muted: #9CA3AF;
+    }
+}
+/* Custom Utilities */
+@layer utilities {
+    .hide-scroll::-webkit-scrollbar {
+        display: none;
+    }
+    .hide-scroll {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    
+    .glass-header {
+        background: rgba(255, 255, 255, 0.90);
+        backdrop-filter: blur(8px);
+    }
+    
+    .dark .glass-header {
+        background: rgba(17, 24, 39, 0.90);
+        border-bottom-color: #374151;
+    }
+
+    .tap-highlight-transparent {
+        -webkit-tap-highlight-color: transparent;
+    }
+}

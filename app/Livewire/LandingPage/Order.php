@@ -10,6 +10,6 @@ class Order extends Component
     {
         $data['title'] = 'Order';
         $data['active'] = 'Order';
-        return view('livewire.landing-page.order', $data)->layout('components.layouts.app', $data);
+        return view('livewire.landing-page.order', $data)->layout('components.layouts.guest', $data);
     }
 }

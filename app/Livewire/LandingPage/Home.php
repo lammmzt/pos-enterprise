@@ -10,6 +10,6 @@ class Home extends Component
     {
         $data['title'] = 'Home';
         $data['active'] = 'Home';
-        return view('livewire.landing-page.home', $data)->layout('components.layouts.app', $data);
+        return view('livewire.landing-page.home', $data)->layout('components.layouts.guest', $data);
     }
 }

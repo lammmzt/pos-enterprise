@@ -48,7 +48,7 @@
                 <i id="menu-icon" class="text-sm fa-solid fa-bars"></i>
             </button>
 
-            <a wire:navigate href="{{ route('Auth') }}"
+            <a wire:navigate href="{{ route('Auth_landing') }}"
                 class="hidden px-5 py-2 text-sm font-bold text-white transition-colors rounded-full shadow-lg lg:block bg-brand-red hover:bg-red-700 shadow-red-500/20">
                 Login
             </a>
@@ -73,7 +73,7 @@
             <a href="{{ route('Profile') }}" wire:navigate class="{{ $active == 'Profile' ? 'flex items-center gap-3 p-3 font-semibold rounded-xl bg-red-50 dark:bg-red-900/20 text-brand-red' : 'flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                     <i class="w-6 text-center fa-solid fa-user"></i> Akun Saya
             </a>
-            <a href="{{ route('Auth') }}" wire:navigate class="{{ $active == 'Auth' ? 'flex items-center gap-3 p-3 font-semibold rounded-xl bg-red-50 dark:bg-red-900/20 text-brand-red' : 'flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+            <a href="{{ route('Auth_landing') }}" wire:navigate class="{{ $active == 'Auth' ? 'flex items-center gap-3 p-3 font-semibold rounded-xl bg-red-50 dark:bg-red-900/20 text-brand-red' : 'flex items-center gap-3 p-3 font-medium text-gray-600 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                     <i class="w-6 text-center fa-solid fa-right-from-bracket"></i> Login
             </a>
         </div>

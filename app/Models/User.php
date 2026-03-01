@@ -7,16 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
 
-// Tambahan untuk Hak Akses & Filament
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasName; // <-- 1. Tambahkan import ini
-use Filament\Panel;
 
-class User extends Authenticatable implements FilamentUser, HasName // <-- Implementasikan FilamentUser
+class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles; // <-- Tambahkan HasRoles
+    use HasFactory, Notifiable;
 
     protected $table = 'users';
     protected $primaryKey = 'id_user';
@@ -26,8 +21,9 @@ class User extends Authenticatable implements FilamentUser, HasName // <-- Imple
         'username',
         'password',
         'alamat',
-        // 'role', // Ini kolom enum dari migration kamu
+        'role', // Ini kolom enum dari migration kamu
         'status',
+        'no_hp',
         'catatan',
     ];
 
@@ -87,9 +83,4 @@ class User extends Authenticatable implements FilamentUser, HasName // <-- Imple
         return $this->hasMany(VerifikasiOtp::class, 'id_user', 'id_user');
     }
 
-    public function getFilamentName(): string
-    {
-        // Beri tahu Filament untuk memakai kolom 'nama' dari database kita
-        return $this->nama; 
-    }
 }
