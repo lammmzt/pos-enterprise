@@ -208,8 +208,8 @@
 
 {{-- SCRIPT UNTUK TRIGGER PRINT STRUK THERMAL --}}
 @push('scripts')
-<script>
-    document.addEventListener('livewire:initialized', () => {
+<script type="text/javascript">
+    document.addEventListener('livewire:navigated', () => {
         Livewire.on('cetak-struk', (event) => {
             let id = event.id_pesanan;
             let printWindow = window.open(`/admin/pos/struk/${id}`, 'Cetak Struk', 'width=400,height=600');

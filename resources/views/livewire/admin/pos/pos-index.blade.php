@@ -297,7 +297,7 @@
 {{-- SCRIPT UNTUK TRIGGER PRINT STRUK THERMAL --}}
 @push('scripts')
 <script>
-    document.addEventListener('livewire:initialized', () => {
+    document.addEventListener('livewire:navigated', () => {
         Livewire.on('cetak-struk', (event) => {
             let id = event.id_pesanan;
             // Membuka route khusus cetak struk

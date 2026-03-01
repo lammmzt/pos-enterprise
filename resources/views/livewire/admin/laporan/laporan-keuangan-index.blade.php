@@ -143,7 +143,7 @@
 </div>
 @push('scripts')
 <script>
-    document.addEventListener('livewire:initialized', () => {
+    document.addEventListener('livewire:navigated', () => {
         Livewire.on('cetak-laporan', (event) => {
             let url = `/admin/laporan-keuangan/cetak?start=${event.start}&end=${event.end}`;
             let printWindow = window.open(url, '_blank');

@@ -96,7 +96,7 @@
                             </button>
                         </div> --}}
 
-                        <form action="#" method="POST" class="space-y-5" id="form_login">
+                        <form class="space-y-5" id="form_login">
                             @csrf
                             <div class="space-y-4">
                                 <x-input label="Username" name="username" type="text" icon="user"
