@@ -46,6 +46,7 @@ class Sidebar extends Component
                         'activePattern' => 'pages.apps.pos',
                         'subItems' => [
                             ['name' => 'Pos', 'route' => 'admin.pos'],
+                            ['name' => 'Pesanan Aktif', 'route' => 'admin.pesanan-aktif'],
                         ],
                     ],
                     [

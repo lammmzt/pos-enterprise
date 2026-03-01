@@ -17,6 +17,7 @@ use App\Livewire\Admin\Pemasok\PemasokIndex;
 use App\Livewire\Admin\Stok\PembelianIndex;
 use App\Livewire\Admin\Stok\MutasiStokIndex;
 use App\Livewire\Admin\Pos\PosIndex;
+use App\Livewire\Admin\Pos\PesananAktifIndex;
 
 
 use App\Http\Controllers\AuthController; // Import Auth Controller Custom kita
@@ -98,6 +99,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,owner,kasir'])->group(fu
     Route::get('/pos', PosIndex::class)->name('admin.pos');
     // Route untuk cetak struk POS
     Route::get('/pos/struk/{id}', [PosController::class, 'cetakStruk'])->name('admin.pos.struk');
+    // pos
+    Route::get('pesanan-aktif', PesananAktifIndex::class)->name('admin.pesanan-aktif');
     // Pesanan Umum
     // Route::get('/pesanan', [PesananController::class, 'index'])->name('admin.pesanan.index');
     // Route::get('/pesanan/{id}', [PesananController::class, 'show'])->name('admin.pesanan.show');
