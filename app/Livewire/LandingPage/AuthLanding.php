@@ -15,7 +15,7 @@ class AuthLanding extends Component
     public $tab = 'login'; // login, register, reset_password, reset_password
 
     // Form Properties
-    public $nama, $no_hp, $password, $password_confirmation;
+    public $nama, $no_hp, $password, $password_confirmation, $alamat, $catatan;
     
     // reset_password Password Properties
     public $reset_no_hp, $new_password, $new_password_confirmation;
@@ -45,7 +45,6 @@ class AuthLanding extends Component
     private function sendOtpCode($user, $konteks)
     {
         $kodeOtp = rand(1000, 9999);
-
         VerifikasiOtp::create([
             'id_user' => $user->id_user,
             'kode_otp' => $kodeOtp,
@@ -65,18 +64,32 @@ class AuthLanding extends Component
     // --- LOGIKA REGISTER ---
     public function register()
     {
+        // jika no hp sudah ada dan satus tidak aktif, maka kirim ulang OTP
+        $user = User::where('no_hp', $this->no_hp)->first();
+
+        if ($user && $user->status == 'tidak_aktif') {
+            $this->tempUserId = $user->id_user;
+            $this->otpContext = 'registrasi';
+            $this->sendOtpCode($user, 'registrasi');
+            return;
+        }
+        
         $this->validate([
             'nama' => 'required|string|max:255',
+            'alamat' => 'required|string|max:255',
             'no_hp' => 'required|numeric|unique:users,no_hp',
             'password' => 'required|min:6|same:password_confirmation',
         ]);
-
+        
         $user = User::create([
             'nama' => $this->nama,
             'no_hp' => $this->no_hp,
+            'username' => $this->no_hp,
             'password' => Hash::make($this->password),
             'role' => 'pelanggan',
-            'status' => 'tidak_aktif'
+            'status' => 'tidak_aktif',
+            'alamat' => $this->alamat,
+            'catatan' => $this->catatan,
         ]);
 
         $this->tempUserId = $user->id_user;

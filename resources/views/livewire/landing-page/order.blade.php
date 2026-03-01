@@ -14,12 +14,47 @@
     
     <header class="sticky top-[61px] z-30 glass-header shadow-sm border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
         <div class="mx-auto max-w-7xl">
-            <div class="flex items-center justify-between px-4 py-3 lg:px-8">
-                <div>
-                    <h2 class="flex items-center gap-1 text-sm font-bold leading-tight text-gray-700 dark:text-gray-200">
-                        <i class="text-xs fa-solid fa-location-dot text-brand-red"></i> Cabang Dago Atas
-                    </h2>
-                    <p class="text-[10px] text-gray-400">Buka: 10.00 - 22.00 WIB</p>
+           <div class="relative overflow-hidden">
+            {{-- Efek Glow di background (Muncul saat di-hover) --}}
+            <div class="absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 transition-transform duration-500 rounded-full"></div>
+
+                <div class="relative flex items-center justify-between px-4 py-4 lg:px-6">
+                    
+                    {{-- Bagian Kiri: Status & Hari --}}
+                    <div class="flex items-center gap-3 md:gap-4">
+                        {{-- Ikon Status Berdenyut (Pulsing Indicator) --}}
+                        <div class="relative flex items-center justify-center w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/20 text-brand-red">
+                            {{-- Animasi Ping untuk menarik perhatian --}}
+                            <span class="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-brand-red/40"></span>
+                            <i class="relative text-lg fa-solid fa-store"></i>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <h2 class="flex items-center gap-2 text-base font-extrabold text-gray-800 dark:text-white">
+                                {{ $data_toko['status_aktif_toko']->nilai == 'aktif' ? 'Toko Buka' : 'Toko Tutup' }}
+                                {{-- Opsional: Badge Tambahan --}}
+                                {{-- <span class="px-2 py-0.5 text-[10px] font-bold text-white uppercase bg-green-500 rounded-full tracking-wider shadow-sm">Buka</span> --}}
+                            </h2>
+                            <p class="mt-0.5 text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                                <i class="fa-regular fa-calendar-days text-[10px] text-gray-400"></i> 
+                                {{ $data_toko['hari_buka_toko']->nilai }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Bagian Kanan: Jam Operasional (Sebagai Pengingat) --}}
+                    <div class="flex flex-col items-end py-3 text-right shrink-0">
+                        <div class="flex items-center gap-2 px-3 py-1.5 transition-colors bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30">
+                            <i class="text-indigo-600 fa-regular fa-clock dark:text-indigo-400 group-hover:animate-spin-slow"></i>
+                            <div class="flex flex-col text-left">
+                                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider leading-none">Jam Operasional</span>
+                                <span class="mt-1 text-sm font-bold leading-none text-gray-700 dark:text-gray-200">
+                                    {{ $data_toko['jam_buka_toko']->nilai }} <span class="text-[10px] font-normal text-gray-400">WIB</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -40,9 +75,9 @@
                 </div>
                 
                 <div class="flex flex-1 gap-2 overflow-x-auto hide-scroll md:justify-end">
-                    <button wire:click="setCategory('all')" class="px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all {{ $activeCategory === 'all' ? 'bg-brand-red text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 border border-gray-200 dark:border-gray-700' }}">Semua</button>
+                    <button wire:click="setCategory('all')" class="px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all {{ $activeCategory === 'all' ? 'bg-brand-red text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 border border-gray-200 dark:border-gray-700' }}">Semua</button>
                     @foreach($kategoris as $kat)
-                        <button wire:click="setCategory({{ $kat->id_kategori }})" class="px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all {{ $activeCategory == $kat->id_kategori ? 'bg-brand-red text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 border border-gray-200 dark:border-gray-700' }}">{{ $kat->nama }}</button>
+                        <button wire:click="setCategory({{ $kat->id_kategori }})" class="px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all {{ $activeCategory == $kat->id_kategori ? 'bg-brand-red text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 border border-gray-200 dark:border-gray-700' }}">{{ $kat->nama }}</button>
                     @endforeach
                 </div>
             </div>

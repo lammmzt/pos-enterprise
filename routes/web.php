@@ -27,6 +27,7 @@ use App\Http\Controllers\AuthController; // Import Auth Controller Custom kita
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\Admin\PosController;
 use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Api\MidtransWebhookController;
 // use App\Http\Controllers\PosController;
 
 
@@ -40,7 +41,7 @@ Route::get('/', Home::class)->name('Home');
 Route::get('Order', Order::class)->name('Order');
 Route::get('/Auth', AuthLanding::class)->name('Auth');
 Route::get('Riwayat', Riwayat::class)->name('Riwayat');
-Route::get('Payment', Payment::class)->name('Payment');
+// Route::get('Payment', Payment::class)->name('Payment');
 Route::get('Profile', Profile::class)->name('Profile');
 // Route::get('/dashboard', [FrontController::class, 'index'])->name('dashboard');
 // Route::get('/', [FrontController::class, 'index'])->name('home');
@@ -57,6 +58,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+Route::get('/logoutUser', [AuthController::class, 'logoutUser'])->name('logoutUser')->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +68,8 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->middle
 Route::middleware(['auth', 'role:pelanggan'])->group(function () {
     Route::get('/profil', [FrontController::class, 'profil'])->name('pelanggan.profil');
     Route::get('/pesanan-saya', [FrontController::class, 'pesanan'])->name('pelanggan.pesanan');
+    Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handler']);
+    Route::get('/payment/{id}', Payment::class)->name('Payment');
 });
 
 /*

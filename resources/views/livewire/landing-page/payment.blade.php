@@ -1,267 +1,154 @@
-<div>
-    <!-- NAVBAR (Consistent with Index) -->
+<div class="relative min-h-screen pb-24 font-sans bg-gray-50 dark:bg-gray-900 selection:bg-brand-red/30">
+    
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
+
     <nav class="sticky top-0 z-50 transition-colors duration-300 border-b border-gray-200 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md dark:border-gray-800">
         <div class="flex items-center justify-between px-4 py-3 mx-auto max-w-7xl lg:px-8">
-            <!-- Brand & Back Button -->
             <div class="flex items-center gap-3">
                 <a wire:navigate href="{{ route('Order') }}" class="flex items-center justify-center w-8 h-8 text-gray-600 transition-all bg-gray-100 rounded-full dark:bg-gray-800 dark:text-gray-300 hover:bg-brand-red hover:text-white active:scale-95">
                     <i class="text-sm fa-solid fa-arrow-left"></i>
                 </a>
                 <div class="flex items-center gap-2">
-                    <div class="flex items-center justify-center w-8 h-8 text-white shadow-lg rounded-xl bg-gradient-to-br from-brand-red to-orange-500 shadow-orange-500/20 rotate-3">
-                        <i class="text-sm fa-solid fa-fire-flame-curved"></i>
-                    </div>
-                    <h1 class="hidden text-lg font-extrabold leading-none tracking-tight text-gray-800 dark:text-white sm:block">
-                        Seblak<span class="text-brand-red">Bucin</span>
-                    </h1>
+                    <h1 class="text-lg font-extrabold tracking-tight text-gray-800 dark:text-white">Pembayaran</h1>
                 </div>
             </div>
-
-            <!-- Right Actions -->
-            <div class="flex items-center gap-3">
-                <button onclick="toggleDarkMode()" class="flex items-center justify-center text-gray-500 transition-all bg-gray-100 border border-transparent rounded-full w-9 h-9 dark:bg-gray-800 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95 dark:border-gray-700">
-                    <i id="dark-mode-icon" class="text-sm fa-solid fa-moon"></i>
-                </button>
+            <div class="px-3 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-gray-300">
+                #{{ $pesanan->nomor_invoice }}
             </div>
         </div>
     </nav>
 
-    <!-- Content -->
-    <main class="flex-1 w-full max-w-md p-5 mx-auto space-y-6 animate-fade-in">
-        
-        <!-- Header Page Title -->
-        <div class="pb-2 text-center">
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Checkout & Pembayaran</h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Selesaikan pembayaran untuk memproses pesanan.</p>
-        </div>
-
-        <!-- Total Card -->
-        <div class="bg-gradient-to-br from-brand-red to-orange-600 rounded-2xl p-6 text-white shadow-xl shadow-orange-500/20 text-center relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-            <div class="absolute w-32 h-32 transition-colors rounded-full -top-10 -right-10 bg-white/10 blur-2xl group-hover:bg-white/20"></div>
-            <div class="absolute w-32 h-32 transition-colors rounded-full -bottom-10 -left-10 bg-white/10 blur-2xl group-hover:bg-white/20"></div>
+    <div class="px-4 pt-6 mx-auto max-w-7xl lg:px-8">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
             
-            <p class="mb-1 text-sm font-medium text-white/90">Total Pembayaran</p>
-            <h2 id="total-display" class="my-2 text-4xl font-extrabold tracking-tight">Rp 0</h2>
-            <div class="inline-flex items-center gap-2 px-3 py-1 mt-2 text-xs border rounded-full bg-white/20 backdrop-blur-sm border-white/10">
-                <i class="fa-solid fa-receipt"></i>
-                <span id="order-id-display">Order #---</span>
-            </div>
-        </div>
-
-        <!-- Order Summary Brief -->
-        <div class="p-4 transition-colors bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-2xl dark:border-gray-700">
-            <h3 class="flex items-center gap-2 pb-2 mb-3 text-sm font-bold text-gray-700 border-b border-gray-100 dark:text-gray-200 dark:border-gray-700">
-                <i class="fa-solid fa-list-ul text-brand-red"></i> Ringkasan Pesanan
-            </h3>
-            <div id="summary-items" class="pr-2 space-y-3 overflow-y-auto text-sm text-gray-600 max-h-48 dark:text-gray-400 hide-scroll">
-                <!-- Items injected here -->
-            </div>
-        </div>
-
-        <!-- Payment Methods -->
-        <div>
-            <h3 class="flex items-center gap-2 mb-3 font-bold text-gray-700 dark:text-gray-200">
-                <i class="fa-regular fa-credit-card text-brand-red"></i> Pilih Metode Pembayaran
-            </h3>
-            
-            <div class="space-y-3">
-                <!-- Tunai -->
-                <label class="relative flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-2 border-transparent rounded-2xl cursor-pointer shadow-sm hover:border-gray-200 dark:hover:border-gray-700 transition-all group has-[:checked]:border-brand-red has-[:checked]:bg-red-50 dark:has-[:checked]:bg-red-900/10 has-[:checked]:shadow-md">
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center justify-center w-12 h-12 text-xl text-green-600 bg-green-100 shadow-inner rounded-xl">
-                            <i class="fa-solid fa-money-bill-wave"></i>
+            <div class="space-y-6 lg:col-span-7">
+                
+                @if($pesanan->tipe_pesanan === 'delivery')
+                    <div class="p-5 bg-white border border-gray-100 shadow-sm rounded-2xl dark:bg-gray-800 dark:border-gray-700">
+                        <div class="flex items-center gap-2 mb-4 text-brand-orange">
+                            <i class="text-xl fa-solid fa-motorcycle"></i>
+                            <h2 class="text-base font-bold text-gray-800 dark:text-white">Informasi Pengiriman</h2>
                         </div>
-                        <div>
-                            <div class="font-bold text-gray-800 dark:text-white">Tunai / Cash</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400">Bayar langsung di kasir</div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block mb-1 text-xs font-bold text-gray-500 uppercase">No WhatsApp (Penerima)</label>
+                                <input type="number" wire:model="nomor_hp" class="w-full p-3 text-sm bg-gray-50 dark:bg-gray-900 border @error('nomor_hp') border-red-500 @else border-gray-200 dark:border-gray-700 @enderror rounded-xl outline-none focus:ring-2 focus:ring-brand-orange dark:text-white">
+                                @error('nomor_hp') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block mb-1 text-xs font-bold text-gray-500 uppercase">Alamat Lengkap</label>
+                                <textarea wire:model="alamat" rows="2" class="w-full p-3 text-sm bg-gray-50 dark:bg-gray-900 border @error('alamat') border-red-500 @else border-gray-200 dark:border-gray-700 @enderror rounded-xl outline-none focus:ring-2 focus:ring-brand-orange dark:text-white" placeholder="Nama Jalan, RT/RW, Patokan..."></textarea>
+                                @error('alamat') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block mb-1 text-xs font-bold text-gray-500 uppercase">Catatan Tambahan (Opsional)</label>
+                                <input type="text" wire:model="catatan" class="w-full p-3 text-sm border border-gray-200 outline-none bg-gray-50 dark:bg-gray-900 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-brand-orange dark:text-white" placeholder="Cth: Pagar warna hitam">
+                            </div>
                         </div>
                     </div>
-                    <div class="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600 group-has-[:checked]:border-brand-red group-has-[:checked]:bg-brand-red flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-check text-white text-xs opacity-0 group-has-[:checked]:opacity-100"></i>
-                    </div>
-                    <input type="radio" name="payment" value="tunai" class="hidden" checked>
-                </label>
+                @endif
 
-                <!-- QRIS -->
-                <label class="relative flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-2 border-transparent rounded-2xl cursor-pointer shadow-sm hover:border-gray-200 dark:hover:border-gray-700 transition-all group has-[:checked]:border-brand-red has-[:checked]:bg-red-50 dark:has-[:checked]:bg-red-900/10 has-[:checked]:shadow-md">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-white border border-gray-100 flex items-center justify-center p-1.5 shadow-inner">
-                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Logo_QRIS.svg/1200px-Logo_QRIS.svg.png" class="object-contain w-full h-full" alt="QRIS">
-                        </div>
-                        <div>
-                            <div class="font-bold text-gray-800 dark:text-white">QRIS</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400">Scan QR & Verifikasi Otomatis</div>
-                        </div>
+                <div class="p-5 bg-white border border-gray-100 shadow-sm rounded-2xl dark:bg-gray-800 dark:border-gray-700">
+                    <h2 class="mb-4 text-base font-bold text-gray-800 dark:text-white">Ringkasan Pesanan</h2>
+                    <div class="space-y-4">
+                        @foreach($pesanan->mangkuk as $idx => $mangkuk)
+                            <div class="p-4 border border-gray-100 rounded-xl bg-gray-50 dark:bg-gray-900/50 dark:border-gray-700">
+                                <div class="flex items-center gap-2 pb-2 mb-2 border-b border-gray-200 border-dashed dark:border-gray-700">
+                                    <div class="flex items-center justify-center w-6 h-6 text-xs font-bold text-white rounded-full bg-brand-red">{{ $idx + 1 }}</div>
+                                    <div>
+                                        <h3 class="text-sm font-bold text-gray-800 dark:text-white">{{ $mangkuk->nama_pemesan }}</h3>
+                                        <p class="text-[10px] text-gray-500">{{ $mangkuk->tipe_kuah }} | Lvl {{ $mangkuk->level_pedas }}</p>
+                                    </div>
+                                </div>
+                                <ul class="space-y-1">
+                                    @foreach($mangkuk->detailPesanan as $item)
+                                        <li class="flex justify-between text-xs text-gray-600 dark:text-gray-300">
+                                            <span>{{ $item->jumlah }}x {{ $item->produk->nama }}</span>
+                                            <span class="font-medium text-gray-800 dark:text-white">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endforeach
                     </div>
-                    <div class="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600 group-has-[:checked]:border-brand-red group-has-[:checked]:bg-brand-red flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-check text-white text-xs opacity-0 group-has-[:checked]:opacity-100"></i>
-                    </div>
-                    <input type="radio" name="payment" value="qris" class="hidden">
-                </label>
+                </div>
             </div>
-        </div>
 
-    </main>
+            <div class="lg:col-span-5">
+                <div class="sticky top-[80px] p-5 bg-white border border-gray-100 shadow-sm rounded-2xl dark:bg-gray-800 dark:border-gray-700 space-y-6">
+                    
+                    <div>
+                        <h2 class="mb-3 text-base font-bold text-gray-800 dark:text-white">Metode Pembayaran</h2>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-center justify-between p-4 transition-colors border-2 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50 {{ $metode_pembayaran === 'qris' ? 'border-brand-red bg-red-50/30 dark:bg-red-900/10' : 'border-gray-100 dark:border-gray-700' }}">
+                                <div class="flex items-center gap-3">
+                                    <div class="text-2xl text-blue-600"><i class="fa-solid fa-qrcode"></i></div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-gray-800 dark:text-white">QRIS / E-Wallet</h4>
+                                        <p class="text-[10px] text-gray-500">Gopay, ShopeePay, Dana, M-Banking</p>
+                                    </div>
+                                </div>
+                                <input type="radio" wire:model="metode_pembayaran" value="qris" class="w-5 h-5 text-brand-red focus:ring-brand-red">
+                            </label>
 
-    <!-- Bottom Button -->
-    <div class="sticky bottom-0 z-40 p-4 transition-colors duration-300 bg-white border-t border-gray-100 dark:bg-gray-900 dark:border-gray-800">
-        <div class="max-w-md mx-auto">
-            <button onclick="processPayment()" class="flex items-center justify-center w-full gap-2 px-4 py-4 font-bold text-white transition-all shadow-lg bg-brand-red hover:bg-red-700 rounded-2xl shadow-red-500/20 active:scale-95 group">
-                <i class="text-xs transition-transform fa-solid fa-lock group-hover:scale-110"></i>
-                <span>Bayar Sekarang</span>
-            </button>
-        </div>
-    </div>
+                            @if($this->isKasir)
+                                <label class="flex items-center justify-between p-4 transition-colors border-2 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50 {{ $metode_pembayaran === 'tunai' ? 'border-brand-red bg-red-50/30 dark:bg-red-900/10' : 'border-gray-100 dark:border-gray-700' }}">
+                                    <div class="flex items-center gap-3">
+                                        <div class="text-2xl text-emerald-500"><i class="fa-solid fa-money-bill-wave"></i></div>
+                                        <div>
+                                            <h4 class="text-sm font-bold text-gray-800 dark:text-white">Tunai (Kasir)</h4>
+                                            <p class="text-[10px] text-gray-500">Bayar langsung di tempat</p>
+                                        </div>
+                                    </div>
+                                    <input type="radio" wire:model="metode_pembayaran" value="tunai" class="w-5 h-5 text-brand-red focus:ring-brand-red">
+                                </label>
+                            @endif
+                        </div>
+                    </div>
 
-    <!-- Modal Success -->
-    <div id="success-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center px-4">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm"></div>
-        
-        <!-- Content -->
-        <div class="relative z-10 w-full max-w-sm p-8 text-center transition-all transform scale-95 bg-white border border-gray-100 shadow-2xl dark:bg-gray-800 rounded-3xl dark:border-gray-700">
-            <div class="flex items-center justify-center w-24 h-24 mx-auto mb-6 text-4xl text-green-500 bg-green-100 rounded-full shadow-lg dark:bg-green-900/30 animate-bounce shadow-green-500/20">
-                <i class="fa-solid fa-check"></i>
+                    <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-bold text-gray-500 dark:text-gray-400">Total Pembayaran</span>
+                            <span class="text-2xl font-black text-brand-red">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
+                        </div>
+
+                        <button wire:click="processPayment" wire:loading.attr="disabled" class="relative flex items-center justify-center w-full py-4 font-bold text-white transition-all shadow-lg bg-brand-red rounded-xl hover:bg-red-700 active:scale-95 disabled:opacity-50">
+                            <span wire:loading.remove wire:target="processPayment">Bayar Sekarang</span>
+                            <span wire:loading wire:target="processPayment"><i class="mr-2 fa-solid fa-spinner fa-spin"></i> Memproses...</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <h2 class="mb-2 text-2xl font-bold text-gray-800 dark:text-white">Pembayaran Berhasil!</h2>
-            <p class="mb-8 leading-relaxed text-gray-500 dark:text-gray-400">Terima kasih, pesananmu akan segera disiapkan oleh dapur.</p>
-            <button onclick="finishOrder()" class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-bold py-3.5 rounded-xl transition-colors">
-                Kembali ke Menu Utama
-            </button>
+
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    
-     // --- Payment Logic ---
-    window.paymentState = window.paymentState || { bowls: [] };
 
-     function initPayment() {
-
-         // Load Order Data
-        const savedData = localStorage.getItem('pos-enterprise');
-        
-        if (!savedData) {
-            // FALLBACK FOR PREVIEW: Generate dummy data if visited directly without ordering
-            console.log("No data found, generating dummy data for preview.");
-            paymentState = {
-                bowls: [{
-                    id: 'dummy-1',
-                    name: 'Contoh Pemesan (Budi)',
-                    items: { 1: 2, 4: 1, 12: 1 }, // 2x Kerupuk, 1x Dumpling, 1x Es Teh
-                    level: 2,
-                    kuah: 'Kuah Kencur (Original)'
-                }]
-            };
-        } else {
-            paymentState = JSON.parse(savedData);
-        }
-        
-        renderPage();
-    }
-
-     function formatRupiah(amount) { 
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount); 
-    }
-
-     // Menu Data (Harus sinkron dengan index.html untuk kalkulasi)
-    window.MENU_DATA = window.MENU_DATA || [
-        { id: 1, name: "Kerupuk Mawar", price: 1000 },
-        { id: 2, name: "Kerupuk Oren", price: 1000 },
-        { id: 3, name: "Makaroni Spiral", price: 1000 },
-        { id: 4, name: "Dumpling Keju", price: 3500 },
-        { id: 5, name: "Dumpling Ayam", price: 3000 },
-        { id: 6, name: "Odeng Korea", price: 4000 },
-        { id: 7, name: "Sosis Sapi", price: 2500 },
-        { id: 8, name: "Baso Sapi", price: 2500 },
-        { id: 9, name: "Ceker Lunak", price: 2000 },
-        { id: 10, name: "Sawi Hijau", price: 1000 },
-        { id: 11, name: "Jamur Enoki", price: 3000 },
-        { id: 12, name: "Es Teh Manis", price: 4000 },
-        { id: 13, name: "Es Jeruk", price: 5000 },
-        { id: 14, name: "Mie Kuning", price: 1500 },
-        { id: 15, name: "Batagor Kering", price: 1500 },
-        { id: 16, name: "Chikwa", price: 2500 },
-    ];
-
-     function getGrandTotal() {
-        return paymentState.bowls.reduce((sum, bowl) => {
-            return sum + Object.entries(bowl.items).reduce((s, [id, qty]) => {
-                return s + (MENU_DATA.find(i => i.id == id)?.price || 0) * qty;
-            }, 0);
-        }, 0);
-    }
-
-     function renderPage() {
-        const total = getGrandTotal();
-        document.getElementById('total-display').innerText = formatRupiah(total);
-        document.getElementById('order-id-display').innerText = `ORD-${Date.now().toString().slice(-6)}`;
-
-         const container = document.getElementById('summary-items');
-        let html = '';
-        
-        paymentState.bowls.forEach(bowl => {
-            if(Object.keys(bowl.items).length > 0) {
-                html += `
-                <div class="pb-3 mb-3 border-b border-gray-100 border-dashed dark:border-gray-700 last:border-0 last:pb-0 last:mb-0">
-                    <div class="flex items-center gap-2 mb-1.5">
-                        <div class="w-1.5 h-1.5 rounded-full bg-brand-orange"></div>
-                        <div class="text-sm font-bold text-gray-800 dark:text-gray-200">${bowl.name}</div>
-                        <span class="text-[10px] bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-gray-500 dark:text-gray-400">Lvl ${bowl.level}</span>
-                    </div>
-                `;
-                for(const [id, qty] of Object.entries(bowl.items)) {
-                    const item = MENU_DATA.find(i => i.id == id);
-                    html += `
-                    <div class="flex justify-between pl-4 mb-1 text-xs text-gray-500 dark:text-gray-400 last:mb-0">
-                        <span>${qty}x ${item.name}</span>
-                        <span class="font-medium text-gray-700 dark:text-gray-300">${formatRupiah(item.price * qty)}</span>
-                    </div>`;
-                }
-                html += `</div>`;
-            }
-        });
-        container.innerHTML = html;
-    }
-
-     function processPayment() {
-        const method = document.querySelector('input[name="payment"]:checked').value;
-        const btn = document.querySelector('button[onclick="processPayment()"]');
-        
-        // Loading State
-        const originalContent = btn.innerHTML;
-        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...`;
-        btn.disabled = true;
-        btn.classList.add('opacity-75', 'cursor-not-allowed');
-
-         setTimeout(() => {
-            if (method === 'qris') {
-                // Simulating Midtrans Redirect/Popup
-                // In real integration: snap.pay(token) would go here
-                alert("Simulasi: Redirect ke Midtrans Snap Gateway...");
-            }
-            
-            // Show Success Modal
-            document.getElementById('success-modal').classList.remove('hidden');
-            
-            // Reset Button state
-            btn.innerHTML = originalContent;
-            btn.disabled = false;
-            btn.classList.remove('opacity-75', 'cursor-not-allowed');
-        }, 2000);
-    }
-
-     function finishOrder() {
-        localStorage.removeItem('pos-enterprise'); // Clear cart
-        goToHome(); // Use safe navigation
-    }
-
-     // Run
-    initPayment();
-
+@push('scripts')
+<script>
     document.addEventListener('livewire:navigated', () => {
-        initPayment();
-        renderPage();
-        window.scrollTo(0, 0);
+        Livewire.on('pay-with-midtrans', (event) => {
+            let snapToken = event[0].token;
+            
+            window.snap.pay(snapToken, {
+                onSuccess: function(result){
+                    // Pembayaran Sukses (Webhook juga akan update DB)
+                    alert("Pembayaran Berhasil! Pesanan Anda sedang diproses.");
+                    window.location.href = "{{ route('Order') }}"; // Redirect ke halaman sukses/riwayat
+                },
+                onPending: function(result){
+                    alert("Menunggu pembayaran Anda.");
+                },
+                onError: function(result){
+                    alert("Pembayaran Gagal. Silakan coba lagi.");
+                },
+                onClose: function(){
+                    console.log('Anda menutup popup sebelum menyelesaikan pembayaran');
+                }
+            });
+        });
     });
 </script>
+@endpush

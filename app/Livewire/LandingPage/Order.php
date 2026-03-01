@@ -9,6 +9,7 @@ use App\Models\Pesanan;
 use App\Models\MangkukPesanan;
 use App\Models\DetailPesanan;
 use App\Models\BatchProduk;
+use App\Models\Pengaturan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,7 +36,11 @@ class Order extends Component
     {
         // Ambil Data Produk (Pastikan stok > 0)
         $query = Produk::where('status', 'aktif')->where('stok', '>', 0);
-        
+        $data['data_toko'] = [
+            'status_aktif_toko' => $pengaturan = Pengaturan::where('kunci', 'status_aktif_toko')->first(),
+            'jam_buka_toko' => $pengaturan = Pengaturan::where('kunci', 'jam_buka_toko')->first(),
+            'hari_buka_toko' => $pengaturan = Pengaturan::where('kunci', 'hari_buka_toko')->first(),
+        ];
         if ($this->search) {
             $query->where('nama', 'like', '%' . $this->search . '%');
         }
@@ -152,9 +157,15 @@ class Order extends Component
 
         // Pastikan User Login (Bisa diubah jika mengizinkan Guest)
         if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk memesan.');
+            return redirect()->route('Auth')->with('error', 'Silakan login terlebih dahulu untuk memesan.');
         }
 
+        $pengaturan = Pengaturan::where('kunci', 'status_aktif_toko')->first();
+
+        if (!$pengaturan || $pengaturan->nilai !== 'aktif') {
+            $this->dispatch('toast', type: 'error', message: 'Toko sedang tutup. Coba lihat pada jadwal diatas.');
+            return;
+        }
         try {
             DB::transaction(function () use (&$pesananId) {
                 $invoice_no = 'INV-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4));
@@ -167,7 +178,7 @@ class Order extends Component
                     'total_harga' => $this->total_harga,
                     'status_pembayaran' => 'belum_bayar',
                     'status_pesanan' => 'proses', // Masuk antrean dapur tapi ditahan status pembayarannya
-                    'tipe_pesanan' => 'takeaway', // Default, bisa diubah di halaman payment nanti
+                    // 'tipe_pesanan' => 'takeaway', // Default, bisa diubah di halaman payment nanti
                 ]);
                 
                 $pesananId = $pesanan->id_pesanan;

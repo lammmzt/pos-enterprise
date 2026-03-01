@@ -113,7 +113,7 @@
         @endforelse
     </div>
 
-    <div x-data="{ open: @entangle('showModalPembayaran') }" x-show="open" class="fixed inset-0 z-[100] flex items-center justify-center p-4" x-cloak>
+    <div x-data="{ open: @entangle('showModalPembayaran') }" x-show="open" class="fixed inset-0 z-[10001] flex items-center justify-center p-4" x-cloak>
         <div x-show="open" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
         <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="relative w-full max-w-md p-6 text-center bg-white border border-gray-100 shadow-xl dark:bg-gray-900 rounded-2xl dark:border-gray-800">
             
@@ -145,7 +145,7 @@
         </div>
     </div>
 
-    <div x-data="{ open: @entangle('showModalDelivery') }" x-show="open" class="fixed inset-0 z-[100] flex items-center justify-center p-4" x-cloak>
+    <div x-data="{ open: @entangle('showModalDelivery') }" x-show="open" class="fixed inset-0 z-[10002] flex items-center justify-center p-4" x-cloak>
         <div x-show="open" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
         <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="relative w-full max-w-md p-6 bg-white border border-gray-100 shadow-xl dark:bg-gray-900 rounded-2xl dark:border-gray-800">
             <h3 class="mb-2 text-lg font-bold text-gray-900 dark:text-white"><i class="text-indigo-500 ti ti-truck"></i> Kirim Pesanan (Delivery)</h3>
@@ -161,7 +161,7 @@
         </div>
     </div>
 
-    <div x-data="{ open: @entangle('showModalSelesai') }" x-show="open" class="fixed inset-0 z-[100] flex items-center justify-center p-4" x-cloak>
+    <div x-data="{ open: @entangle('showModalSelesai') }" x-show="open" class="fixed inset-0 z-[10002] flex items-center justify-center p-4" x-cloak>
         <div x-show="open" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
         <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="relative w-full max-w-md p-6 text-center bg-white border border-gray-100 shadow-xl dark:bg-gray-900 rounded-2xl dark:border-gray-800">
             <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-3xl rounded-full bg-emerald-100 text-emerald-600"><i class="ti ti-check"></i></div>

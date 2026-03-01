@@ -75,6 +75,7 @@
                                             {{ str_replace('_', ' ', $pengaturan->status) }}
                                         </span>
                                     </td>
+                                    @if($pengaturan->kunci != 'status_aktif_toko')
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
                                             <button wire:click="edit({{ $pengaturan->id_pengaturan }})" class="p-2 text-blue-500 transition-colors bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50">
@@ -85,6 +86,9 @@
                                             </button>
                                         </div>
                                     </td>
+                                    @else
+                                    <td class="px-6 py-4 text-center">-</td>
+                                    @endif
                                 </tr>
                             @empty
                                 <tr>
