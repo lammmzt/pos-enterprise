@@ -3,13 +3,220 @@
 namespace App\Livewire\LandingPage;
 
 use Livewire\Component;
+use App\Models\Produk;
+use App\Models\Kategori;
+use App\Models\Pesanan;
+use App\Models\MangkukPesanan;
+use App\Models\DetailPesanan;
+use App\Models\BatchProduk;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class Order extends Component
 {
+    // Filter
+    public $search = '';
+    public $activeCategory = 'all';
+
+    // State 3-Tier (Mangkuk)
+    public $bowls = [];
+    public $activeBowlIndex = 0;
+    
+    // Kalkulasi
+    public $total_harga = 0;
+
+    public function mount()
+    {
+        // Inisialisasi Mangkuk Pertama
+        $this->addBowl('Mangkuk 1');
+    }
+
     public function render()
     {
-        $data['title'] = 'Order';
+        // Ambil Data Produk (Pastikan stok > 0)
+        $query = Produk::where('status', 'aktif')->where('stok', '>', 0);
+        
+        if ($this->search) {
+            $query->where('nama', 'like', '%' . $this->search . '%');
+        }
+        if ($this->activeCategory !== 'all') {
+            $query->where('id_kategori', $this->activeCategory);
+        }
+
+        $data['produks'] = $query->get();
+        $data['kategoris'] = Kategori::all();
+        $data['title'] = 'Menu Custom Bowl';
         $data['active'] = 'Order';
+
         return view('livewire.landing-page.order', $data)->layout('components.layouts.guest', $data);
+    }
+
+    public function setCategory($id_kategori)
+    {
+        $this->activeCategory = $id_kategori;
+    }
+
+    // --- LOGIKA MANGKUK ---
+    public function addBowl($nama = null)
+    {
+        $namaPemesan = $nama ?? 'Mangkuk ' . (count($this->bowls) + 1);
+        $this->bowls[] = [
+            'id' => uniqid('bowl_'),
+            'nama_pemesan' => $namaPemesan,
+            'tipe_kuah' => 'Kuah Kencur (Original)',
+            'level_pedas' => 1,
+            'catatan' => '',
+            'items' => [] 
+        ];
+        $this->activeBowlIndex = count($this->bowls) - 1;
+    }
+
+    public function setActiveBowl($index)
+    {
+        if (isset($this->bowls[$index])) $this->activeBowlIndex = $index;
+    }
+
+    public function removeBowl($index)
+    {
+        unset($this->bowls[$index]);
+        $this->bowls = array_values($this->bowls);
+        if (count($this->bowls) === 0) $this->addBowl('Mangkuk 1');
+        else $this->activeBowlIndex = 0;
+        $this->calculateTotal();
+    }
+
+    // --- LOGIKA ITEM & STOK ---
+    private function getGlobalQty($id_produk)
+    {
+        $total = 0;
+        foreach ($this->bowls as $bowl) {
+            if (isset($bowl['items'][$id_produk])) $total += $bowl['items'][$id_produk]['qty'];
+        }
+        return $total;
+    }
+
+    public function updateItem($id_produk, $change)
+    {
+        $produk = Produk::find($id_produk);
+        if (!$produk) return;
+
+        $activeBowl =& $this->bowls[$this->activeBowlIndex];
+        $currentQty = $activeBowl['items'][$id_produk]['qty'] ?? 0;
+
+        if ($change > 0) {
+            // Cek Stok Maksimal
+            if ($this->getGlobalQty($id_produk) >= $produk->stok) {
+                $this->dispatch('toast', type: 'error', message: "Stok {$produk->nama} habis!");
+                return;
+            }
+            
+            if (isset($activeBowl['items'][$id_produk])) {
+                $activeBowl['items'][$id_produk]['qty']++;
+            } else {
+                $activeBowl['items'][$id_produk] = [
+                    'id' => $produk->id_produk,
+                    'nama' => $produk->nama,
+                    'harga' => $produk->harga_jual,
+                    'qty' => 1,
+                ];
+            }
+        } elseif ($change < 0) {
+            if ($currentQty > 1) {
+                $activeBowl['items'][$id_produk]['qty']--;
+            } else {
+                unset($activeBowl['items'][$id_produk]);
+            }
+        }
+        
+        $this->calculateTotal();
+    }
+
+    public function calculateTotal()
+    {
+        $this->total_harga = 0;
+        foreach ($this->bowls as $bowl) {
+            foreach ($bowl['items'] as $item) {
+                $this->total_harga += $item['harga'] * $item['qty'];
+            }
+        }
+    }
+
+    // --- CHECKOUT & BUAT INVOICE ---
+    public function checkout()
+    {
+        $this->calculateTotal();
+        if ($this->total_harga == 0) {
+            $this->dispatch('toast', type: 'error', message: 'Keranjang masih kosong!');
+            return;
+        }
+
+        // Pastikan User Login (Bisa diubah jika mengizinkan Guest)
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk memesan.');
+        }
+
+        try {
+            DB::transaction(function () use (&$pesananId) {
+                $invoice_no = 'INV-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4));
+                
+                // 1. Buat Data Pesanan (Status: belum_bayar)
+                $pesanan = Pesanan::create([
+                    'id_user' => Auth::id(),
+                    'id_kasir' => null, // Karena pesan mandiri online
+                    'nomor_invoice' => $invoice_no,
+                    'total_harga' => $this->total_harga,
+                    'status_pembayaran' => 'belum_bayar',
+                    'status_pesanan' => 'proses', // Masuk antrean dapur tapi ditahan status pembayarannya
+                    'tipe_pesanan' => 'takeaway', // Default, bisa diubah di halaman payment nanti
+                ]);
+                
+                $pesananId = $pesanan->id_pesanan;
+
+                // 2. Simpan Mangkuk dan FEFO (Logika yang sama persis dengan Kasir POS)
+                foreach ($this->bowls as $bowl) {
+                    if (count($bowl['items']) === 0) continue;
+
+                    $mangkuk = MangkukPesanan::create([
+                        'id_pesanan' => $pesanan->id_pesanan,
+                        'nama_pemesan' => $bowl['nama_pemesan'],
+                        'tipe_kuah' => $bowl['tipe_kuah'],
+                        'level_pedas' => $bowl['level_pedas'],
+                        'catatan' => $bowl['catatan'],
+                    ]);
+
+                    foreach ($bowl['items'] as $item) {
+                        $qtyNeeded = $item['qty'];
+                        $batches = BatchProduk::where('id_produk', $item['id'])
+                            ->where('jumlah', '>', 0)
+                            ->orderByRaw('ISNULL(tanggal_kedaluwarsa), tanggal_kedaluwarsa ASC')
+                            ->lockForUpdate()
+                            ->get();
+
+                        foreach ($batches as $batch) {
+                            if ($qtyNeeded <= 0) break;
+                            $qtyDiambil = min($batch->jumlah, $qtyNeeded);
+                            $batch->decrement('jumlah', $qtyDiambil);
+                            Produk::where('id_produk', $item['id'])->decrement('stok', $qtyDiambil);
+
+                            DetailPesanan::create([
+                                'id_mangkuk' => $mangkuk->id_mangkuk,
+                                'id_produk' => $item['id'],
+                                'id_batch' => $batch->id_batch,
+                                'jumlah' => $qtyDiambil,
+                                'harga' => $item['harga'],
+                                'subtotal' => $qtyDiambil * $item['harga'],
+                            ]);
+                            $qtyNeeded -= $qtyDiambil;
+                        }
+                    }
+                }
+            });
+
+            // Redirect ke halaman Pembayaran membawa ID Pesanan
+            return redirect()->route('Payment', ['id' => $pesananId]);
+
+        } catch (\Exception $e) {
+            $this->dispatch('toast', type: 'error', message: 'Terjadi kesalahan sistem: ' . $e->getMessage());
+        }
     }
 }

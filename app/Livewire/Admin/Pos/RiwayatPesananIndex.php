@@ -10,6 +10,8 @@ class RiwayatPesananIndex extends Component
 {
     use WithPagination;
 
+    protected $paginationTheme = 'tailwind';
+
     // Filter & Search
     public $search = '';
     public $filterStatus = '';
@@ -20,6 +22,8 @@ class RiwayatPesananIndex extends Component
     // State Modal Detail
     public $isDetailModalOpen = false;
     public $detailPesanan = null;
+
+    
 
     public function updatingSearch() { $this->resetPage(); }
     public function updatingFilterStatus() { $this->resetPage(); }

@@ -214,11 +214,10 @@
             class="fixed inset-0 z-[55] bg-gray-900/50 backdrop-blur-sm xl:hidden">
         </div>
 
-        {{-- Pastikan di dalam komponen <x-sidebar /> sudah ditambahkan @persist('sidebar') --}}
         <x-sidebar />
 
         {{-- Main Area --}}
-        <div class="flex flex-col flex-1 min-h-screen transition-all duration-300 ease-in-out"
+        <div class="flex flex-col flex-1 min-w-0 min-h-screen transition-all duration-300 ease-in-out"
             :class="{
                 'xl:ml-72': $store.sidebar.isExpanded,
                 'xl:ml-20': !$store.sidebar.isExpanded,
@@ -228,8 +227,8 @@
             <x-header />
 
             {{-- Page Content --}}
-            <main class="flex-1 p-4 md:p-8">
-                <div class="mx-auto max-w-screen-2xl">
+            <main class="flex-1 w-full min-w-0 p-4 md:p-8">
+                <div class="w-full min-w-0 mx-auto max-w-screen-2xl">
                     {{ $slot }}
                 </div>
             </main>
@@ -248,6 +247,7 @@
     @livewireScripts
     @stack('scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </body>
 
 </html>

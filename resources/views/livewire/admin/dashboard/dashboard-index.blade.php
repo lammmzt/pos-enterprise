@@ -241,20 +241,44 @@
         </div>
     </div>
 </div>
-
-{{-- Memuatkan Library ApexCharts --}}{{-- Memuatkan Library ApexCharts --}}
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<script>
+<script type="text/javascript">
+    // 1. Definisikan komponen Alpine secara global
     document.addEventListener('alpine:init', () => {
         Alpine.data('revenueChart', () => ({
             chart: null,
-            initChart() {
+            
+            // init() adalah lifecycle hook bawaan Alpine.js
+            // Ia akan otomatis dipanggil SETIAP KALI div dengan x-data="revenueChart()" di-render di DOM, 
+            // termasuk saat berpindah halaman via wire:navigate!
+            init() {
+                // Pastikan div dengan id 'chart-area' sudah ada sebelum merender
+                if (document.getElementById('chart-area')) {
+                    this.renderChart();
+                }
+
+                // Listener untuk update chart ketika Livewire mengubah rentang tanggal
+                Livewire.on('update-chart', (event) => {
+                    if (this.chart) {
+                        let data = event[0].chartData;
+                        this.chart.updateOptions({ xaxis: { categories: data.dates } });
+                        this.chart.updateSeries([{ data: data.totals }]);
+                    }
+                });
+            },
+
+            renderChart() {
+                // Jika chart sudah pernah dirender, hancurkan dulu (destroy) untuk mencegah duplikasi canvas akibat SPA
+                if (this.chart) {
+                    this.chart.destroy();
+                }
+
                 let options = {
                     series: [{
                         name: 'Pendapatan (Rp)',
-                        data: @json($chartTotals)
+                        data: @json($chartTotals) // Ini akan di-evaluate ulang oleh blade
                     }],
                     chart: {
                         type: 'area',
@@ -264,7 +288,7 @@
                         fontFamily: 'inherit',
                         animations: { enabled: true, easing: 'easeinout', speed: 800 },
                         parentHeightOffset: 0,
-                        redrawOnParentResize: true // FIX: Pastikan chart menyesuaikan diri saat ukuran parent/layar berubah
+                        redrawOnParentResize: true 
                     },
                     colors: ['#4f46e5'],
                     fill: {
@@ -279,7 +303,7 @@
                         axisTicks: { show: false },
                         labels: { 
                             style: { colors: '#9ca3af', fontSize: '10px', fontWeight: 600 },
-                            hideOverlappingLabels: true // FIX: Sembunyikan label yang menumpuk di layar kecil
+                            hideOverlappingLabels: true 
                         }
                     },
                     yaxis: {
@@ -301,18 +325,15 @@
 
                 this.chart = new ApexCharts(document.getElementById('chart-area'), options);
                 this.chart.render();
-
-                Livewire.on('update-chart', (event) => {
-                    let data = event[0].chartData;
-                    this.chart.updateOptions({ xaxis: { categories: data.dates } });
-                    this.chart.updateSeries([{ data: data.totals }]);
-                });
+            },
+            
+            // Hook ini akan dipanggil otomatis oleh Alpine ketika komponen dicabut dari DOM
+            destroy() {
+                if (this.chart) {
+                    this.chart.destroy();
+                }
             }
         }));
-    });
-
-    document.addEventListener('livewire:navigated', () => {
-        Alpine.store('revenueChart').initChart();
     });
 </script>
 @endpush

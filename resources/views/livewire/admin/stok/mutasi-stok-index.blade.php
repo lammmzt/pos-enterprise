@@ -36,12 +36,12 @@
                 </div>
 
                 <div class="relative overflow-x-auto font-mono text-xs min-h-[300px]">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse whitespace-nowrap">
                         <thead>
                             <tr class="border-b border-gray-100 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-800">
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase">Tanggal</th>
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase">Produk & Batch</th>
-                                <th class="px-6 py-4 font-bold text-gray-400 uppercase">Jenis Mutasi</th>
+                                <th class="px-6 py-4 font-bold text-gray-400 uppercase whitespace-nowrap">Jenis Mutasi</th>
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase">Qty (+/-)</th>
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase">Catatan</th>
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase">Admin</th>
