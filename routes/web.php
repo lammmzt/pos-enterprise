@@ -18,11 +18,15 @@ use App\Livewire\Admin\Stok\PembelianIndex;
 use App\Livewire\Admin\Stok\MutasiStokIndex;
 use App\Livewire\Admin\Pos\PosIndex;
 use App\Livewire\Admin\Pos\PesananAktifIndex;
+use App\Livewire\Admin\Pos\RiwayatPesananIndex;
+use App\Livewire\Admin\Laporan\LaporanKeuanganIndex;
+use App\Livewire\Admin\Laporan\LaporanPenjualanIndex;
 
 
 use App\Http\Controllers\AuthController; // Import Auth Controller Custom kita
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\Admin\PosController;
+use App\Http\Controllers\Admin\LaporanController;
 // use App\Http\Controllers\PosController;
 
 
@@ -99,8 +103,21 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,owner,kasir'])->group(fu
     Route::get('/pos', PosIndex::class)->name('admin.pos');
     // Route untuk cetak struk POS
     Route::get('/pos/struk/{id}', [PosController::class, 'cetakStruk'])->name('admin.pos.struk');
-    // pos
+    // pos pesanan
     Route::get('pesanan-aktif', PesananAktifIndex::class)->name('admin.pesanan-aktif');
+    // pos hisotory
+    Route::get('riwayat-pesanan', RiwayatPesananIndex::class)->name('admin.riwayat-pesanan');
+
+
+    // laporan keuangan
+    Route::get('laporan-keuangan', LaporanKeuanganIndex::class)->name('admin.laporan-keuangan');
+
+    Route::get('laporan-keuangan/cetak', [LaporanController::class, 'cetakKeuangan'])->name('admin.laporan.cetak');
+
+    // Laporan Penjualan (Livewire Dashboard)
+    Route::get('/laporan-penjualan', LaporanPenjualanIndex::class)->name('admin.laporan-penjualan');
+    // Route Cetak Penjualan (Controller)
+    Route::get('/laporan-penjualan/cetak', [LaporanController::class, 'cetakPenjualan'])->name('admin.laporan.penjualan.cetak');
     // Pesanan Umum
     // Route::get('/pesanan', [PesananController::class, 'index'])->name('admin.pesanan.index');
     // Route::get('/pesanan/{id}', [PesananController::class, 'show'])->name('admin.pesanan.show');

@@ -47,6 +47,7 @@ class Sidebar extends Component
                         'subItems' => [
                             ['name' => 'Pos', 'route' => 'admin.pos'],
                             ['name' => 'Pesanan Aktif', 'route' => 'admin.pesanan-aktif'],
+                            ['name' => 'Riwayat Pesanan', 'route' => 'admin.riwayat-pesanan'],
                         ],
                     ],
                     [
@@ -59,6 +60,15 @@ class Sidebar extends Component
                             ['name' => 'Pemasok', 'route' => 'admin.pemasok'],
                             ['name' => 'Pembelian', 'route' => 'admin.pembelian'],
                             ['name' => 'Mutasi Stok', 'route' => 'admin.mutasi-stok'],
+                        ]
+                    ],
+                    [
+                        'name' => 'Laporan',
+                        'icon' => 'report',
+                        'activePattern' => 'laporan.*',
+                        'subItems' => [
+                            ['name' => 'Keuangan', 'route' => 'admin.laporan-keuangan'],
+                            ['name' => 'Penjualan', 'route' => 'admin.laporan-penjualan'],
                         ]
                     ],
                 ]

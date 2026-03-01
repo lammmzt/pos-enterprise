@@ -1,260 +1,228 @@
-<div>
-    <div class="pb-12 space-y-8">
-    <div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-            <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">{{$title}}</h1>
-            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{$desc_page}}</p>
+<div class="w-full max-w-full pb-20 space-y-6 overflow-x-hidden sm:space-y-8" wire:poll.30s>
+    
+    <div class="flex flex-col w-full gap-4 md:flex-row md:items-end md:justify-between">
+        <div class="w-full min-w-0">
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900 truncate sm:text-3xl dark:text-white">{{ $title }}</h1>
+            <p class="text-xs font-medium text-gray-500 truncate sm:text-sm dark:text-gray-400">{{ $desc_page }}</p>
         </div>
-
-        <div class="flex items-center gap-3">
-            <x-button variant="secondary" icon="calendar">Laporan Bulanan</x-button>
-            <x-button variant="primary" icon="shopping-cart">Tambah Produk</x-button>
+        
+        <div class="flex flex-col items-center w-full gap-2 p-2 transition-all bg-white border border-gray-200 shadow-sm sm:flex-row sm:gap-3 dark:bg-gray-900 dark:border-gray-800 rounded-xl sm:rounded-2xl md:w-auto shrink-0">
+            <div class="flex flex-col w-full px-2 sm:w-auto">
+                <span class="text-[10px] font-bold text-gray-400 uppercase">Dari Tanggal</span>
+                <input type="date" wire:model.live="tanggalMulai" class="w-full p-0 text-xs font-bold text-gray-700 bg-transparent border-none outline-none cursor-pointer sm:text-sm dark:text-gray-200 focus:ring-0">
+            </div>
+            <div class="hidden w-px h-8 bg-gray-200 sm:block dark:bg-gray-700"></div>
+            <div class="w-full h-px my-1 bg-gray-100 sm:hidden dark:bg-gray-800"></div>
+            <div class="flex flex-col w-full px-2 sm:w-auto">
+                <span class="text-[10px] font-bold text-gray-400 uppercase">Sampai Tanggal</span>
+                <input type="date" wire:model.live="tanggalAkhir" class="w-full p-0 text-xs font-bold text-gray-700 bg-transparent border-none outline-none cursor-pointer sm:text-sm dark:text-gray-200 focus:ring-0">
+            </div>
         </div>
     </div>
-    {{-- Stats Grid: Enhanced with Custom Background & Layered Effects --}}
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        @php
-        $ecomStats = [
-        [
-        'label' => 'Total Penjualan',
-        'value' => 'Rp 142.8M',
-        'growth' => '+15.4%',
-        'icon' => 'ti-shopping-bag',
-        'bg' => 'from-indigo-600/20 via-indigo-600/5 to-transparent',
-        'color' => 'indigo',
-        ],
-        [
-        'label' => 'Pesanan Baru',
-        'value' => '856',
-        'growth' => '+42',
-        'icon' => 'ti-package',
-        'bg' => 'from-sky-500/20 via-sky-500/5 to-transparent',
-        'color' => 'sky',
-        ],
-        [
-        'label' => 'Produk Terjual',
-        'value' => '2,410',
-        'growth' => '+12%',
-        'icon' => 'ti-box',
-        'bg' => 'from-emerald-500/20 via-emerald-500/5 to-transparent',
-        'color' => 'emerald',
-        ],
-        [
-        'label' => 'Rata-rata Keranjang',
-        'value' => 'Rp 165k',
-        'growth' => '-2.4%',
-        'icon' => 'ti-shopping-cart-discount',
-        'bg' => 'from-rose-500/20 via-rose-500/5 to-transparent',
-        'color' => 'rose',
-        ],
-        ];
-        @endphp
 
-        @foreach ($ecomStats as $stat)
-        <x-card
-            class="group relative overflow-hidden border-none shadow-none bg-white dark:bg-gray-900 hover:scale-[1.02] transition-all duration-500">
-            <div
-                class="absolute inset-0 bg-gradient-to-br {{ $stat['bg'] }} opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+    <div class="grid w-full grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div class="relative flex flex-col justify-between w-full min-w-0 p-5 overflow-hidden text-white transition-all bg-indigo-600 border border-indigo-700 shadow-md sm:p-6 rounded-2xl sm:rounded-3xl group">
+            <div class="absolute transition-transform text-indigo-500/50 -right-4 -bottom-4 group-hover:scale-110"><i class="text-8xl sm:text-9xl ti ti-wallet"></i></div>
+            <div class="relative z-10">
+                <p class="mb-2 text-[10px] sm:text-xs font-bold tracking-widest text-indigo-200 uppercase truncate">Pendapatan Terpilih</p>
+                <h3 class="mb-1 text-xl font-black truncate sm:text-2xl">Rp {{ number_format($pendapatanPeriode, 0, ',', '.') }}</h3>
+                <p class="text-[9px] sm:text-[10px] text-white font-bold bg-indigo-500/50 px-2 py-1 rounded-md inline-block mt-1">Berdasarkan Filter</p>
             </div>
-            <div
-                class="absolute -right-6 -bottom-6 opacity-[0.03] dark:opacity-[0.07] group-hover:scale-150 group-hover:-rotate-12 transition-transform duration-700">
-                <i class="ti {{ $stat['icon'] }} text-[10rem]"></i>
-            </div>
-
-            <div class="relative z-10 flex flex-col gap-5">
-                <div class="flex items-center justify-between">
-                    <div class="relative">
-                        <div
-                            class="absolute inset-0 bg-{{ $stat['color'] }}-500/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                        </div>
-                        <div
-                            class="w-14 h-14 rounded-2xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center text-{{ $stat['color'] }}-500 transition-all duration-500 group-hover:rotate-[10deg] group-hover:shadow-{{ $stat['color'] }}-500/20 group-hover:shadow-lg relative z-10">
-                            <i class="ti {{ $stat['icon'] }} text-3xl"></i>
-                        </div>
-                    </div>
-
-                    <span
-                        class="flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-sm text-{{ str_contains($stat['growth'], '+') ? 'emerald' : 'rose' }}-500 border border-gray-100 dark:border-gray-700">
-                        <i class="ti ti-trending-{{ str_contains($stat['growth'], '+') ? 'up' : 'down' }}"></i>
-                        {{ str_replace(['+', '-'], '', $stat['growth']) }}
-                    </span>
-                </div>
-
-                <div class="space-y-1">
-                    <p class="text-sm font-semibold leading-none text-gray-400 dark:text-gray-500">
-                        {{ $stat['label'] }}</p>
-                    <h3 class="text-3xl font-bold text-gray-900 dark:text-white">
-                        {{ $stat['value'] }}
-                    </h3>
-                </div>
-            </div>
-        </x-card>
-        @endforeach
-    </div>
-    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {{-- Revenue Chart --}}
-        <x-card class="lg:col-span-2" title="Grafik Pendapatan">
-            <div class="relative h-[380px] mt-4">
-                <canvas id="revenueChart"></canvas>
-            </div>
-        </x-card>
-        {{-- Top Selling Products --}}
-        <x-card title="Produk Terlaris">
-            <div class="mt-4 space-y-5">
-                @foreach ([['name' => 'Nike Air Max 270', 'sales' => '412', 'stock' => '12', 'price' => 'Rp 2.1M', 'img'
-                => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200'], ['name' => 'Apple Watch
-                Series 7', 'sales' => '325', 'stock' => '0', 'price' => 'Rp 5.4M', 'img' =>
-                'https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=200'], ['name' => 'Sony WH-1000XM4',
-                'sales' => '210', 'stock' => '45', 'price' => 'Rp 3.8M', 'img' =>
-                'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=200'], ['name' => 'Logitech G Pro
-                X', 'sales' => '185', 'stock' => '28', 'price' => 'Rp 1.2M', 'img' =>
-                'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?q=80&w=200']] as $product)
-                <div class="flex items-center gap-4 cursor-pointer group">
-                    <div class="relative flex-shrink-0">
-                        <img src="{{ $product['img'] }}"
-                            class="object-cover transition-all w-14 h-14 rounded-2xl ring-2 ring-transparent group-hover:ring-indigo-500/20">
-                        @if ($product['stock'] == 0)
-                        <div class="absolute inset-0 flex items-center justify-center bg-rose-500/60 rounded-2xl">
-                            <span class="text-[8px] font-bold text-white uppercase tracking-tighter">Habis</span>
-                        </div>
-                        @endif
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h4
-                            class="text-sm font-semibold text-gray-900 truncate transition-colors dark:text-white group-hover:text-indigo-600">
-                            {{ $product['name'] }}</h4>
-                        <p class="text-xs font-semibold tracking-tight text-gray-400 uppercase">
-                            {{ $product['sales'] }} Terjual • Stok: {{ $product['stock'] }}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $product['price'] }}</p>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-            <x-slot:footer>
-                <x-button variant="secondary" class="w-full py-3 text-xs font-semibold">Kelola Inventaris</x-button>
-            </x-slot:footer>
-        </x-card>
-    </div>
-    {{-- Transaction Table --}}
-    <x-card title="Transaksi Terkini">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left">
-                <thead>
-                    <tr class="border-b border-gray-100 dark:border-gray-800">
-                        <th class="px-4 pb-4 text-sm font-semibold text-gray-400">ID Pesanan</th>
-                        <th class="pb-4 text-sm font-semibold text-gray-400">Pelanggan</th>
-                        <th class="pb-4 text-sm font-semibold text-center text-gray-400">Status</th>
-                        <th class="px-4 pb-4 text-sm font-semibold text-right text-gray-400">Total</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50 dark:divide-gray-800/50">
-                    @foreach ([['id' => '#ORD-7721', 'user' => 'Rizky Pratama', 'status' => 'Selesai', 'color' =>
-                    'emerald', 'total' => 'Rp 2.450.000'], ['id' => '#ORD-7722', 'user' => 'Dewi Anggraini', 'status' =>
-                    'Dikirim', 'color' => 'indigo', 'total' => 'Rp 890.000'], ['id' => '#ORD-7723', 'user' => 'Budi
-                    Santoso', 'status' => 'Proses', 'color' => 'amber', 'total' => 'Rp 1.120.000'], ['id' =>
-                    '#ORD-7724', 'user' => 'Siti Aminah', 'status' => 'Dibatalkan', 'color' => 'rose', 'total' => 'Rp
-                    450.000']] as $order)
-                    <tr class="transition-all group hover:bg-gray-50 dark:hover:bg-gray-800/30">
-                        <td class="px-4 py-4 text-sm font-bold text-indigo-600 group-hover:underline">
-                            {{ $order['id'] }}</td>
-                        <td class="py-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                            {{ $order['user'] }}</td>
-                        <td class="py-4 text-center">
-                            @php
-                            $statusVariantMap = [
-                            'Selesai' => 'success',
-                            'Dikirim' => 'info',
-                            'Proses' => 'warning',
-                            'Dibatalkan' => 'danger',
-                            ];
-                            @endphp
-
-                            @php
-                            $variant = $statusVariantMap[$order['status']] ?? 'gray';
-                            @endphp
-
-                            <x-badge :variant="$variant" type="soft" rounded>
-                                {{ $order['status'] }}
-                            </x-badge>
-                        </td>
-                        <td class="px-4 py-4 text-sm font-bold text-right text-gray-900 dark:text-white">
-                            {{ $order['total'] }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
         </div>
-    </x-card>
+
+        <div class="relative flex flex-col justify-between w-full min-w-0 p-5 overflow-hidden transition-all bg-white border border-gray-200 shadow-sm sm:p-6 dark:bg-gray-900 rounded-2xl sm:rounded-3xl dark:border-gray-800 group">
+            <div class="absolute transition-transform text-emerald-50 -right-6 -top-6 dark:text-emerald-900/20 group-hover:scale-110"><i class="text-8xl sm:text-9xl ti ti-receipt"></i></div>
+            <div class="relative z-10">
+                <p class="mb-2 text-[10px] sm:text-xs font-bold tracking-widest text-gray-500 uppercase truncate">Total Transaksi</p>
+                <h3 class="mb-1 text-2xl font-black text-gray-900 truncate sm:text-3xl dark:text-white">{{ $transaksiPeriode }}</h3>
+                <p class="text-[9px] sm:text-[10px] text-gray-400 font-medium mt-1">Berdasarkan Filter</p>
+            </div>
+        </div>
+
+        <div class="relative flex flex-col justify-between w-full min-w-0 p-5 overflow-hidden transition-all bg-white border border-gray-200 shadow-sm sm:p-6 dark:bg-gray-900 rounded-2xl sm:rounded-3xl dark:border-gray-800 group">
+            <div class="absolute transition-transform text-orange-50 -right-6 -top-6 dark:text-orange-900/20 group-hover:scale-110"><i class="text-8xl sm:text-9xl ti ti-soup"></i></div>
+            <div class="relative z-10">
+                <p class="mb-2 text-[10px] sm:text-xs font-bold tracking-widest text-orange-500 uppercase truncate">Antrean Dapur</p>
+                <h3 class="mb-1 text-2xl font-black text-orange-600 truncate sm:text-3xl">{{ $antreanDapur }}</h3>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="flex w-2 h-2 bg-orange-500 rounded-full animate-ping shrink-0"></span>
+                    <span class="text-[9px] sm:text-[10px] font-bold text-orange-500">Real-time</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative flex flex-col justify-between w-full min-w-0 p-5 overflow-hidden transition-all bg-white border border-gray-200 shadow-sm sm:p-6 dark:bg-gray-900 rounded-2xl sm:rounded-3xl dark:border-gray-800 group">
+            <div class="absolute transition-transform text-red-50 -right-6 -top-6 dark:text-red-900/20 group-hover:scale-110"><i class="text-8xl sm:text-9xl ti ti-cash-off"></i></div>
+            <div class="relative z-10">
+                <p class="mb-2 text-[10px] sm:text-xs font-bold tracking-widest text-red-500 uppercase truncate">Menunggu Bayaran</p>
+                <h3 class="mb-1 text-2xl font-black text-red-600 truncate sm:text-3xl">{{ $menungguPembayaran }}</h3>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="flex w-2 h-2 bg-red-500 rounded-full animate-ping shrink-0"></span>
+                    <span class="text-[9px] sm:text-[10px] font-bold text-red-500">Real-time</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full min-w-0 p-4 bg-white border border-gray-200 shadow-sm sm:p-6 dark:bg-gray-900 rounded-2xl sm:rounded-3xl dark:border-gray-800" wire:ignore>
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-gray-900 truncate sm:text-lg dark:text-white">Tren Pendapatan</h3>
+            <span class="text-[9px] sm:text-[10px] px-2 py-1 bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 rounded-md font-bold uppercase tracking-widest shrink-0">Interaktif</span>
+        </div>
+        
+        <div x-data="revenueChart()" x-init="initChart()" class="h-64 max-w-md sm:h-72 ma">
+            <div id="chart-area" class="w-full"></div>
+        </div>
+    </div>
+
+    <div class="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="w-full min-w-0 space-y-4 lg:col-span-2">
+            <div class="flex items-center justify-between">
+                <h3 class="text-base font-bold text-gray-900 truncate sm:text-lg dark:text-white">Transaksi Terkini</h3>
+                <a href="{{ route('admin.riwayat-pesanan') }}" wire:navigate class="text-[10px] sm:text-xs font-bold text-indigo-600 hover:text-indigo-700 shrink-0">Lihat Semua</a>
+            </div>
+            
+            <div class="w-full overflow-hidden bg-white border border-gray-200 shadow-sm dark:bg-gray-900 rounded-2xl sm:rounded-3xl dark:border-gray-800">
+                <div class="w-full overflow-x-auto">
+                    <table class="w-full text-xs text-left border-collapse sm:text-sm whitespace-nowrap">
+                        <thead>
+                            <tr class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800 text-gray-400 text-[10px] sm:text-xs uppercase">
+                                <th class="px-4 py-3 font-bold sm:px-5 sm:py-4">Masa & Inv</th>
+                                <th class="px-4 py-3 font-bold sm:px-5 sm:py-4">Pelanggan</th>
+                                <th class="px-4 py-3 font-bold sm:px-5 sm:py-4">Status</th>
+                                <th class="px-4 py-3 font-bold text-right sm:px-5 sm:py-4">Jumlah</th>
+                            </tr>
+                        </thead>
+                        <tbody class="font-mono divide-y divide-gray-100 dark:divide-gray-800">
+                            @forelse($transaksiTerkini as $trx)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/40">
+                                    <td class="px-4 py-2 sm:px-5 sm:py-3">
+                                        <div class="font-bold text-indigo-600 dark:text-indigo-400">{{ $trx->nomor_invoice }}</div>
+                                        <div class="text-[9px] sm:text-[10px] text-gray-500">{{ $trx->created_at->diffForHumans() }}</div>
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 sm:px-5 sm:py-3 dark:text-white">
+                                        {{ $trx->user->nama ?? 'Walk-in' }}
+                                        <div class="text-[8px] sm:text-[9px] text-gray-400 uppercase mt-0.5">{{ $trx->tipe_pesanan }}</div>
+                                    </td>
+                                    <td class="px-4 py-2 sm:px-5 sm:py-3">
+                                        @if($trx->status_pesanan === 'selesai')
+                                            <span class="px-2 py-1 text-[9px] sm:text-[10px] font-bold text-emerald-600 bg-emerald-50 rounded-md dark:bg-emerald-500/10">Selesai</span>
+                                        @elseif($trx->status_pesanan === 'proses')
+                                            <span class="px-2 py-1 text-[9px] sm:text-[10px] font-bold text-orange-600 bg-orange-50 rounded-md dark:bg-orange-500/10 animate-pulse">Dapur</span>
+                                        @else
+                                            <span class="px-2 py-1 text-[9px] sm:text-[10px] font-bold text-red-600 bg-red-50 rounded-md dark:bg-red-500/10">Batal</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-2 font-bold text-right text-gray-900 sm:px-5 sm:py-3 dark:text-white">
+                                        Rp {{ number_format($trx->total_harga, 0, ',', '.') }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-4 py-8 text-center text-gray-400">Tiada transaksi direkodkan.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full min-w-0 space-y-6">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2 text-red-500">
+                    <i class="text-lg ti ti-alert-triangle sm:text-xl"></i>
+                    <h3 class="text-sm font-bold text-gray-900 truncate dark:text-white">Amaran Kedaluwarsa <span class="text-[10px] text-gray-400 font-normal">(< 7 Hari)</span></h3>
+                </div>
+                
+                <div class="overflow-hidden bg-white border border-red-100 divide-y divide-gray-100 shadow-sm dark:bg-gray-900 rounded-2xl dark:border-red-900/30 dark:divide-gray-800">
+                    @forelse($hampirKedaluwarsa as $batch)
+                        @php
+                            $isExpired = \Carbon\Carbon::parse($batch->tanggal_kedaluwarsa)->isPast();
+                        @endphp
+                        <div class="flex items-center justify-between p-3 transition-colors sm:p-4 hover:bg-red-50/50 dark:hover:bg-red-900/10">
+                            <div class="flex-1 min-w-0 pr-2">
+                                <h4 class="text-[11px] sm:text-xs font-bold text-gray-900 dark:text-white truncate">{{ $batch->produk->nama ?? 'Produk Dibuang' }}</h4>
+                                <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5 truncate">Batch #{{ $batch->id_batch }} | Stok: {{ $batch->jumlah }}</p>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-[10px] sm:text-xs font-bold {{ $isExpired ? 'text-red-600' : 'text-orange-500' }}">
+                                    {{ \Carbon\Carbon::parse($batch->tanggal_kedaluwarsa)->format('d M y') }}
+                                </span>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="p-6 text-xs font-medium text-center text-gray-400">Tiada produk hampir luput.</div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{{-- Memuatkan Library ApexCharts --}}
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ctxRev = document.getElementById('revenueChart').getContext('2d');
-        const revGradient = ctxRev.createLinearGradient(0, 0, 0, 400);
-        revGradient.addColorStop(0, 'rgba(79, 70, 229, 0.4)');
-        revGradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
-
-        new Chart(ctxRev, {
-            type: 'line',
-            data: {
-                labels: ['01 Jan', '02 Jan', '03 Jan', '04 Jan', '05 Jan', '06 Jan', '07 Jan'],
-                datasets: [{
-                    label: 'Revenue',
-                    data: [12000000, 15000000, 11000000, 19000000, 24000000, 21000000,
-                        28000000
-                    ],
-                    borderColor: '#4f46e5',
-                    borderWidth: 4,
-                    tension: 0.4,
-                    fill: true,
-                    backgroundColor: revGradient,
-                    pointRadius: 0,
-                    pointHoverRadius: 6,
-                    pointHoverBackgroundColor: '#4f46e5',
-                    pointHoverBorderWidth: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('revenueChart', () => ({
+            chart: null,
+            initChart() {
+                let options = {
+                    series: [{
+                        name: 'Pendapatan (Rp)',
+                        data: @json($chartTotals)
+                    }],
+                    chart: {
+                        type: 'area',
+                        height: '100%',
+                        width: '100%',
+                        toolbar: { show: false },
+                        fontFamily: 'inherit',
+                        animations: { enabled: true, easing: 'easeinout', speed: 800 },
+                        parentHeightOffset: 0
                     },
+                    colors: ['#4f46e5'],
+                    fill: {
+                        type: 'gradient',
+                        gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 100] }
+                    },
+                    dataLabels: { enabled: false },
+                    stroke: { curve: 'smooth', width: 3 },
+                    xaxis: {
+                        categories: @json($chartDates),
+                        axisBorder: { show: false },
+                        axisTicks: { show: false },
+                        labels: { style: { colors: '#9ca3af', fontSize: '10px', fontWeight: 600 } }
+                    },
+                    yaxis: {
+                        labels: {
+                            style: { colors: '#9ca3af', fontSize: '10px', fontWeight: 600 },
+                            formatter: (value) => { 
+                                if(value >= 1000000) return "Rp " + (value/1000000).toFixed(1) + "M";
+                                if(value >= 1000) return "Rp " + (value/1000).toFixed(0) + "K";
+                                return "Rp " + value; 
+                            }
+                        }
+                    },
+                    grid: { borderColor: '#f3f4f6', strokeDashArray: 4, padding: { left: 10, right: 10 } },
                     tooltip: {
-                        backgroundColor: '#111827',
-                        padding: 12,
-                        cornerRadius: 12,
-                        titleFont: {
-                            weight: 'bold'
-                        }
+                        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+                        y: { formatter: function (val) { return "Rp " + new Intl.NumberFormat('id-ID').format(val) } }
                     }
-                },
-                scales: {
-                    y: {
-                        grid: {
-                            color: 'rgba(156, 163, 175, 0.05)',
-                            drawBorder: false
-                        },
-                        ticks: {
-                            color: '#9ca3af',
-                            callback: v => 'Rp' + v / 1000000 + 'jt'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: '#9ca3af'
-                        }
-                    }
-                }
-            }
-        });
-    });
+                };
 
+                this.chart = new ApexCharts(document.getElementById('chart-area'), options);
+                this.chart.render();
+
+                Livewire.on('update-chart', (event) => {
+                    let data = event[0].chartData;
+                    this.chart.updateOptions({ xaxis: { categories: data.dates } });
+                    this.chart.updateSeries([{ data: data.totals }]);
+                });
+            }
+        }));
+    });
 </script>
-</div>
+@endpush
