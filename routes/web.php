@@ -16,10 +16,13 @@ use App\Livewire\Admin\Produk\ProdukIndex;
 use App\Livewire\Admin\Pemasok\PemasokIndex;
 use App\Livewire\Admin\Stok\PembelianIndex;
 use App\Livewire\Admin\Stok\MutasiStokIndex;
+use App\Livewire\Admin\Pos\PosIndex;
+
 
 use App\Http\Controllers\AuthController; // Import Auth Controller Custom kita
 use App\Http\Controllers\FrontController;
-use App\Http\Controllers\PosController;
+use App\Http\Controllers\Admin\PosController;
+// use App\Http\Controllers\PosController;
 
 
 
@@ -91,12 +94,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,owner,kasir'])->group(fu
     // pembelian
     Route::get('/mutasi-stok', MutasiStokIndex::class)->name('admin.mutasi-stok');
 
-    // POS Kasir
-    Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-
+    // pos
+    Route::get('/pos', PosIndex::class)->name('admin.pos');
+    // Route untuk cetak struk POS
+    Route::get('/pos/struk/{id}', [PosController::class, 'cetakStruk'])->name('admin.pos.struk');
     // Pesanan Umum
-    Route::get('/pesanan', [PesananController::class, 'index'])->name('admin.pesanan.index');
-    Route::get('/pesanan/{id}', [PesananController::class, 'show'])->name('admin.pesanan.show');
+    // Route::get('/pesanan', [PesananController::class, 'index'])->name('admin.pesanan.index');
+    // Route::get('/pesanan/{id}', [PesananController::class, 'show'])->name('admin.pesanan.show');
 
     // Area Khusus Admin & Owner
     // Route::middleware(['role:admin,owner'])->group(function () {

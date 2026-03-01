@@ -41,10 +41,12 @@ class Sidebar extends Component
                 'title' => 'Aplikasi',
                 'items' => [
                     [
-                        'name' => 'Point of Sale', 
+                        'name' => 'POS Kasir',
                         'icon' => 'device-laptop', 
                         'activePattern' => 'pages.apps.pos',
-                        'route' => 'admin.dashboard' // Single menu tanpa sub-item
+                        'subItems' => [
+                            ['name' => 'Pos', 'route' => 'admin.pos'],
+                        ],
                     ],
                     [
                         'name' => 'Manajemen Produk',

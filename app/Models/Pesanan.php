@@ -31,10 +31,8 @@ class Pesanan extends Model
     {
         return $this->belongsTo(User::class, 'id_kasir', 'id_user');
     }
-
-    public function detailPesanan()
-    {
-        return $this->hasMany(DetailPesanan::class, 'id_pesanan', 'id_pesanan');
+    public function mangkuk() {
+         return $this->hasMany(MangkukPesanan::class, 'id_pesanan', 'id_pesanan'); 
     }
 
     public function testimoni()

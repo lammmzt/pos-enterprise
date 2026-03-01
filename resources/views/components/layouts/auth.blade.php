@@ -113,7 +113,8 @@
                             
                             setTimeout(function() {
                                 // add wire navigation
-                               Livewire.navigate("{{ route('admin.dashboard') }}")
+                                window.location.href = "{{ route('admin.dashboard') }}";
+                            //    Livewire.navigate("{{ route('admin.dashboard') }}")
                             }, 3000); // Beri waktu 3 detik agar toast terlihat
                             
                         } else {

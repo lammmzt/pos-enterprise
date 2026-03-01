@@ -1,7 +1,7 @@
 {{-- Tambahkan @persist di sini untuk menjaga state Alpine.js antar navigasi halaman --}}
 @persist('sidebar')
 <aside id="sidebar"
-    class="fixed top-0 left-0 z-[9999] h-screen bg-white/90 backdrop-blur-xl dark:bg-gray-950/90 text-gray-900 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] border-r border-gray-200/50 dark:border-gray-800/50 flex flex-col"
+    class="fixed inset-y-0 left-0 z-[9999] bg-white/90 backdrop-blur-xl dark:bg-gray-950/90 text-gray-900 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] border-r border-gray-200/50 dark:border-gray-800/50 flex flex-col"
     x-data="{
         currentPath: window.location.pathname,
         openSubmenus: {},
@@ -88,7 +88,7 @@
     </div>
 
     {{-- Navigation --}}
-    <div class="flex-1 px-4 py-4 overflow-y-auto no-scrollbar">
+    <div class="flex-1 px-4 py-4 pb-4 overflow-y-auto no-scrollbar">
         <nav class="space-y-6">
             @foreach ($menuGroups as $gIdx => $group)
                 <div class="space-y-2">
@@ -100,12 +100,10 @@
                         @foreach ($group['items'] as $iIdx => $item)
                             @php 
                                 $key = "sub-$gIdx-$iIdx"; 
-                                // Generate array dari URL submenu untuk dikirimkan ke JavaScript Alpine
                                 $subPaths = isset($item['subItems']) ? collect($item['subItems'])->map(fn($sub) => parse_url(route($sub['route']), PHP_URL_PATH) ?? '/')->toJson() : '[]';
                             @endphp
                             <li class="relative">
                                 @if (isset($item['subItems']))
-                                    {{-- Dropdown Menu Toggler --}}
                                     <button @click="toggleSubmenu('{{ $key }}')"
                                         @mouseenter="showTooltip($event, '{{ $item['name'] }}')"
                                         class="w-full flex items-center py-2.5 rounded-xl transition-all duration-300 group relative"
@@ -125,7 +123,6 @@
                                             :class="openSubmenus['{{ $key }}'] ? 'rotate-90' : ''"></i>
                                     </button>
 
-                                    {{-- Submenu Content --}}
                                     <div x-show="openSubmenus['{{ $key }}'] && expanded" 
                                          x-init="if(isGroupActive({{ $subPaths }})) openSubmenus['{{ $key }}'] = true"
                                          x-cloak x-collapse>
@@ -139,7 +136,6 @@
                                                        class="relative flex items-center py-2 text-sm font-medium transition-colors duration-200"
                                                        :class="isPathActive('{{ $subRoutePath }}') ? 'text-indigo-600' : 'text-gray-400 hover:text-indigo-500'">
                                                         
-                                                        {{-- Indikator Titik Aktif berbasis Alpine --}}
                                                         <template x-if="isPathActive('{{ $subRoutePath }}')">
                                                             <div class="absolute left-[-14px] w-1 h-1 bg-indigo-600 rounded-full"></div>
                                                         </template>
@@ -151,7 +147,6 @@
                                         </ul>
                                     </div>
                                 @else
-                                    {{-- Single Link --}}
                                     @php
                                         $routePath = parse_url(route($item['route']), PHP_URL_PATH) ?? '/';
                                     @endphp
@@ -182,7 +177,7 @@
     </div>
 
     {{-- Bottom Section --}}
-    <div class="p-4 space-y-3 border-t border-gray-100 dark:border-gray-800 shrink-0">
+    <div class="p-4 pb-6 space-y-3 border-t border-gray-100 dark:border-gray-800 shrink-0 bg-white/90 dark:bg-gray-950/90 xl:pb-4">
         <div class="flex items-center gap-1 p-1 bg-gray-100/50 dark:bg-gray-900/50 rounded-xl" x-show="expanded" x-cloak>
             <button @click="$store.theme.toggle()" class="flex items-center justify-center flex-1 gap-2 py-2 text-xs font-semibold transition-all rounded-lg"
                     :class="$store.theme.theme === 'light' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-400'">

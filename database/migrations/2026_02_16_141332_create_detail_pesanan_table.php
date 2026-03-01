@@ -12,14 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('detail_pesanan', function (Blueprint $table) {
-           $table->id('id_detail');
-            $table->foreignId('id_pesanan')->constrained('pesanan', 'id_pesanan')->cascadeOnDelete();
-            $table->foreignId('id_produk')->constrained('produk', 'id_produk')->cascadeOnDelete();
-            $table->foreignId('id_batch')->nullable()->constrained('batch_produk', 'id_batch')->nullOnDelete();
+            $table->id('id_detail');
+            $table->unsignedBigInteger('id_mangkuk'); // Berubah dari id_pesanan
+            $table->unsignedBigInteger('id_produk');
+            $table->unsignedBigInteger('id_batch')->nullable();
+            
             $table->integer('jumlah');
             $table->decimal('harga', 15, 2);
             $table->decimal('subtotal', 15, 2);
+            
             $table->timestamps();
+
+            $table->foreign('id_mangkuk')->references('id_mangkuk')->on('mangkuk_pesanan')->onDelete('cascade');
+            $table->foreign('id_produk')->references('id_produk')->on('produk')->onDelete('cascade');
+            $table->foreign('id_batch')->references('id_batch')->on('batch_produk')->onDelete('set null');
         });
     }
 
