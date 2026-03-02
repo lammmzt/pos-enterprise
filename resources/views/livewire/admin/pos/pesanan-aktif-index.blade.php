@@ -38,7 +38,7 @@
                                 <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded-md bg-emerald-100 text-emerald-700">Lunas</span>
                             @endif
                         </div>
-                        <h3 class="text-sm font-black text-gray-900 dark:text-white">{{ $pesanan->nomor_invoice }}</h3>
+                        <h3 class="text-sm font-black text-gray-900 dark:text-white">{{ $pesanan->id_pesanan }}</h3>
                         <p class="text-xs font-medium text-gray-500">Oleh: <span class="text-gray-900 dark:text-gray-300">{{ $pesanan->pelanggan->nama ?? 'Walk-in' }}</span></p>
                     </div>
                     <div class="text-right">

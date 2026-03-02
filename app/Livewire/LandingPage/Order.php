@@ -10,6 +10,7 @@ use App\Models\MangkukPesanan;
 use App\Models\DetailPesanan;
 use App\Models\BatchProduk;
 use App\Models\Pengaturan;
+use App\Models\MutasiStok; // <-- Tambahkan model MutasiStok
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -36,11 +37,13 @@ class Order extends Component
     {
         // Ambil Data Produk (Pastikan stok > 0)
         $query = Produk::where('status', 'aktif')->where('stok', '>', 0);
+        
         $data['data_toko'] = [
-            'status_aktif_toko' => $pengaturan = Pengaturan::where('kunci', 'status_aktif_toko')->first(),
-            'jam_buka_toko' => $pengaturan = Pengaturan::where('kunci', 'jam_buka_toko')->first(),
-            'hari_buka_toko' => $pengaturan = Pengaturan::where('kunci', 'hari_buka_toko')->first(),
+            'status_aktif_toko' => Pengaturan::where('kunci', 'status_aktif_toko')->first(),
+            'jam_buka_toko' => Pengaturan::where('kunci', 'jam_buka_toko')->first(),
+            'hari_buka_toko' => Pengaturan::where('kunci', 'hari_buka_toko')->first(),
         ];
+        
         if ($this->search) {
             $query->where('nama', 'like', '%' . $this->search . '%');
         }
@@ -155,17 +158,42 @@ class Order extends Component
             return;
         }
 
-        // Pastikan User Login (Bisa diubah jika mengizinkan Guest)
+        // Pastikan User Login
         if (!Auth::check()) {
             return redirect()->route('Auth')->with('error', 'Silakan login terlebih dahulu untuk memesan.');
         }
 
+        // check apakah ada status pesanan yang belum bayar
+        $pesanan = Pesanan::where('id_user', Auth::id())
+            ->where('status_pembayaran', 'belum_bayar')
+            ->where('status_pesanan', '!=', 'dibatalkan')
+            ->first();
+
+        if ($pesanan) {
+            $this->dispatch('toast', type: 'error', message: 'Gagal! Pastikan pelanggan sudah membayar pesanan sebelumnya.');
+            return;
+        }
+        
         $pengaturan = Pengaturan::where('kunci', 'status_aktif_toko')->first();
 
         if (!$pengaturan || $pengaturan->nilai !== 'aktif') {
             $this->dispatch('toast', type: 'error', message: 'Toko sedang tutup. Coba lihat pada jadwal diatas.');
             return;
         }
+
+        // Pastikan Stok Mencukupi
+        foreach ($this->bowls as $bowl) {
+            foreach ($bowl['items'] as $item) {
+                $produk = Produk::find($item['id']);
+                if ($produk->stok < $item['qty']) {
+                    $this->dispatch('toast', type: 'error', message: "Stok {$produk->nama} tidak mencukupi!");
+                    return;
+                }
+            }
+        }
+
+        $pesananId = null;
+
         try {
             DB::transaction(function () use (&$pesananId) {
                 $invoice_no = 'INV-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4));
@@ -178,12 +206,11 @@ class Order extends Component
                     'total_harga' => $this->total_harga,
                     'status_pembayaran' => 'belum_bayar',
                     'status_pesanan' => 'proses', // Masuk antrean dapur tapi ditahan status pembayarannya
-                    // 'tipe_pesanan' => 'takeaway', // Default, bisa diubah di halaman payment nanti
                 ]);
                 
                 $pesananId = $pesanan->id_pesanan;
 
-                // 2. Simpan Mangkuk dan FEFO (Logika yang sama persis dengan Kasir POS)
+                // 2. Simpan Mangkuk dan FEFO (Pemotongan Stok)
                 foreach ($this->bowls as $bowl) {
                     if (count($bowl['items']) === 0) continue;
 
@@ -205,10 +232,16 @@ class Order extends Component
 
                         foreach ($batches as $batch) {
                             if ($qtyNeeded <= 0) break;
+                            
                             $qtyDiambil = min($batch->jumlah, $qtyNeeded);
+                            
+                            // A. Potong Stok dari Batch
                             $batch->decrement('jumlah', $qtyDiambil);
+                            
+                            // B. Potong Stok dari Produk Induk
                             Produk::where('id_produk', $item['id'])->decrement('stok', $qtyDiambil);
 
+                            // C. Catat Detail Pesanan
                             DetailPesanan::create([
                                 'id_mangkuk' => $mangkuk->id_mangkuk,
                                 'id_produk' => $item['id'],
@@ -217,14 +250,26 @@ class Order extends Component
                                 'harga' => $item['harga'],
                                 'subtotal' => $qtyDiambil * $item['harga'],
                             ]);
+                            MutasiStok::create([
+                                'id_produk' => $item['id'],
+                                'id_batch' => $batch->id_batch,
+                                'id_user' => Auth::id(),
+                                'tipe' => 'keluar',
+                                'jumlah' => $qtyDiambil,
+                                'tipe_referensi' => 'Penjualan',
+                                'id_referensi' => $pesanan->id_pesanan,
+                                'catatan' => 'Penjualan Mangkuk: ' . $mangkuk->id_mangkuk
+                                
+                            ]);
+
                             $qtyNeeded -= $qtyDiambil;
                         }
                     }
                 }
             });
 
-            // Redirect ke halaman Pembayaran membawa ID Pesanan
-            return redirect()->route('Payment', ['id' => $pesananId]);
+            // Redirect ke halaman Pembayaran
+            $this->redirect(route('Payment', ['id' => $pesananId]));
 
         } catch (\Exception $e) {
             $this->dispatch('toast', type: 'error', message: 'Terjadi kesalahan sistem: ' . $e->getMessage());

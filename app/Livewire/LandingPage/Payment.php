@@ -4,6 +4,10 @@ namespace App\Livewire\LandingPage;
 
 use Livewire\Component;
 use App\Models\Pesanan;
+use App\Models\Produk;
+use App\Models\BatchProduk;
+use App\Models\MutasiStok; // <-- Tambahkan ini untuk model Mutasi Stok
+
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -65,21 +69,27 @@ class Payment extends Component
             $updateData['catatan'] = $this->catatan;
         }
 
-        // Simpan perubahan ke database
         $this->pesanan->update($updateData);
 
         // 3. Logika Pembayaran
         if ($this->metode_pembayaran === 'tunai') {
-            // Jika Tunai (Hanya Kasir), langsung selesai dan masuk antrean dapur
             $this->pesanan->update([
                 'status_pembayaran' => 'lunas',
                 'status_pesanan' => 'proses'
             ]);
-            
             return redirect()->route('Order')->with('success', 'Pesanan Tunai Berhasil. Menunggu dimasak dapur.');
             
         } elseif ($this->metode_pembayaran === 'qris') {
-            // Konfigurasi Midtrans
+            
+            // --- LOGIKA CEK TOKEN LAMA (ANTI-REFRESH BUG) ---
+            if ($this->pesanan->snap_token) {
+                // Jika token sudah pernah dibuat, LANGSUNG panggil ulang token lama
+                // Tanpa perlu memanggil API Midtrans lagi!
+                $this->dispatch('pay-with-midtrans', token: $this->pesanan->snap_token);
+                return; // Hentikan fungsi sampai di sini
+            }
+
+            // --- JIKA BELUM ADA TOKEN, BUAT BARU ---
             Config::$serverKey = env('MIDTRANS_SERVER_KEY');
             Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
             Config::$isSanitized = true;
@@ -98,15 +108,67 @@ class Payment extends Component
             ];
 
             try {
-                // Dapatkan Token dari Midtrans
+                // Dapatkan Token BARU dari Midtrans
                 $snapToken = Snap::getSnapToken($params);
                 
-                // Trigger event Javascript untuk membuka Popup Midtrans
+                // SIMPAN KE DATABASE AGAR BISA DIGUNAKAN LAGI
+                $this->pesanan->update([
+                    'snap_token' => $snapToken
+                ]);
+
+                // Trigger event Javascript untuk membuka Popup
                 $this->dispatch('pay-with-midtrans', token: $snapToken);
+                
             } catch (\Exception $e) {
                 $this->dispatch('toast', type: 'error', message: 'Gagal memuat pembayaran: ' . $e->getMessage());
             }
         }
+    }
+
+     // Tambahkan fungsi ini di dalam class Payment Component Anda
+    public function cancelExpiredOrder()
+    {
+        // Jika statusnya belum dibayar/proses, batalkan
+        if ($this->pesanan->status_pembayaran !== 'lunas' && $this->pesanan->status_pesanan !== 'proses') {
+            
+            // 1. Kembalikan Stok (Logika Reverse FEFO)
+            foreach ($this->pesanan->mangkuk as $mangkuk) {
+                foreach ($mangkuk->detailPesanan as $detail) {
+                    
+                    // A. Kembalikan ke Master Produk
+                    Produk::where('id_produk', $detail->id_produk)
+                        ->increment('stok', $detail->jumlah);
+                    
+                    // B. Kembalikan ke Batch (FEFO)
+                    if ($detail->id_batch) {
+                        BatchProduk::where('id_batch', $detail->id_batch)
+                            ->increment('jumlah', $detail->jumlah);
+                    }
+
+                    // C. Catat ke Tabel Mutasi Stok (Menambah Stok)
+                    MutasiStok::create([
+                        'id_produk' => $detail->id_produk,
+                        'id_batch' => $detail->id_batch,
+                        'id_user' => $this->pesanan->id_user,
+                        'tipe' => 'masuk',
+                        'jumlah' => $detail->jumlah,
+                        'tipe_referensi' => 'Penjualan',
+                        'id_referensi' => $this->pesanan->id_pesanan,
+                        'catatan' => 'Pengembalian stok (Otomatis) - Waktu pembayaran habis. Invoice: ' . $this->pesanan->nomor_invoice,
+                    ]);
+                }
+            }
+
+            // 2. Ubah Status Pesanan
+            $this->pesanan->update([
+                'status_pembayaran' => 'gagal',
+                'status_pesanan' => 'dibatalkan',
+            ]);
+            
+            session()->flash('error', 'Waktu pembayaran telah habis. Pesanan otomatis dibatalkan.');
+        }
+
+        return redirect()->route('Order');
     }
 
     public function render()

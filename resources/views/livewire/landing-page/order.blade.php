@@ -1,6 +1,7 @@
 <div x-data="{ 
         isCartOpen: false, 
         showInfoModal: false, 
+        showConfirmModal: false, // State baru untuk modal konfirmasi
         activeInfo: { nama: '', deskripsi: '', gambar: '', harga: '' },
         openInfo(nama, deskripsi, gambar, harga) {
             this.activeInfo = { nama, deskripsi, gambar, harga };
@@ -32,8 +33,6 @@
                         <div class="flex flex-col">
                             <h2 class="flex items-center gap-2 text-base font-extrabold text-gray-800 dark:text-white">
                                 {{ $data_toko['status_aktif_toko']->nilai == 'aktif' ? 'Toko Buka' : 'Toko Tutup' }}
-                                {{-- Opsional: Badge Tambahan --}}
-                                {{-- <span class="px-2 py-0.5 text-[10px] font-bold text-white uppercase bg-green-500 rounded-full tracking-wider shadow-sm">Buka</span> --}}
                             </h2>
                             <p class="mt-0.5 text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                                 <i class="fa-regular fa-calendar-days text-[10px] text-gray-400"></i> 
@@ -94,9 +93,7 @@
             <div class="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4 auto-rows-fr">
                 @forelse($produks as $item)
                     @php
-                        // Cek apakah item ini sudah ada di mangkuk aktif
                         $qtyInBowl = $bowls[$activeBowlIndex]['items'][$item->id_produk]['qty'] ?? 0;
-                        // Format sanitasi teks agar aman dimasukkan ke Javascript
                         $safeNama = addslashes($item->nama);
                         $safeDeskripsi = addslashes(preg_replace('/\r|\n/', ' ', $item->deskripsi ?? 'Belum ada deskripsi untuk produk ini.'));
                         $gambarUrl = $item->gambar ? asset('storage/'.$item->gambar) : '';
@@ -249,10 +246,14 @@
                         <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Total ({{ count($bowls) }} Mangkuk)</span>
                         <span class="text-lg font-bold text-brand-dark dark:text-white">Rp {{ number_format($total_harga, 0, ',', '.') }}</span>
                     </div>
-                    <button wire:click="checkout" wire:loading.attr="disabled" class="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-bold text-white transition-all shadow-lg bg-brand-red hover:bg-red-700 rounded-xl active:scale-95 disabled:opacity-50">
-                        <span wire:loading.remove>Checkout Pesanan</span>
-                        <span wire:loading><i class="fa-solid fa-spinner fa-spin"></i> Loading...</span>
+                    
+                    {{-- TOMBOL TRIGGER MODAL KONFIRMASI --}}
+                    <button type="button" 
+                            @click="if('{{ $total_harga }}' > 0) { showConfirmModal = true; } else { $wire.checkout(); }" 
+                            class="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-bold text-white transition-all shadow-lg bg-brand-red hover:bg-red-700 rounded-xl active:scale-95 disabled:opacity-50">
+                        <span>Checkout Pesanan</span>
                     </button>
+
                 </div>
             </div>
         </aside>
@@ -296,6 +297,42 @@
 
                 <button @click="showInfoModal = false" class="w-full mt-5 py-3.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors shadow-sm">
                     Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="showConfirmModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4" x-cloak>
+        <div x-show="showConfirmModal" x-transition.opacity @click="showConfirmModal = false" class="fixed inset-0 bg-black/60 backdrop-blur-sm"></div>
+        
+        <div x-show="showConfirmModal" 
+             x-transition:enter="transition ease-out duration-300" 
+             x-transition:enter-start="opacity-0 scale-95 translate-y-4" 
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0" 
+             x-transition:leave="transition ease-in duration-200" 
+             x-transition:leave-start="opacity-100 scale-100 translate-y-0" 
+             x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+             class="relative w-full max-w-sm bg-white dark:bg-gray-900 rounded-[2rem] p-6 border border-gray-100 dark:border-gray-800 shadow-2xl overflow-hidden text-center">
+            
+            <div class="flex items-center justify-center w-20 h-20 mx-auto mb-4 text-4xl rounded-full bg-red-50 text-brand-red dark:bg-red-900/20">
+                <i class="fa-solid fa-clipboard-check"></i>
+            </div>
+
+            <h3 class="mb-2 text-xl font-black text-gray-900 dark:text-white">Pesanan Sudah Benar?</h3>
+            <p class="mb-6 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+                Pastikan semua pilihan menu dan level pedas sudah sesuai.<br> 
+                Anda akan diarahkan ke halaman pembayaran setelah ini.
+            </p>
+
+            <div class="flex gap-3">
+                <button @click="showConfirmModal = false" class="flex-1 py-3.5 font-bold text-gray-700 transition-colors bg-gray-100 rounded-xl hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
+                    Cek Lagi
+                </button>
+                
+                {{-- TOMBOL EKSEKUSI CHECKOUT (LIVEWIRE) --}}
+                <button wire:click="checkout" @click="showConfirmModal = false" wire:loading.attr="disabled" class="flex-1 flex items-center justify-center gap-2 py-3.5 font-bold text-white transition-all shadow-lg bg-brand-red rounded-xl hover:bg-red-700 active:scale-95 disabled:opacity-50">
+                    <span wire:loading.remove wire:target="checkout">Ya, Lanjut</span>
+                    <span wire:loading wire:target="checkout"><i class="fa-solid fa-spinner fa-spin"></i> Proses...</span>
                 </button>
             </div>
         </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Struk Pesanan - {{ $pesanan->nomor_invoice }}</title>
+    <title>Struk Pesanan - {{ $pesanan->id_pesanan }}</title>
     <style>
         /* RESET & SETUP KERTAS 58mm */
         @page { margin: 0; }
@@ -68,7 +68,7 @@
         <div class="border-dashed"></div>
 
         <div class="info-transaksi">
-            <div><span>Inv:</span> <span>{{ $pesanan->nomor_invoice }}</span></div>
+            <div><span>Inv:</span> <span>{{ $pesanan->id_pesanan }}</span></div>
             <div><span>Tgl:</span> <span>{{ $pesanan->created_at->format('d/m/Y H:i') }}</span></div>
             <div><span>Kasir:</span> <span>{{ $pesanan->kasir->nama ?? 'Sistem' }}</span></div>
             <div><span>Plgn:</span> <span>{{ $pesanan->user->nama ?? 'Walk-in' }}</span></div>

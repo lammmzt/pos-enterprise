@@ -82,6 +82,7 @@ class AuthLanding extends Component
         ]);
         
         $user = User::create([
+            'id_user' => uniqid(),
             'nama' => $this->nama,
             'no_hp' => $this->no_hp,
             'username' => $this->no_hp,
@@ -149,7 +150,7 @@ class AuthLanding extends Component
         
         if ($this->otpContext === 'registrasi') {
             $user = User::find($this->tempUserId);
-            $user->update(['status' => 'aktif']);
+            $user->save(['status' => 'aktif']);// kenapa erro disini? apa karena id buka int?
             Auth::login($user);
             return redirect()->route('Order'); 
         } elseif ($this->otpContext === 'reset_password') {
@@ -180,7 +181,14 @@ class AuthLanding extends Component
         $user = User::where('no_hp', $this->no_hp)->first();
 
         if ($user && Auth::attempt(['no_hp' => $this->no_hp, 'password' => $this->password])) {
-            return redirect()->route('Order');
+            if ($user->status == 'aktif') {
+                return redirect()->route('Order');
+            }else{
+                // mengaktifkan akun dengan otp
+                $this->tempUserId = $user->id_user;
+                $this->otpContext = 'login';
+                $this->sendOtpCode($user, 'login');
+            }
         }
         session()->flash('error', 'Nomor HP atau Password salah.');
     }
