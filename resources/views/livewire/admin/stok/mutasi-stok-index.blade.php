@@ -44,7 +44,7 @@
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase whitespace-nowrap">Jenis Mutasi</th>
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase">Qty (+/-)</th>
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase">Catatan</th>
-                                <th class="px-6 py-4 font-bold text-gray-400 uppercase">Admin</th>
+                                <th class="px-6 py-4 font-bold text-gray-400 uppercase">Pengguna Penginput</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">

@@ -29,8 +29,24 @@ class Order extends Component
 
     public function mount()
     {
-        // Inisialisasi Mangkuk Pertama
-        $this->addBowl('Mangkuk 1');
+       // Cek apakah ada data reorder dari halaman Riwayat
+        if (session()->has('reorder_cart')) {
+            // Ambil data dari session dan masukkan ke keranjang aktif
+            $this->bowls = session()->get('reorder_cart');
+            $this->activeBowlIndex = 0;
+            
+            // Hitung total harga sesuai mangkuk yang baru di-load
+            $this->calculateTotal();
+            
+            // Hapus session agar tidak terus-terusan meload jika halaman di-refresh
+            session()->forget('reorder_cart');
+            
+            // (Opsional) Kirim notifikasi sukses
+            session()->flash('success', 'Keranjang berhasil diisi dengan pesanan lama Anda.');
+        } else {
+            // Jika tidak ada reorder, inisialisasi Mangkuk Pertama kosong seperti biasa
+            $this->addBowl('Mangkuk 1');
+        }
     }
 
     public function render()
@@ -258,7 +274,7 @@ class Order extends Component
                                 'jumlah' => $qtyDiambil,
                                 'tipe_referensi' => 'Penjualan',
                                 'id_referensi' => $pesanan->id_pesanan,
-                                'catatan' => 'Penjualan Mangkuk: ' . $mangkuk->id_mangkuk
+                                'catatan' => 'Penjualan Mangkuk: ' . $mangkuk->nama_pemesan . ' (Invoice: ' . $pesanan->nomor_invoice . ')',
                                 
                             ]);
 

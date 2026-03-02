@@ -187,7 +187,7 @@
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Rp {{ number_format($item['harga'] * $item['qty'], 0, ',', '.') }}</span>
-                                                    <button wire:click="updateItem({{ $id }}, -1)" class="w-5 h-5 text-gray-400 bg-gray-100 rounded hover:text-red-500"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                                                    <button wire:click="updateItem({{ $id }}, -1)" class="w-5 h-5 text-gray-400 bg-gray-100 rounded hover:text-red-500"><i class="fa-solid fa-trash-can text-[13px]"></i></button>
                                                 </div>
                                             </li>
                                         @empty

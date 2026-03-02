@@ -129,7 +129,7 @@ class Payment extends Component
     public function cancelExpiredOrder()
     {
         // Jika statusnya belum dibayar/proses, batalkan
-        if ($this->pesanan->status_pembayaran !== 'lunas' && $this->pesanan->status_pesanan !== 'proses') {
+        if ($this->pesanan->status_pembayaran !== 'lunas') {
             
             // 1. Kembalikan Stok (Logika Reverse FEFO)
             foreach ($this->pesanan->mangkuk as $mangkuk) {
@@ -156,6 +156,8 @@ class Payment extends Component
                         'id_referensi' => $this->pesanan->id_pesanan,
                         'catatan' => 'Pengembalian stok (Otomatis) - Waktu pembayaran habis. Invoice: ' . $this->pesanan->nomor_invoice,
                     ]);
+
+                    
                 }
             }
 
@@ -166,9 +168,9 @@ class Payment extends Component
             ]);
             
             session()->flash('error', 'Waktu pembayaran telah habis. Pesanan otomatis dibatalkan.');
+            return redirect()->route('Order');
         }
 
-        return redirect()->route('Order');
     }
 
     public function render()
