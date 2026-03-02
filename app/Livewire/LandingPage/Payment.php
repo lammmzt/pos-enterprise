@@ -13,6 +13,10 @@ class Payment extends Component
     public $pesananId;
     public $pesanan;
     public $metode_pembayaran = 'qris'; // Default
+    
+    // Properti Baru
+    public $tipe_pesanan; 
+    public $isKasir = false;
 
     // Properti khusus Delivery
     public $nomor_hp;
@@ -29,49 +33,50 @@ class Payment extends Component
             abort(403, 'Akses Ditolak');
         }
 
-        // Jika tipe delivery, isi form dengan data user
-        if ($this->pesanan->tipe_pesanan === 'delivery') {
-            $this->nomor_hp = Auth::user()->nomor_hp;
-            $this->alamat = $this->pesanan->alamat ?? ''; 
-            $this->catatan = $this->pesanan->catatan ?? '';
-        }
-    }
+        // Set Nilai Awal
+        $this->tipe_pesanan = $this->pesanan->tipe_pesanan ?? 'takeaway';
 
-    // Mengecek apakah user ini adalah 'antrean_'
-    public function getIsKasirAttribute()
-    {
-        $namaUser = Auth::user()->nama ?? Auth::user()->username ?? '';
-        return strpos(strtolower($namaUser), 'antrean_') !== false;
+        // Cek apakah user ini adalah 'antrean_' (Kasir)
+        $namaUser = strtolower(Auth::user()->nama ?? Auth::user()->username ?? '');
+        $this->isKasir = (strpos($namaUser, 'antrean_') !== false);
+
+        // Inisialisasi form delivery dengan data user yang login
+        $this->nomor_hp = Auth::user()->nomor_hp;
+        $this->alamat = $this->pesanan->alamat ?? ''; 
+        $this->catatan = $this->pesanan->catatan ?? '';
     }
 
     public function processPayment()
     {
-        // 1. Simpan perubahan alamat jika tipe Delivery
-        if ($this->pesanan->tipe_pesanan === 'delivery') {
+        // 1. Siapkan data update
+        $updateData = [
+            'tipe_pesanan' => $this->tipe_pesanan,
+            'metode_pembayaran' => $this->metode_pembayaran
+        ];
+
+        // 2. Jika tipe Delivery, validasi dan simpan alamat
+        if ($this->tipe_pesanan === 'delivery') {
             $this->validate([
                 'nomor_hp' => 'required|numeric',
                 'alamat' => 'required|string|min:10',
             ]);
             
-            // Simpan ke pesanan
-            $this->pesanan->update([
-                'link_delivery' => $this->alamat . ' | HP: ' . $this->nomor_hp, // Asumsi ini kolom alamat di DB Anda
-                'catatan' => $this->catatan
-            ]);
+            $updateData['link_delivery'] = $this->alamat . ' | HP: ' . $this->nomor_hp;
+            $updateData['catatan'] = $this->catatan;
         }
 
-        $this->pesanan->update(['metode_pembayaran' => $this->metode_pembayaran]);
+        // Simpan perubahan ke database
+        $this->pesanan->update($updateData);
 
-        // 2. Logika Pembayaran
+        // 3. Logika Pembayaran
         if ($this->metode_pembayaran === 'tunai') {
-            // Jika Tunai (Hanya Kasir), langsung selesai dan masuk dapur
+            // Jika Tunai (Hanya Kasir), langsung selesai dan masuk antrean dapur
             $this->pesanan->update([
                 'status_pembayaran' => 'lunas',
                 'status_pesanan' => 'proses'
             ]);
             
-            // Redirect ke halaman sukses
-            return redirect()->route('Order')->with('success', 'Pesanan Tunai Berhasil. Silakan ke kasir.');
+            return redirect()->route('Order')->with('success', 'Pesanan Tunai Berhasil. Menunggu dimasak dapur.');
             
         } elseif ($this->metode_pembayaran === 'qris') {
             // Konfigurasi Midtrans

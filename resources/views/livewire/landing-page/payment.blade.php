@@ -9,6 +9,9 @@
                     <i class="text-sm fa-solid fa-arrow-left"></i>
                 </a>
                 <div class="flex items-center gap-2">
+                    <div class="flex items-center justify-center w-8 h-8 text-white shadow-lg rounded-xl bg-gradient-to-br from-brand-red to-orange-500 shadow-orange-500/20 rotate-3">
+                        <i class="text-sm fa-solid fa-fire-flame-curved"></i>
+                    </div>
                     <h1 class="text-lg font-extrabold tracking-tight text-gray-800 dark:text-white">Pembayaran</h1>
                 </div>
             </div>
@@ -23,8 +26,33 @@
             
             <div class="space-y-6 lg:col-span-7">
                 
-                @if($pesanan->tipe_pesanan === 'delivery')
-                    <div class="p-5 bg-white border border-gray-100 shadow-sm rounded-2xl dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-5 bg-white border border-gray-100 shadow-sm rounded-2xl dark:bg-gray-800 dark:border-gray-700">
+                    <h2 class="mb-4 text-base font-bold text-gray-800 dark:text-white">Tipe Pesanan</h2>
+                    <div class="grid grid-cols-3 gap-3">
+                        
+                        <label class="relative flex flex-col items-center p-3 text-center transition-all border-2 cursor-pointer rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 {{ $tipe_pesanan === 'dinein' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
+                            <input type="radio" wire:model.live="tipe_pesanan" value="dinein" class="hidden">
+                            <i class="mb-2 text-2xl fa-solid fa-utensils {{ $tipe_pesanan === 'dinein' ? 'text-brand-red' : 'text-gray-400' }}"></i>
+                            <span class="text-xs font-bold {{ $tipe_pesanan === 'dinein' ? 'text-brand-red' : 'text-gray-500' }}">Makan Sini</span>
+                        </label>
+
+                        <label class="relative flex flex-col items-center p-3 text-center transition-all border-2 cursor-pointer rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 {{ $tipe_pesanan === 'takeaway' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
+                            <input type="radio" wire:model.live="tipe_pesanan" value="takeaway" class="hidden">
+                            <i class="mb-2 text-2xl fa-solid fa-bag-shopping {{ $tipe_pesanan === 'takeaway' ? 'text-brand-red' : 'text-gray-400' }}"></i>
+                            <span class="text-xs font-bold {{ $tipe_pesanan === 'takeaway' ? 'text-brand-red' : 'text-gray-500' }}">Bawa Pulang</span>
+                        </label>
+
+                        <label class="relative flex flex-col items-center p-3 text-center transition-all border-2 cursor-pointer rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 {{ $tipe_pesanan === 'delivery' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
+                            <input type="radio" wire:model.live="tipe_pesanan" value="delivery" class="hidden">
+                            <i class="mb-2 text-2xl fa-solid fa-motorcycle {{ $tipe_pesanan === 'delivery' ? 'text-brand-red' : 'text-gray-400' }}"></i>
+                            <span class="text-xs font-bold {{ $tipe_pesanan === 'delivery' ? 'text-brand-red' : 'text-gray-500' }}">Delivery</span>
+                        </label>
+
+                    </div>
+                </div>
+
+                @if($tipe_pesanan === 'delivery')
+                    <div class="p-5 bg-white border border-gray-100 shadow-sm rounded-2xl dark:bg-gray-800 dark:border-gray-700 animate-fade-in-up">
                         <div class="flex items-center gap-2 mb-4 text-brand-orange">
                             <i class="text-xl fa-solid fa-motorcycle"></i>
                             <h2 class="text-base font-bold text-gray-800 dark:text-white">Informasi Pengiriman</h2>
@@ -93,7 +121,7 @@
                                 <input type="radio" wire:model="metode_pembayaran" value="qris" class="w-5 h-5 text-brand-red focus:ring-brand-red">
                             </label>
 
-                            @if($this->isKasir)
+                            @if($isKasir)
                                 <label class="flex items-center justify-between p-4 transition-colors border-2 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50 {{ $metode_pembayaran === 'tunai' ? 'border-brand-red bg-red-50/30 dark:bg-red-900/10' : 'border-gray-100 dark:border-gray-700' }}">
                                     <div class="flex items-center gap-3">
                                         <div class="text-2xl text-emerald-500"><i class="fa-solid fa-money-bill-wave"></i></div>
@@ -124,22 +152,31 @@
 
         </div>
     </div>
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up {
+        animation: fadeInUp 0.4s ease-out forwards;
+    }
+</style>
 </div>
+
 
 @push('scripts')
 <script>
-    document.addEventListener('livewire:navigated', () => {
+    document.addEventListener('livewire:initialized', () => {
         Livewire.on('pay-with-midtrans', (event) => {
             let snapToken = event[0].token;
             
             window.snap.pay(snapToken, {
                 onSuccess: function(result){
-                    // Pembayaran Sukses (Webhook juga akan update DB)
                     alert("Pembayaran Berhasil! Pesanan Anda sedang diproses.");
-                    window.location.href = "{{ route('Order') }}"; // Redirect ke halaman sukses/riwayat
+                    window.location.href = "{{ route('Order') }}";
                 },
                 onPending: function(result){
-                    alert("Menunggu pembayaran Anda.");
+                    alert("Menunggu pembayaran Anda diselesaikan.");
                 },
                 onError: function(result){
                     alert("Pembayaran Gagal. Silakan coba lagi.");
