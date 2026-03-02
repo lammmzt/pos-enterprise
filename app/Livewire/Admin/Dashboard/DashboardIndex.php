@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Dashboard;
 use Livewire\Component;
 use App\Models\Pesanan;
 use App\Models\Produk;
+use App\Models\Pengaturan;
 use App\Models\BatchProduk;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,7 @@ class DashboardIndex extends Component
 
     public function render()
     {
+        $data['statusAktifToko'] = Pengaturan::where('kunci', 'status_aktif_toko')->first();
         $start = $this->tanggalMulai . ' 00:00:00';
         $end = $this->tanggalAkhir . ' 23:59:59';
 
@@ -77,5 +79,15 @@ class DashboardIndex extends Component
         ]);
 
         return view('livewire.admin.dashboard.dashboard-index', $data)->layout('components.layouts.app', $data);
+    }
+
+    public function ubahStatusAktifToko()
+    {
+        $pengaturan = Pengaturan::where('kunci', 'status_aktif_toko')->first();
+        $pengaturan->nilai = $pengaturan->nilai == 'aktif' ? 'tidak_aktif' : 'aktif';
+        $pengaturan->save();
+
+        $this->dispatch('toast', type: 'success', message: 'Status aktif toko berhasil diubah!');
+        $this->statusAktifToko = $pengaturan->nilai;
     }
 }

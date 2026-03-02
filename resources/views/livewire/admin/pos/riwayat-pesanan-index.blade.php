@@ -62,7 +62,7 @@
                             <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/40">
                                 <td class="px-6 py-4">
                                     <div class="flex flex-col">
-                                        <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ $item->nomor_invoice }}</span>
+                                        <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ $item->id_pesanan }}</span>
                                         <span class="text-[10px] text-gray-500">{{ $item->created_at->format('d M Y, H:i') }}</span>
                                     </div>
                                 </td>
@@ -135,7 +135,7 @@
                     @if($detailPesanan)
                         <div class="flex items-start justify-between pb-4 mb-6 border-b border-gray-100 dark:border-gray-800">
                             <div>
-                                <h4 class="text-2xl font-black text-gray-900 dark:text-white">{{ $detailPesanan->nomor_invoice }}</h4>
+                                <h4 class="text-2xl font-black text-gray-900 dark:text-white">{{ $detailPesanan->id_pesanan }}</h4>
                                 <p class="mt-1 text-xs text-gray-500">{{ $detailPesanan->created_at->format('d F Y, H:i:s') }} | Kasir: {{ $detailPesanan->kasir->nama ?? 'Sistem' }}</p>
                             </div>
                             <div class="flex gap-2">

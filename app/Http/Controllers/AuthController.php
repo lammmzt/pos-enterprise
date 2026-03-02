@@ -53,6 +53,16 @@ class AuthController extends Controller
         return redirect('/login');
     }
 
+    public function logoutUser(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/Auth');
+    }
+
     /**
      * Helper untuk mengarahkan user berdasarkan role.
      */

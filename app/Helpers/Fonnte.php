@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Models\Pengaturan;
 
 class Fonnte
 {
@@ -15,7 +16,8 @@ class Fonnte
      */
     public static function send($target, $message)
     {
-        $token = env('FONNTE_TOKEN');
+        // $token = env('FONNTE_TOKEN');
+        $token = Pengaturan::where('kunci', 'fonnte_token')->first()->nilai;
 
         if (!$token) {
             Log::error('Fonnte Token tidak ditemukan di .env');

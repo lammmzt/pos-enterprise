@@ -44,7 +44,7 @@
                             <label class="block mb-1.5 text-sm font-bold text-gray-700 dark:text-gray-300">Nomor HP / WhatsApp</label>
                             <div class="relative">
                                 <i class="absolute text-gray-400 transform -translate-y-1/2 fa-solid fa-phone left-4 top-1/2"></i>
-                                <input type="number" wire:model="no_hp" placeholder="Contoh: 08123456789" class="w-full py-3 pl-11 pr-4 bg-gray-50 border @error('no_hp') border-red-500 @else border-gray-200 @enderror rounded-xl focus:ring-2 focus:ring-brand-red outline-none dark:bg-gray-900 dark:border-gray-700 dark:text-white transition-all">
+                                <input type="text" wire:model="no_hp" placeholder="Contoh: 08123456789" class="w-full py-3 pl-11 pr-4 bg-gray-50 border @error('no_hp') border-red-500 @else border-gray-200 @enderror rounded-xl focus:ring-2 focus:ring-brand-red outline-none dark:bg-gray-900 dark:border-gray-700 dark:text-white transition-all" maxlength="15" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
                             </div>
                             @error('no_hp') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                         </div>
@@ -85,11 +85,12 @@
                             <label class="block mb-1.5 text-sm font-bold text-gray-700 dark:text-gray-300">Nomor WhatsApp Aktif</label>
                             <div class="relative">
                                 <i class="absolute text-gray-400 transform -translate-y-1/2 fa-brands fa-whatsapp left-4 top-1/2"></i>
-                                <input type="number" wire:model="no_hp" placeholder="08..." class="w-full py-3 pr-4 border border-gray-200 outline-none pl-11 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-red dark:bg-gray-900 dark:border-gray-700 dark:text-white">
+                                <input type="text" wire:model="no_hp" placeholder="08..." class="w-full py-3 pr-4 border border-gray-200 outline-none pl-11 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-red dark:bg-gray-900 dark:border-gray-700 dark:text-white" maxlength="15" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
                             </div>
                             <p class="mt-1 text-[10px] text-gray-500">*Pastikan nomor aktif untuk menerima OTP</p>
                             @error('no_hp') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                         </div>
+                    
                         <div x-data="{ show: false }">
                             <label class="block mb-1.5 text-sm font-bold text-gray-700 dark:text-gray-300">Buat Password</label>
                             <div class="relative">
@@ -108,7 +109,23 @@
                                 <input :type="show ? 'text' : 'password'" wire:model="password_confirmation" placeholder="Ulangi Password" class="w-full py-3 pr-12 border border-gray-200 outline-none pl-11 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-red dark:bg-gray-900 dark:border-gray-700 dark:text-white">
                             </div>
                         </div>
-
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-700 dark:text-gray-300">Alamat</label>
+                            <div class="relative">
+                                <i class="absolute text-gray-400 transform -translate-y-1/2 fa-solid fa-location-dot left-4 top-1/2"></i>
+                                <input type="text" wire:model="alamat" placeholder="Alamat lengkap" class="w-full py-3 pr-4 border border-gray-200 outline-none pl-11 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-red dark:bg-gray-900 dark:border-gray-700 dark:text-white" >
+                            </div>
+                            @error('alamat') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-700 dark:text-gray-300">Catatan (Opsional)</label>
+                            <div class="relative">
+                                <i class="absolute text-gray-400 transform -translate-y-1/2 fa-solid fa-pencil left-4 top-1/2"></i>
+                                <textarea type="text" wire:model="catatan" placeholder="contoh : patokan depan masjid" class="w-full py-3 pr-4 border border-gray-200 outline-none pl-11 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-red dark:bg-gray-900 dark:border-gray-700 dark:text-white" ></textarea>
+                            </div>
+                            @error('catatan') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                        
                         <button type="submit" wire:loading.attr="disabled" class="w-full py-3.5 mt-4 font-bold text-white transition-all shadow-lg rounded-xl bg-brand-red hover:bg-red-700 active:scale-95 shadow-red-500/20 disabled:opacity-50">
                             <span wire:loading.remove wire:target="register">Daftar Akun</span>
                             <span wire:loading wire:target="register"><i class="mr-2 fa-solid fa-spinner fa-spin"></i> Mengirim OTP...</span>
@@ -117,16 +134,16 @@
                 </form>
 
                 <form wire:submit="forgotPassword" x-show="tab === 'forgot'" x-transition.opacity style="display: none;">
-                    <div class="text-center mb-6">
+                    <div class="mb-6 text-center">
                         <h2 class="text-xl font-bold dark:text-white">Lupa Kata Sandi?</h2>
-                        <p class="text-sm text-gray-500">Masukkan nomor WA Anda yang terdaftar, kami akan mengirimkan OTP untuk reset password.</p>
+                        <p class="text-sm text-gray-500">Masukkan nomor WA terdaftar, kami akan mengirimkan OTP untuk reset password.</p>
                     </div>
                     <div class="space-y-4">
                         <div>
                             <label class="block mb-1.5 text-sm font-bold text-gray-700 dark:text-gray-300">Nomor WhatsApp Terdaftar</label>
                             <div class="relative">
                                 <i class="absolute text-gray-400 transform -translate-y-1/2 fa-brands fa-whatsapp left-4 top-1/2"></i>
-                                <input type="number" wire:model="reset_no_hp" placeholder="Contoh: 08123456789" class="w-full py-3 pl-11 pr-4 bg-gray-50 border @error('reset_no_hp') border-red-500 @else border-gray-200 @enderror rounded-xl focus:ring-2 focus:ring-brand-red outline-none dark:bg-gray-900 dark:border-gray-700 dark:text-white transition-all">
+                                <input type="text" wire:model="reset_no_hp" placeholder="Contoh: 08123456789" class="w-full py-3 pl-11 pr-4 bg-gray-50 border @error('reset_no_hp') border-red-500 @else border-gray-200 @enderror rounded-xl focus:ring-2 focus:ring-brand-red outline-none dark:bg-gray-900 dark:border-gray-700 dark:text-white transition-all" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
                             </div>
                             @error('reset_no_hp') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                         </div>
@@ -143,7 +160,7 @@
                 </form>
 
                 <form wire:submit="updatePassword" x-show="tab === 'reset_password'" x-transition.opacity style="display: none;">
-                    <div class="text-center mb-6">
+                    <div class="mb-6 text-center">
                         <h2 class="text-xl font-bold dark:text-white">Buat Sandi Baru</h2>
                         <p class="text-sm text-gray-500">Silakan buat kata sandi baru untuk akun Anda.</p>
                     </div>
@@ -179,17 +196,48 @@
     </div>
 
     <div x-data="{ 
-            timer: 120, 
+            timer: 0, 
             canResend: false, 
             interval: null,
+            init() {
+                // Saat halaman direload, cek apakah ada timer OTP yang masih berjalan
+                let expiry = localStorage.getItem('otp_expiry');
+                if (expiry) {
+                    let now = new Date().getTime();
+                    let diff = Math.floor((expiry - now) / 1000);
+                    if (diff > 0) {
+                        this.timer = diff;
+                        this.canResend = false;
+                        $wire.showOtpModal = true; // Paksa buka modal jika timer belum habis
+                        this.runTimer();
+                    } else {
+                        this.timer = 0;
+                        this.canResend = true;
+                    }
+                }
+            },
             startTimer() {
+                // Set batas kedaluwarsa 2 menit (120 detik) dari sekarang
+                let expiry = new Date().getTime() + (120 * 1000);
+                localStorage.setItem('otp_expiry', expiry);
                 this.timer = 120;
                 this.canResend = false;
+                $wire.showOtpModal = true;
+                this.runTimer();
+            },
+            runTimer() {
                 clearInterval(this.interval);
                 this.interval = setInterval(() => {
-                    if (this.timer > 0) {
-                        this.timer--;
+                    let expiry = localStorage.getItem('otp_expiry');
+                    if (!expiry) return;
+
+                    let now = new Date().getTime();
+                    let diff = Math.floor((expiry - now) / 1000);
+                    
+                    if (diff > 0) {
+                        this.timer = diff;
                     } else {
+                        this.timer = 0;
                         this.canResend = true;
                         clearInterval(this.interval);
                     }
@@ -206,6 +254,10 @@
                 } else if (event.target.value.length === 1 && index < 3) {
                     $refs['otp' + (index + 1)].focus();
                 }
+            },
+            closeModal() {
+                $wire.showOtpModal = false;
+                localStorage.removeItem('otp_expiry');
             }
          }" 
          @otp-sent.window="startTimer()" 
@@ -214,7 +266,9 @@
          
         <div x-show="$wire.showOtpModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="relative w-full max-w-sm p-8 text-center bg-white shadow-2xl dark:bg-gray-800 rounded-3xl">
             
-            <button @click="$wire.showOtpModal = false" class="absolute text-gray-400 top-4 right-5 hover:text-gray-600 dark:hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <button x-show="canResend" @click="closeModal()" class="absolute text-gray-400 top-4 right-5 hover:text-gray-600 dark:hover:text-white">
+                <i class="text-xl fa-solid fa-xmark"></i>
+            </button>
 
             <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-2xl rounded-full bg-brand-red/10 text-brand-red">
                 <i class="fa-brands fa-whatsapp"></i>
@@ -230,13 +284,13 @@
             @enderror
 
             <div class="flex justify-center gap-3 mb-6" dir="ltr">
-                <input type="text" inputmode="numeric" maxlength="1" x-ref="otp0" wire:model="otp.0" @keyup="focusNext($event, 0)" class="w-12 h-14 text-2xl font-black text-center text-gray-800 bg-gray-100 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-red outline-none dark:bg-gray-900 dark:border-gray-700 dark:text-white transition-all">
-                <input type="text" inputmode="numeric" maxlength="1" x-ref="otp1" wire:model="otp.1" @keyup="focusNext($event, 1)" class="w-12 h-14 text-2xl font-black text-center text-gray-800 bg-gray-100 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-red outline-none dark:bg-gray-900 dark:border-gray-700 dark:text-white transition-all">
-                <input type="text" inputmode="numeric" maxlength="1" x-ref="otp2" wire:model="otp.2" @keyup="focusNext($event, 2)" class="w-12 h-14 text-2xl font-black text-center text-gray-800 bg-gray-100 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-red outline-none dark:bg-gray-900 dark:border-gray-700 dark:text-white transition-all">
-                <input type="text" inputmode="numeric" maxlength="1" x-ref="otp3" wire:model="otp.3" @keyup="focusNext($event, 3)" class="w-12 h-14 text-2xl font-black text-center text-gray-800 bg-gray-100 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-red outline-none dark:bg-gray-900 dark:border-gray-700 dark:text-white transition-all">
+                <input type="text" inputmode="numeric" maxlength="1" x-ref="otp0" wire:model="otp.0" @keyup="focusNext($event, 0)" class="w-12 text-2xl font-black text-center text-gray-800 transition-all bg-gray-100 border border-gray-200 outline-none h-14 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-red dark:bg-gray-900 dark:border-gray-700 dark:text-white">
+                <input type="text" inputmode="numeric" maxlength="1" x-ref="otp1" wire:model="otp.1" @keyup="focusNext($event, 1)" class="w-12 text-2xl font-black text-center text-gray-800 transition-all bg-gray-100 border border-gray-200 outline-none h-14 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-red dark:bg-gray-900 dark:border-gray-700 dark:text-white">
+                <input type="text" inputmode="numeric" maxlength="1" x-ref="otp2" wire:model="otp.2" @keyup="focusNext($event, 2)" class="w-12 text-2xl font-black text-center text-gray-800 transition-all bg-gray-100 border border-gray-200 outline-none h-14 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-red dark:bg-gray-900 dark:border-gray-700 dark:text-white">
+                <input type="text" inputmode="numeric" maxlength="1" x-ref="otp3" wire:model="otp.3" @keyup="focusNext($event, 3)" class="w-12 text-2xl font-black text-center text-gray-800 transition-all bg-gray-100 border border-gray-200 outline-none h-14 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-red dark:bg-gray-900 dark:border-gray-700 dark:text-white">
             </div>
 
-            <button wire:click="verifyOtp" wire:loading.attr="disabled" class="w-full py-3.5 font-bold text-white transition-all rounded-xl bg-brand-red hover:bg-red-700 shadow-lg shadow-red-500/20 active:scale-95 disabled:opacity-50">
+            <button wire:click="verifyOtp" @click="setTimeout(() => { localStorage.removeItem('otp_expiry'); }, 1000);" wire:loading.attr="disabled" class="w-full py-3.5 font-bold text-white transition-all rounded-xl bg-brand-red hover:bg-red-700 shadow-lg shadow-red-500/20 active:scale-95 disabled:opacity-50">
                 <span wire:loading.remove wire:target="verifyOtp">Verifikasi OTP</span>
                 <span wire:loading wire:target="verifyOtp"><i class="mr-2 fa-solid fa-spinner fa-spin"></i> Memeriksa...</span>
             </button>
