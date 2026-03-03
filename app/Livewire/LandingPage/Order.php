@@ -221,7 +221,7 @@ class Order extends Component
                     'nomor_invoice' => $invoice_no,
                     'total_harga' => $this->total_harga,
                     'status_pembayaran' => 'belum_bayar',
-                    'status_pesanan' => 'proses', // Masuk antrean dapur tapi ditahan status pembayarannya
+                    'status_pesanan' => 'menunggu_pembayaran', // Masuk antrean dapur tapi ditahan status pembayarannya
                 ]);
                 
                 $pesananId = $pesanan->id_pesanan;

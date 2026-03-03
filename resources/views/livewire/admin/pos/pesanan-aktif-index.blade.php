@@ -13,7 +13,7 @@
 
             <div class="relative w-full md:w-72">
                 <i class="absolute text-gray-400 -translate-y-1/2 ti ti-search left-4 top-1/2"></i>
-                <input type="text" wire:model.live.debounce.300ms="search" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl pl-11 pr-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all" placeholder="Cari No. Invoice / Pelanggan...">
+                <input autofocus type="text" wire:model.live.debounce.300ms="search" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl pl-11 pr-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all" placeholder="Cari No. Invoice / Pelanggan..." id="search_input">
             </div>
         </div>
     </div>
@@ -34,6 +34,8 @@
                             </span>
                             @if($pesanan->status_pembayaran === 'belum_bayar')
                                 <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded-md bg-red-100 text-red-700 animate-pulse">Belum Bayar</span>
+                            @elseif($pesanan->status_pembayaran === 'prose_bayar')
+                                <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded-md bg-yellow-100 text-yellow-700 animate-pulse">Proses Bayar</span>
                             @else
                                 <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded-md bg-emerald-100 text-emerald-700">Lunas</span>
                             @endif
@@ -86,11 +88,15 @@
                 </div>
 
                 <div class="p-3 space-y-2 border-t border-gray-100 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-800">
-                    @if($pesanan->status_pembayaran === 'belum_bayar')
+                    @if($pesanan->status_pembayaran === 'prose_bayar' )
                         <button wire:click="openModalPembayaran({{ $pesanan->id_pesanan }})" class="flex items-center justify-center w-full gap-2 py-2 text-xs font-bold text-white transition-all bg-yellow-500 shadow-sm rounded-xl hover:bg-yellow-600">
                             <i class="ti ti-cash"></i> Konfirmasi Bayar
                         </button>
+                        <button wire:click="openModalBatal({{ $pesanan->id_pesanan }})" class="flex items-center justify-center w-full gap-2 py-2 text-xs font-bold text-white transition-all bg-red-500 shadow-sm rounded-xl hover:bg-red-600">
+                            <i class="ti ti-cash"></i> Batalkan Pesanan & Refund
+                        </button>
                     @endif
+                    
 
                     @if($pesanan->tipe_pesanan === 'delivery')
                         <button wire:click="openModalDelivery({{ $pesanan->id_pesanan }}, '{{ $pesanan->link_delivery }}')" class="flex items-center justify-center w-full gap-2 py-2 text-xs font-bold text-indigo-700 transition-all bg-indigo-100 shadow-sm rounded-xl hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400">
@@ -98,9 +104,11 @@
                         </button>
                     @endif
 
-                    <button wire:click="openModalSelesai({{ $pesanan->id_pesanan }})" class="w-full py-2.5 text-sm font-bold text-white transition-all {{ $pesanan->status_pembayaran === 'belum_bayar' ? 'bg-gray-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 shadow-sm hover:shadow' }} rounded-xl flex justify-center items-center gap-2">
-                        <i class="ti ti-check"></i> Pesanan Selesai
-                    </button>
+                    @if($pesanan->status_pesanan === 'proses')
+                        <button wire:click="openModalSelesai({{ $pesanan->id_pesanan }})" class="w-full py-2.5 text-sm font-bold text-white transition-all {{ $pesanan->status_pembayaran === 'belum_bayar' ? 'bg-gray-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 shadow-sm hover:shadow' }} rounded-xl flex justify-center items-center gap-2">
+                            <i class="ti ti-check"></i> Pesanan Selesai
+                        </button>
+                    @endif
                 </div>
 
             </div>
@@ -111,6 +119,38 @@
                 <p class="text-sm">Belum ada pesanan aktif saat ini.</p>
             </div>
         @endforelse
+    </div>
+
+    <div x-data="{ open: @entangle('showModalBatalPesanan') }" x-show="open" class="fixed inset-0 z-[10001] flex items-center justify-center p-4" x-cloak>
+        <div x-show="open" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+        <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="relative w-full max-w-md p-6 text-center bg-white border border-gray-100 shadow-xl dark:bg-gray-900 rounded-2xl dark:border-gray-800">
+            
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-3xl rounded-full text-danger-500 bg-danger-100"><i class="ti ti-IconQuestionMark"></i></div>
+            <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Konfirmasi Pembatalan Pesanan</h3>
+            <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">Pastikan Anda akan menbatalkan pesanan dari pelanggan ini.</p>
+            
+            <div class="p-4 mb-6 space-y-3 text-left border border-gray-100 bg-gray-50 dark:bg-gray-800/50 rounded-xl dark:border-gray-700">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="font-medium text-gray-500">Pelanggan</span>
+                    <span class="font-bold text-gray-900 dark:text-white">{{ $paymentCustomer }}</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="font-medium text-gray-500">Metode</span>
+                    <span class="font-bold text-gray-900 dark:text-white">{{ $paymentMethod }}</span>
+                </div>
+                <div class="flex items-center justify-between pt-3 border-t border-gray-200 border-dashed dark:border-gray-700">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Total Tagihan</span>
+                    <span class="text-lg font-black text-emerald-600 dark:text-emerald-400">Rp {{ number_format($paymentTotal, 0, ',', '.') }}</span>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button wire:click="resetModal" class="flex-1 px-4 py-3 font-bold text-gray-700 transition-colors bg-gray-100 rounded-xl hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300">Tutup</button>
+                <button wire:click="batalkanPesanan" class="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-bold text-white transition-colors bg-red-500 shadow-md rounded-xl hover:bg-red-600">
+                    Ya, Batalkan
+                </button>
+            </div>
+        </div>
     </div>
 
     <div x-data="{ open: @entangle('showModalPembayaran') }" x-show="open" class="fixed inset-0 z-[10001] flex items-center justify-center p-4" x-cloak>
@@ -178,13 +218,17 @@
 {{-- SCRIPT UNTUK TRIGGER PRINT STRUK THERMAL OTOMATIS --}}
 @push('scripts')
 <script>
-    document.addEventListener('livewire:initialized', () => {
+    document.addEventListener('livewire:navigated', () => {
         Livewire.on('cetak-struk', (event) => {
             let id = event.id_pesanan;
             let printWindow = window.open(`/admin/pos/struk/${id}`, 'Cetak Struk', 'width=400,height=600');
             printWindow.onload = function() {
                 printWindow.print();
             };
+        });
+        // impment focus on the search input
+        Livewire.on('focus-search-input', () => {
+            document.getElementById('search_input').focus();
         });
     });
 </script>

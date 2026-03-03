@@ -20,6 +20,9 @@ class Payment extends Component
     
     // Properti Baru
     public $tipe_pesanan; 
+    public $tipe_pembayaran;
+    public $status_pembayaran;
+    // public $status_pesanan; 
     public $isKasir = false;
 
     // Properti khusus Delivery
@@ -39,15 +42,18 @@ class Payment extends Component
 
         // Set Nilai Awal
         $this->tipe_pesanan = $this->pesanan->tipe_pesanan ?? 'takeaway';
+        $this->metode_pembayaran = $this->pesanan->metode_pembayaran ?? 'qris';
+        $this->status_pembayaran = $this->pesanan->status_pembayaran ?? 'belum_bayar';
+        // $this->status_pesanan = $this->pesanan->status_pesanan ?? 'menunggu_pembayaran';
 
         // Cek apakah user ini adalah 'antrean_' (Kasir)
         $namaUser = strtolower(Auth::user()->nama ?? Auth::user()->username ?? '');
         $this->isKasir = (strpos($namaUser, 'antrean_') !== false);
 
         // Inisialisasi form delivery dengan data user yang login
-        $this->nomor_hp = Auth::user()->nomor_hp;
-        $this->alamat = $this->pesanan->alamat ?? ''; 
-        $this->catatan = $this->pesanan->catatan ?? '';
+        $this->nomor_hp = Auth::user()->no_hp;
+        $this->alamat = Auth::user()->alamat ?? ''; 
+        $this->catatan = Auth::user()->catatan ?? '';
     }
 
     public function processPayment()
@@ -74,10 +80,13 @@ class Payment extends Component
         // 3. Logika Pembayaran
         if ($this->metode_pembayaran === 'tunai') {
             $this->pesanan->update([
-                'status_pembayaran' => 'lunas',
-                'status_pesanan' => 'proses'
+                'status_pembayaran' => 'prose_bayar',
+                'tipe_pesanan' => $this->tipe_pesanan
             ]);
-            return redirect()->route('Order')->with('success', 'Pesanan Tunai Berhasil. Menunggu dimasak dapur.');
+            // open modal qrcode 
+            $this->dispatch('open-qrcode-modal');
+            return;
+            // return redirect()->route('Order')->with('success', 'Pesanan Tunai Berhasil. Menunggu dimasak dapur.');
             
         } elseif ($this->metode_pembayaran === 'qris') {
             
@@ -113,7 +122,9 @@ class Payment extends Component
                 
                 // SIMPAN KE DATABASE AGAR BISA DIGUNAKAN LAGI
                 $this->pesanan->update([
-                    'snap_token' => $snapToken
+                    'snap_token' => $snapToken,
+                    'status_pembayaran' => 'prose_bayar',
+                    'tipe_pesanan' => $this->tipe_pesanan
                 ]);
 
                 // Trigger event Javascript untuk membuka Popup
@@ -172,7 +183,6 @@ class Payment extends Component
         }
 
     }
-
     public function render()
     {
         $data['title'] = 'Payment';

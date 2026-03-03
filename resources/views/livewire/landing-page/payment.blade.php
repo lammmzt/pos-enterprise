@@ -4,22 +4,24 @@
     $waktuDibuat = \Carbon\Carbon::parse($pesanan->created_at);
     
     // 2. Tambahkan 10 menit sebagai batas kedaluwarsa
-    $waktuKedaluwarsa = $waktuDibuat->copy()->addMinutes(10);
+    $waktuKedaluwarsa = $waktuDibuat->copy()->addMinutes(20);
     
     // 3. Hitung selisih dari waktu kedaluwarsa dengan detik saat ini
     // (false digunakan agar jika waktu sudah lewat, hasilnya menjadi minus)
     $sisaDetik = now()->diffInSeconds($waktuKedaluwarsa, false);
     
-    // 4. Pastikan sisa waktu tidak kurang dari 0 dan tidak lebih dari 600 detik
+    // 4. Pastikan sisa waktu tidak kurang dari 0 dan tidak lebih dari 1200 detik
     $sisaWaktu = $sisaDetik > 0 ? (int) $sisaDetik : 0;
-    if ($sisaWaktu > 600) {
-        $sisaWaktu = 600;
+    if ($sisaWaktu > 1200) {
+        $sisaWaktu = 1200;
     }
 @endphp
 
 <div x-data="paymentTimer({{ $sisaWaktu }})" 
      @open-payment-modal.window="showPaymentModal = true" 
      @close-payment-modal.window="closeModal()"
+     @open-qrcode-modal.window="showQrcodePayment = true" 
+     @close-qrcode-modal.window="closeModal()"
      class="relative min-h-screen pb-24 font-sans bg-gray-50 dark:bg-gray-900 selection:bg-brand-red/30">
     
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}" data-navigate-track></script>
@@ -38,7 +40,7 @@
                 </div>
             </div>
             <div class="px-3 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-gray-300">
-                #{{ $pesanan->id_pesanan }}
+                #{{ $pesanan->nomor_invoice }}
             </div>
         </div>
     </nav>
@@ -51,17 +53,17 @@
                     <h2 class="mb-4 text-base font-bold text-gray-800 dark:text-white">Tipe Pesanan</h2>
                     <div class="grid grid-cols-3 gap-3">
                         <label class="relative flex flex-col items-center p-3 text-center transition-all border-2 cursor-pointer rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 {{ $tipe_pesanan === 'dinein' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
-                            <input type="radio" wire:model.live="tipe_pesanan" value="dinein" class="hidden">
+                            <input type="radio" wire:model.live="tipe_pesanan" value="dinein" class="hidden" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
                             <i class="mb-2 text-2xl fa-solid fa-utensils {{ $tipe_pesanan === 'dinein' ? 'text-brand-red' : 'text-gray-400' }}"></i>
                             <span class="text-xs font-bold {{ $tipe_pesanan === 'dinein' ? 'text-brand-red' : 'text-gray-500' }}">Makan Sini</span>
                         </label>
                         <label class="relative flex flex-col items-center p-3 text-center transition-all border-2 cursor-pointer rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 {{ $tipe_pesanan === 'takeaway' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
-                            <input type="radio" wire:model.live="tipe_pesanan" value="takeaway" class="hidden">
+                            <input type="radio" wire:model.live="tipe_pesanan" value="takeaway" class="hidden" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
                             <i class="mb-2 text-2xl fa-solid fa-bag-shopping {{ $tipe_pesanan === 'takeaway' ? 'text-brand-red' : 'text-gray-400' }}"></i>
                             <span class="text-xs font-bold {{ $tipe_pesanan === 'takeaway' ? 'text-brand-red' : 'text-gray-500' }}">Bawa Pulang</span>
                         </label>
                         <label class="relative flex flex-col items-center p-3 text-center transition-all border-2 cursor-pointer rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 {{ $tipe_pesanan === 'delivery' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
-                            <input type="radio" wire:model.live="tipe_pesanan" value="delivery" class="hidden">
+                            <input type="radio" wire:model.live="tipe_pesanan" value="delivery" class="hidden" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
                             <i class="mb-2 text-2xl fa-solid fa-motorcycle {{ $tipe_pesanan === 'delivery' ? 'text-brand-red' : 'text-gray-400' }}"></i>
                             <span class="text-xs font-bold {{ $tipe_pesanan === 'delivery' ? 'text-brand-red' : 'text-gray-500' }}">Delivery</span>
                         </label>
@@ -77,7 +79,7 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block mb-1 text-xs font-bold text-gray-500 uppercase">No WhatsApp (Penerima)</label>
-                                <input type="number" wire:model="nomor_hp" class="w-full p-3 text-sm bg-gray-50 dark:bg-gray-900 border @error('nomor_hp') border-red-500 @else border-gray-200 dark:border-gray-700 @enderror rounded-xl outline-none focus:ring-2 focus:ring-brand-orange dark:text-white">
+                                <input type="number" wire:model="nomor_hp" class="w-full p-3 text-sm bg-gray-50 dark:bg-gray-900 border @error('nomor_hp') border-red-500 @else border-gray-200 dark:border-gray-700 @enderror rounded-xl outline-none focus:ring-2 focus:ring-brand-orange dark:text-white" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
                                 @error('nomor_hp') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                             </div>
                             <div>
@@ -87,7 +89,7 @@
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-bold text-gray-500 uppercase">Catatan Tambahan (Opsional)</label>
-                                <input type="text" wire:model="catatan" class="w-full p-3 text-sm border border-gray-200 outline-none bg-gray-50 dark:bg-gray-900 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-brand-orange dark:text-white" placeholder="Cth: Pagar warna hitam">
+                                <input type="text" wire:model="catatan" class="w-full p-3 text-sm border border-gray-200 outline-none bg-gray-50 dark:bg-gray-900 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-brand-orange dark:text-white" placeholder="Cth: Pagar warna hitam" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
                             </div>
                         </div>
                     </div>
@@ -150,7 +152,7 @@
                                         <p class="text-[10px] text-gray-500">Gopay, ShopeePay, Dana, M-Banking</p>
                                     </div>
                                 </div>
-                                <input type="radio" wire:model="metode_pembayaran" value="qris" class="w-5 h-5 text-brand-red focus:ring-brand-red">
+                                <input type="radio" wire:model="metode_pembayaran" wire:model.live="metode_pembayaran" value="qris" class="w-5 h-5 text-brand-red focus:ring-brand-red" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
                             </label>
 
                             @if($isKasir)
@@ -162,7 +164,7 @@
                                             <p class="text-[10px] text-gray-500">Bayar langsung di tempat</p>
                                         </div>
                                     </div>
-                                    <input type="radio" wire:model="metode_pembayaran" value="tunai" class="w-5 h-5 text-brand-red focus:ring-brand-red">
+                                    <input type="radio" wire:model="metode_pembayaran" wire:model.live="metode_pembayaran" value="tunai" class="w-5 h-5 text-brand-red focus:ring-brand-red" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
                                 </label>
                             @endif
                         </div>
@@ -218,6 +220,41 @@
             </div>
         </div>
     </div>
+
+    <div x-show="showQrcodePayment" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" x-cloak>
+        <div x-show="showQrcodePayment" x-transition.opacity @click="closeModal()" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm"></div>
+        
+        <div x-show="showQrcodePayment" 
+             x-transition:enter="transition ease-out duration-300" 
+             x-transition:enter-start="opacity-0 translate-y-full sm:translate-y-4 sm:scale-95" 
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave="transition ease-in duration-200" 
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave-end="opacity-0 translate-y-full sm:translate-y-4 sm:scale-95" 
+             class="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[85vh] sm:max-h-[90vh]">
+            
+            <div class="flex justify-center w-full pt-3 pb-1 bg-white sm:hidden dark:bg-gray-900">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+            </div>
+
+            <div class="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100 dark:bg-gray-900 dark:border-gray-800">
+                <div class="flex items-center gap-2">
+                    <i class="text-xl fa-solid fa-money-bill-wave text-brand-red"></i>
+                    <h3 class="font-bold text-gray-900 dark:text-white">Detail Pembayaran Tunai</h3>
+                </div>
+                <button @click="closeModal()" class="flex items-center justify-center w-8 h-8 text-gray-400 transition-colors bg-gray-100 rounded-full dark:bg-gray-800 hover:text-red-500 hover:bg-red-50">
+                    <i class="text-lg fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="qrcode-wrapper" class="flex-1 w-full overflow-y-auto bg-gray-50 dark:bg-gray-900">
+               <div class="flex flex-col items-center justify-center h-full min-h-[450px] gap-3 text-gray-400">
+                    <i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i>
+                    <span class="text-xs font-medium tracking-widest uppercase animate-pulse">Menyiapkan Pembayaran...</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @push('scripts')
@@ -226,6 +263,7 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('paymentTimer', (initialSeconds) => ({
             showPaymentModal: false,
+            showQrcodePayment: false,
             // Pastikan nilai detik merupakan angka bulat
             timeLeft: parseInt(initialSeconds, 10), 
             timerInterval: null,
@@ -267,6 +305,7 @@
 
             closeModal() {
                 this.showPaymentModal = false;
+                this.showQrcodePayment = false;
                 
                 // Mencegah Bug state Midtrans "PopupInView"
                 if (window.snap && typeof window.snap.hide === 'function') {
@@ -279,12 +318,16 @@
                     if(wrapper){
                         wrapper.innerHTML = `<div id="snap-container" class="flex flex-col items-center justify-center w-full h-full min-h-[450px] gap-3 text-gray-400"><i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i><span class="text-xs font-medium tracking-widest uppercase animate-pulse">Menyiapkan...</span></div>`;
                     }
+                    let wrappe2 = document.getElementById('qrcode-wrapper');
+                    if(wrappe2){
+                        wrappe2.innerHTML = `<div id="snap-container" class="flex flex-col items-center justify-center w-full h-full min-h-[450px] gap-3 text-gray-400"><i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i><span class="text-xs font-medium tracking-widest uppercase animate-pulse">Menyiapkan...</span></div>`;
+                    }
                 }, 300);
             }
         }));
     });
 
-    document.addEventListener('livewire:initialized', () => {
+    document.addEventListener('livewire:navigated', () => {
         Livewire.on('pay-with-midtrans', (event) => {
             
             let snapToken = event.token || (event[0] && event[0].token) || event;
@@ -320,6 +363,34 @@
                     }
                 });
             }, 100);
+        });
+        Livewire.on('open-qrcode-modal', (event) => {
+            
+            
+            window.dispatchEvent(new CustomEvent('open-qrcode-modal'));
+
+            let wrapper2 = document.getElementById('qrcode-wrapper');
+            // tampilam qrcode untuk detail pembayaran dan informasi untuk segera ke kasir untuk proses pesanan buat tampialn yang menarik dan informatif dengan menampilkan nomor invoice, total pembayaran dan catatan untuk kasir lalu generate juga qrcode dari package milon/barcode
+            wrapper2.innerHTML = `
+                <div class="flex flex-col items-center justify-center gap-4 p-6">
+                    <div class="text-center">
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-white">Tunjukkan QR Code ini ke Kasir</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Nomor Invoice: <span class="font-mono font-bold text-brand-red">#{{ $pesanan->nomor_invoice }}</span></p>
+                    </div>
+                    <div class="p-4 bg-white border border-gray-200 shadow-sm rounded-xl">
+                        {!! DNS2D::getBarcodeHTML($pesanan->nomor_invoice, 'QRCODE', 4, 4) !!}
+                    </div>
+                    <div class="w-full p-4 text-sm text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300">
+                        <p><span class="font-bold">Total Pembayaran:</span> Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</p>
+                        @if(!empty($catatan))
+                            <p class="mt-2"><span class="font-bold">Catatan untuk Kasir:</span> {{ $catatan }}</p>
+                        @endif
+                    </div>
+                    <hr class="w-full border-t border-gray-200 dark:border-gray-700">
+                    <p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-mono font-bold text-brand-red">* Pesanan anda tidak akan diproes selama pembayaran belum diselesaikan.</span></p>
+                </div>
+             `;
+            
         });
     });
 </script>

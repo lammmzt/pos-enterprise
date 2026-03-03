@@ -4,6 +4,9 @@ namespace App\Livewire\Admin\Pos;
 
 use Livewire\Component;
 use App\Models\Pesanan;
+use App\Models\Produk;
+use App\Models\BatchProduk;
+use App\Models\MutasiStok; // <-- Tambahkan ini untuk model Mutasi Stok
 
 class PesananAktifIndex extends Component
 {
@@ -11,6 +14,7 @@ class PesananAktifIndex extends Component
 
     // State untuk Modal
     public $showModalPembayaran = false;
+    public $showModalBatalPesanan = false;
     public $showModalSelesai = false;
     public $showModalDelivery = false;
 
@@ -26,7 +30,10 @@ class PesananAktifIndex extends Component
     public function render()
     {
         $query = Pesanan::with(['mangkuk.detailPesanan.produk', 'pelanggan', 'kasir'])
-            ->where('status_pesanan', 'proses');
+            ->where('status_pembayaran', 'proses_bayar')
+            ->orWhere('status_pesanan', 'menunggu_pembayaran')
+            ->orWhere('status_pesanan', 'proses')
+            ->orWhere('status_pesanan', 'delivery');
 
         if ($this->search) {
             $query->where('nomor_invoice', 'like', '%' . $this->search . '%')
@@ -60,7 +67,7 @@ class PesananAktifIndex extends Component
     {
         $pesanan = Pesanan::find($this->selectedPesananId);
         if ($pesanan) {
-            $pesanan->update(['status_pembayaran' => 'lunas']);
+            $pesanan->update(['status_pembayaran' => 'lunas', 'status_pesanan' => 'proses', 'id_kasir' => auth()->id()]);
             $this->dispatch('toast', type: 'success', message: 'Pembayaran berhasil dikonfirmasi!');
             
             // Trigger buka tab cetak struk otomatis
@@ -68,6 +75,68 @@ class PesananAktifIndex extends Component
         }
         $this->resetModal();
     }
+
+    // fitur batal pesanan
+    public function openModalBatal($id)
+    {
+        $this->selectedPesananId = $id;
+        $pesanan = Pesanan::with('pelanggan')->find($id);
+        
+        if ($pesanan) {
+            $this->paymentTotal = $pesanan->total_harga;
+            $this->paymentMethod = $pesanan->metode_pembayaran ?? 'Belum ditentukan';
+            $this->paymentCustomer = $pesanan->pelanggan->nama ?? 'Pelanggan Umum (Walk-in)';
+            $this->showModalBatalPesanan = true;
+        }
+    }
+
+    public function batalkanPesanan()
+    {
+        // reference on top
+        // Jika statusnya belum dibayar/proses, batalkan
+        $pesanan = Pesanan::find($this->selectedPesananId);
+        if ($pesanan->status_pembayaran !== 'lunas') {
+            
+            // 1. Kembalikan Stok (Logika Reverse FEFO)
+            foreach ($pesanan->mangkuk as $mangkuk) {
+                foreach ($mangkuk->detailPesanan as $detail) {
+                    
+                    // A. Kembalikan ke Master Produk
+                    Produk::where('id_produk', $detail->id_produk)
+                        ->increment('stok', $detail->jumlah);
+                    
+                    // B. Kembalikan ke Batch (FEFO)
+                    if ($detail->id_batch) {
+                        BatchProduk::where('id_batch', $detail->id_batch)
+                            ->increment('jumlah', $detail->jumlah);
+                    }
+
+                    // C. Catat ke Tabel Mutasi Stok (Menambah Stok)
+                    MutasiStok::create([
+                        'id_produk' => $detail->id_produk,
+                        'id_batch' => $detail->id_batch,
+                        'id_user' => $pesanan->id_user,
+                        'tipe' => 'masuk',
+                        'jumlah' => $detail->jumlah,
+                        'tipe_referensi' => 'Penjualan',
+                        'id_referensi' => $pesanan->id_pesanan,
+                        'catatan' => 'Pengembalian stok (Otomatis) - Waktu pembayaran habis. Invoice: ' . $pesanan->nomor_invoice,
+                    ]);
+
+                    
+                }
+            }
+
+            // 2. Ubah Status Pesanan
+            $pesanan->update([
+                'status_pembayaran' => 'gagal',
+                'status_pesanan' => 'dibatalkan',
+            ]);
+            $this->dispatch('toast', type: 'success', message: 'Pesanan berhasil dibatalkan!');
+        }
+        $this->resetModal();
+    }
+
 
     // --- FITUR UPDATE LINK DELIVERY ---
     public function openModalDelivery($id, $currentLink)
@@ -103,7 +172,7 @@ class PesananAktifIndex extends Component
         $pesanan = Pesanan::find($this->selectedPesananId);
         
         if ($pesanan) {
-            if ($pesanan->status_pembayaran === 'belum_bayar') {
+            if ($pesanan->status_pembayaran === 'belum_bayar' || $pesanan->status_pembayaran === 'prose_bayar') {
                 $this->dispatch('toast', type: 'error', message: 'Gagal! Pastikan pelanggan sudah membayar.');
                 $this->resetModal();
                 return;
@@ -112,15 +181,18 @@ class PesananAktifIndex extends Component
             $pesanan->update(['status_pesanan' => 'selesai']);
             $this->dispatch('toast', type: 'success', message: 'Pesanan ' . $pesanan->nomor_invoice . ' diselesaikan!');
         }
+        
         $this->resetModal();
     }
 
     public function resetModal()
     {
         $this->showModalPembayaran = false;
+        $this->showModalBatalPesanan = false;
         $this->showModalSelesai = false;
         $this->showModalDelivery = false;
         $this->selectedPesananId = null;
         $this->inputLinkDelivery = '';
+        $this->dispatch('focus-search-input');
     }
 }
