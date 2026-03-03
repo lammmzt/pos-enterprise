@@ -284,8 +284,8 @@ class Order extends Component
                 }
             });
 
-            // Redirect ke halaman Pembayaran
-            $this->redirect(route('Payment', ['id' => $pesananId]));
+            // Redirect ke halaman Pembayaran denagn livewire
+            $this->redirect(route('Payment', ['pesanan_id' => $pesananId]));
 
         } catch (\Exception $e) {
             $this->dispatch('toast', type: 'error', message: 'Terjadi kesalahan sistem: ' . $e->getMessage());

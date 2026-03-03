@@ -14,7 +14,7 @@
             @foreach(['all' => 'Semua', 'active' => 'Sedang Berjalan', 'completed' => 'Selesai'] as $key => $label)
             <button wire:click="setTab('{{ $key }}')"
                 class="px-6 py-2.5 text-sm font-bold transition-all rounded-full whitespace-nowrap active:scale-95 {{ $activeTab === $key ? 'text-white shadow-lg bg-brand-red shadow-red-500/30' : 'text-gray-500 bg-white border border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 hover:border-brand-red/50' }}">
-                {{ $label }}
+                {{ $label }}    
             </button>
             @endforeach
         </div>
@@ -85,9 +85,9 @@
 
                 <div class="flex gap-2 mt-4">
                     @if($isUnpaid)
-                    <a href="{{ route('Payment', ['id' => $order->id_pesanan]) }}"
+                    <a href="{{ route('Payment', ['id' => $order->id_pesanan]) }}" wire:navigate
                         class="flex items-center justify-center flex-1 gap-2 py-3.5 text-sm font-bold transition-all border-2 rounded-xl text-red-500 border-red-400 bg-red-50 hover:bg-red-500 hover:text-white dark:bg-red-900/20 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-600 dark:hover:border-amber-600 dark:hover:text-white active:scale-95 group">
-                        <i class="transition-transform fa-regular fa-wallet group-hover:fa-solid group-hover:scale-110"></i> 
+                        <i class="transition-transform fa-solid fa-money-bill-wave group-hover:fa-solid group-hover:scale-110"></i> 
                         <span>Bayar</span>
                     </a>
                     {{-- @elseif($isPaid || $order->status_pesanan === 'selesai')

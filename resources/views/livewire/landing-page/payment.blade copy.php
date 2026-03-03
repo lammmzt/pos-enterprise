@@ -225,7 +225,7 @@
                     <i class="text-xl fa-solid fa-money-bill-wave text-brand-red"></i>
                     <h3 class="font-bold text-gray-900 dark:text-white">Detail Pembayaran Tunai</h3>
                 </div>
-                <button @click="closeModal()" class="flex items-center justify-center w-8 h-8 text-gray-400 transition-colors bg-gray-100 rounded-full dark:bg-gray-800 hover:text-red-500 hover:bg-red-50" wire:model.live="metode_pembayaran">
+                <button @click="closeModal()" class="flex items-center justify-center w-8 h-8 text-gray-400 transition-colors bg-gray-100 rounded-full dark:bg-gray-800 hover:text-red-500 hover:bg-red-50">
                     <i class="text-lg fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -242,12 +242,12 @@
 
 @push('scripts')
 <script>
-    // 1. BUNGKUS LOGIKA ALPINE KE DALAM FUNGSI
-    const initPaymentTimer = () => {
-        // Alpine mengizinkan deklarasi ulang komponen, jadi ini aman
+    // Inisialisasi Timer Alpine JS Global
+    document.addEventListener('alpine:init', () => {
         Alpine.data('paymentTimer', (initialSeconds) => ({
             showPaymentModal: false,
             showQrcodePayment: false,
+            // Pastikan nilai detik merupakan angka bulat
             timeLeft: parseInt(initialSeconds, 10), 
             timerInterval: null,
             
@@ -280,6 +280,7 @@
             },
             
             cancelOrder() {
+                // Menjalankan fungsi return stock & ubah status di backend Livewire
                 if (this.$wire) {
                     this.$wire.cancelExpiredOrder();
                 }
@@ -289,10 +290,12 @@
                 this.showPaymentModal = false;
                 this.showQrcodePayment = false;
                 
+                // Mencegah Bug state Midtrans "PopupInView"
                 if (window.snap && typeof window.snap.hide === 'function') {
                     window.snap.hide();
                 }
 
+                // Mereset Wrapper setelah animasi tutup modal selesai
                 setTimeout(() => {
                     let wrapper = document.getElementById('snap-wrapper');
                     if(wrapper){
@@ -300,30 +303,16 @@
                     }
                     let wrappe2 = document.getElementById('qrcode-wrapper');
                     if(wrappe2){
-                        wrappe2.innerHTML = `<div id="qrcode-container" class="flex flex-col items-center justify-center w-full h-full min-h-[450px] gap-3 text-gray-400"><i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i><span class="text-xs font-medium tracking-widest uppercase animate-pulse">Menyiapkan...</span></div>`;
+                        wrappe2.innerHTML = `<div id="snap-container" class="flex flex-col items-center justify-center w-full h-full min-h-[450px] gap-3 text-gray-400"><i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i><span class="text-xs font-medium tracking-widest uppercase animate-pulse">Menyiapkan...</span></div>`;
                     }
                 }, 300);
             }
         }));
-    };
+    });
 
-    // 2. CEK STATUS ALPINE UNTUK MENGAKALI wire:navigate
-    if (window.Alpine) {
-        // Jika masuk dari wire:navigate, Alpine sudah "hidup". Langsung eksekusi!
-        initPaymentTimer();
-    } else {
-        // Jika ini adalah refresh halaman penuh, tunggu Alpine menyala
-        document.addEventListener('alpine:init', initPaymentTimer);
-    }
-
-    // 3. DAFTARKAN LISTENER LIVEWIRE DENGAN SISTEM CLEANUP (ANTI-DOUBLE TRIGGER)
     document.addEventListener('livewire:navigated', () => {
-        
-        // Hapus pendengar event sebelumnya (jika ada) saat pengguna bolak-balik halaman
-        if (window.midtransCleanup) window.midtransCleanup();
-        if (window.qrcodeCleanup) window.qrcodeCleanup();
-
-        window.midtransCleanup = Livewire.on('pay-with-midtrans', (event) => {
+        Livewire.on('pay-with-midtrans', (event) => {
+            
             let snapToken = event.token || (event[0] && event[0].token) || event;
             if (typeof snapToken !== 'string' || snapToken.trim() === '') {
                 alert("Gagal memuat Token Pembayaran."); return;
@@ -358,11 +347,13 @@
                 });
             }, 100);
         });
-
-        window.qrcodeCleanup = Livewire.on('open-qrcode-modal', (event) => {
+        Livewire.on('open-qrcode-modal', (event) => {
+            
+            
             window.dispatchEvent(new CustomEvent('open-qrcode-modal'));
 
             let wrapper2 = document.getElementById('qrcode-wrapper');
+            // tampilam qrcode untuk detail pembayaran dan informasi untuk segera ke kasir untuk proses pesanan buat tampialn yang menarik dan informatif dengan menampilkan nomor invoice, total pembayaran dan catatan untuk kasir lalu generate juga qrcode dari package milon/barcode
             wrapper2.innerHTML = `
                 <div class="flex flex-col items-center justify-center gap-4 p-6">
                     <div class="text-center">
@@ -381,7 +372,8 @@
                     <hr class="w-full border-t border-gray-200 dark:border-gray-700">
                     <p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-mono font-bold text-brand-red">* Pesanan anda tidak akan diproes selama pembayaran belum diselesaikan.</span></p>
                 </div>
-            `;
+             `;
+            
         });
     });
 </script>

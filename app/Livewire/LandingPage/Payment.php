@@ -84,6 +84,7 @@ class Payment extends Component
                 'tipe_pesanan' => $this->tipe_pesanan
             ]);
             // open modal qrcode 
+            // reload data and open modal
             $this->dispatch('open-qrcode-modal');
             return;
             // return redirect()->route('Order')->with('success', 'Pesanan Tunai Berhasil. Menunggu dimasak dapur.');

@@ -9,25 +9,26 @@
         </div>
 
         <div
-            class="relative flex flex-col items-center w-full gap-2 p-2 transition-all bg-white border border-gray-200 shadow-sm sm:flex-row sm:gap-3 dark:bg-gray-900 dark:border-gray-800 rounded-xl sm:rounded-2xl md:w-auto shrink-0">
+            class="relative flex flex-col items-center w-full gap-2 p-2 transition-all bg-white border border-gray-200 shadow-sm sm:flex-row sm:gap-3 dark:bg-gray-900 dark:border-gray-800 rounded-xl sm:rounded-2xl md:w-auto shrink-0 py-4">
             {{-- Loading Indicator saat filter diubah --}}
             <div wire:loading wire:target="tanggalMulai, tanggalAkhir"
                 class="absolute inset-0 z-10 flex items-center justify-center bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl">
                 <i class="text-xl text-indigo-600 animate-spin ti ti-loader-2"></i>
             </div>
 
-            <div
-                class="flex flex-col w-full px-2 transition-colors sm:w-auto group hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-xl">
+            <div class="flex flex-col w-full px-2 transition-colors sm:w-auto group hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-xl">
                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Dari Tanggal</span>
                 <input type="date" wire:model.live="tanggalMulai"
                     class="w-full p-0 py-1 text-xs font-bold text-gray-700 bg-transparent border-none outline-none cursor-pointer sm:text-sm dark:text-gray-200 focus:ring-0">
             </div>
-            <div
-                class="flex flex-col w-full px-2 transition-colors sm:w-auto group hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-xl">
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Dari Tanggal</span>
-                <input type="date" wire:model.live="tanggalMulai"
+            
+            {{-- FIX: Mengubah duplikasi 'Dari Tanggal' menjadi 'Sampai Tanggal' dan model 'tanggalAkhir' --}}
+            <div class="flex flex-col w-full px-2 transition-colors sm:w-auto group hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-xl">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Sampai Tanggal</span>
+                <input type="date" wire:model.live="tanggalAkhir"
                     class="w-full p-0 py-1 text-xs font-bold text-gray-700 bg-transparent border-none outline-none cursor-pointer sm:text-sm dark:text-gray-200 focus:ring-0">
             </div>
+
             <div class="hidden w-px h-8 bg-gray-200 sm:block dark:bg-gray-700"></div>
             <div class="w-full h-px my-1 bg-gray-100 sm:hidden dark:bg-gray-800"></div>
             <div class="flex flex-col items-start w-full px-2 transition-colors sm:w-auto">
@@ -146,9 +147,84 @@
                     class="text-[9px] sm:text-[10px] px-2.5 py-1 bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 rounded-md font-bold uppercase tracking-widest shrink-0 border border-indigo-100 dark:border-indigo-800">Interaktif</span>
             </div>
 
-            {{-- FIX: Bungkus grafik dengan relative dan paksa div chart menjadi absolute inset-0 agar tidak bisa melebihi card --}}
-            <div x-data="revenueChart()" x-init="initChart()" class="relative w-full h-64 overflow-hidden sm:h-72">
-                <div id="chart-area" class="absolute inset-0 w-full h-full"></div>
+            {{-- FIX: Menggunakan inline x-data dan x-ref. Tidak perlu mendengarkan alpine:init lagi. --}}
+            <div 
+                class="relative w-full h-64 overflow-hidden sm:h-72"
+                x-data="{
+                    chart: null,
+                    init() {
+                        // $nextTick memastikan elemen DOM sudah siap sebelum render grafik
+                        this.$nextTick(() => {
+                            this.renderChart();
+                        });
+
+                        Livewire.on('update-chart', (event) => {
+                            if (this.chart) {
+                                let data = event[0].chartData;
+                                this.chart.updateOptions({ xaxis: { categories: data.dates } });
+                                this.chart.updateSeries([{ data: data.totals }]);
+                            }
+                        });
+                    },
+                    renderChart() {
+                        if (this.chart) {
+                            this.chart.destroy();
+                        }
+                        let options = {
+                            series: [{
+                                name: 'Pendapatan (Rp)',
+                                data: @js($chartTotals)
+                            }],
+                            chart: {
+                                type: 'area', height: '100%', width: '100%', toolbar: { show: false },
+                                fontFamily: 'inherit', animations: { enabled: true, easing: 'easeinout', speed: 800 },
+                                parentHeightOffset: 0, redrawOnParentResize: true 
+                            },
+                            colors: ['#4f46e5'],
+                            fill: {
+                                type: 'gradient',
+                                gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 100] }
+                            },
+                            dataLabels: { enabled: false },
+                            stroke: { curve: 'smooth', width: 3 },
+                            xaxis: {
+                                categories: @js($chartDates),
+                                axisBorder: { show: false }, axisTicks: { show: false },
+                                labels: { 
+                                    style: { colors: '#9ca3af', fontSize: '10px', fontWeight: 600 },
+                                    hideOverlappingLabels: true 
+                                }
+                            },
+                            yaxis: {
+                                labels: {
+                                    style: { colors: '#9ca3af', fontSize: '10px', fontWeight: 600 },
+                                    formatter: (value) => { 
+                                        if(value >= 1000000) return 'Rp ' + (value/1000000).toFixed(1) + 'M';
+                                        if(value >= 1000) return 'Rp ' + (value/1000).toFixed(0) + 'K';
+                                        return 'Rp ' + value; 
+                                    }
+                                }
+                            },
+                            grid: { borderColor: '#f3f4f6', strokeDashArray: 4, padding: { left: 10, right: 10, bottom: 0 } },
+                            tooltip: {
+                                theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+                                y: { formatter: function (val) { return 'Rp ' + new Intl.NumberFormat('id-ID').format(val) } }
+                            }
+                        };
+                        
+                        // Gunakan this.$refs.chart alih-alih document.getElementById
+                        this.chart = new ApexCharts(this.$refs.chart, options);
+                        this.chart.render();
+                    },
+                    destroy() {
+                        if (this.chart) {
+                            this.chart.destroy();
+                        }
+                    }
+                }"
+            >
+                {{-- Gunakan x-ref --}}
+                <div x-ref="chart" class="absolute inset-0 w-full h-full"></div>
             </div>
         </div>
 
@@ -328,99 +404,8 @@
         </div>
     </div>
 </div>
+
 @push('scripts')
+{{-- Pindahkan pemuatan script library ini ke layout/app.blade.php utama (di dalam <head>) jika memungkinkan, dengan menambahkan attribute data-navigate-track --}}
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
-<script type="text/javascript">
-    // 1. Definisikan komponen Alpine secara global
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('revenueChart', () => ({
-            chart: null,
-            
-            // init() adalah lifecycle hook bawaan Alpine.js
-            // Ia akan otomatis dipanggil SETIAP KALI div dengan x-data="revenueChart()" di-render di DOM, 
-            // termasuk saat berpindah halaman via wire:navigate!
-            init() {
-                // Pastikan div dengan id 'chart-area' sudah ada sebelum merender
-                if (document.getElementById('chart-area')) {
-                    this.renderChart();
-                }
-
-                // Listener untuk update chart ketika Livewire mengubah rentang tanggal
-                Livewire.on('update-chart', (event) => {
-                    if (this.chart) {
-                        let data = event[0].chartData;
-                        this.chart.updateOptions({ xaxis: { categories: data.dates } });
-                        this.chart.updateSeries([{ data: data.totals }]);
-                    }
-                });
-            },
-
-            renderChart() {
-                // Jika chart sudah pernah dirender, hancurkan dulu (destroy) untuk mencegah duplikasi canvas akibat SPA
-                if (this.chart) {
-                    this.chart.destroy();
-                }
-
-                let options = {
-                    series: [{
-                        name: 'Pendapatan (Rp)',
-                        data: @json($chartTotals) // Ini akan di-evaluate ulang oleh blade
-                    }],
-                    chart: {
-                        type: 'area',
-                        height: '100%',
-                        width: '100%',
-                        toolbar: { show: false },
-                        fontFamily: 'inherit',
-                        animations: { enabled: true, easing: 'easeinout', speed: 800 },
-                        parentHeightOffset: 0,
-                        redrawOnParentResize: true 
-                    },
-                    colors: ['#4f46e5'],
-                    fill: {
-                        type: 'gradient',
-                        gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 100] }
-                    },
-                    dataLabels: { enabled: false },
-                    stroke: { curve: 'smooth', width: 3 },
-                    xaxis: {
-                        categories: @json($chartDates),
-                        axisBorder: { show: false },
-                        axisTicks: { show: false },
-                        labels: { 
-                            style: { colors: '#9ca3af', fontSize: '10px', fontWeight: 600 },
-                            hideOverlappingLabels: true 
-                        }
-                    },
-                    yaxis: {
-                        labels: {
-                            style: { colors: '#9ca3af', fontSize: '10px', fontWeight: 600 },
-                            formatter: (value) => { 
-                                if(value >= 1000000) return "Rp " + (value/1000000).toFixed(1) + "M";
-                                if(value >= 1000) return "Rp " + (value/1000).toFixed(0) + "K";
-                                return "Rp " + value; 
-                            }
-                        }
-                    },
-                    grid: { borderColor: '#f3f4f6', strokeDashArray: 4, padding: { left: 10, right: 10, bottom: 0 } },
-                    tooltip: {
-                        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
-                        y: { formatter: function (val) { return "Rp " + new Intl.NumberFormat('id-ID').format(val) } }
-                    }
-                };
-
-                this.chart = new ApexCharts(document.getElementById('chart-area'), options);
-                this.chart.render();
-            },
-            
-            // Hook ini akan dipanggil otomatis oleh Alpine ketika komponen dicabut dari DOM
-            destroy() {
-                if (this.chart) {
-                    this.chart.destroy();
-                }
-            }
-        }));
-    });
-</script>
 @endpush
