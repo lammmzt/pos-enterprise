@@ -17,6 +17,7 @@ use App\Livewire\Admin\Pemasok\PemasokIndex;
 use App\Livewire\Admin\Stok\PembelianIndex;
 use App\Livewire\Admin\Stok\MutasiStokIndex;
 use App\Livewire\Admin\Pos\PosIndex;
+use App\Livewire\Admin\Testimoni\TestimoniIndex;
 use App\Livewire\Admin\Pos\PesananAktifIndex;
 use App\Livewire\Admin\Pos\RiwayatPesananIndex;
 use App\Livewire\Admin\Laporan\LaporanKeuanganIndex;
@@ -105,6 +106,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,owner,kasir'])->group(fu
 
     // pos
     Route::get('/pos', PosIndex::class)->name('admin.pos');
+    Route::get('/testimoni', TestimoniIndex::class)->name('admin.testimoni');
     // Route untuk cetak struk POS
     Route::get('/pos/struk/{id}', [PosController::class, 'cetakStruk'])->name('admin.pos.struk');
     // pos pesanan

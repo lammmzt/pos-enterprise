@@ -87,7 +87,7 @@ class Order extends Component
         $this->bowls[] = [
             'id' => uniqid('bowl_'),
             'nama_pemesan' => $namaPemesan,
-            'tipe_kuah' => 'Kuah Kencur (Original)',
+            'tipe_kuah' => 'Seblak Kuah Original',
             'level_pedas' => 1,
             'catatan' => '',
             'items' => [] 

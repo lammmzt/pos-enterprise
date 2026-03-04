@@ -82,7 +82,7 @@
                 <!-- Hero Image/Illustration -->
                 <div class="relative flex-1 animate-float">
                     <div class="relative z-10 w-full max-w-lg p-2 mx-auto rounded-full shadow-2xl aspect-square bg-gradient-to-tr from-brand-red to-orange-400 shadow-orange-500/40">
-                        <img src="https://placehold.co/600x600/png?text=Seblak+Bowl+HD" alt="Seblak Bowl" class="object-cover w-full h-full border-4 border-white rounded-full dark:border-gray-800">
+                        <img src="{{ asset('img/BOWL SEBLAK.png') }}" alt="Seblak Bowl" class="object-cover w-full h-full border-4 border-white rounded-full dark:border-gray-800">
                         
                         <!-- Floating Badge 1 -->
                         <div class="absolute flex items-center gap-3 p-4 bg-white shadow-xl top-10 -left-6 dark:bg-gray-800 rounded-2xl animate-bounce" style="animation-duration: 3s;">
@@ -176,86 +176,30 @@
 
             <!-- Slider Container (Updated) -->
             <div id="reviews-container" class="flex gap-6 pb-4 overflow-x-auto hide-scroll snap-x snap-mandatory scroll-smooth">
-                
+                @foreach ($testimonials as $testimonial)
                 <!-- Review Card 1 -->
                 <div class="min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] snap-start bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative">
                     <i class="absolute text-4xl text-gray-100 fa-solid fa-quote-right top-6 right-6 dark:text-gray-700"></i>
                     <div class="flex items-center gap-1 mb-4 text-sm text-yellow-400">
+                        {{-- <i class="fa-solid fa-star"></i>
                         <i class="fa-solid fa-star"></i>
                         <i class="fa-solid fa-star"></i>
                         <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i> --}}
+                        @for ($i = 0; $i < $testimonial->rating; $i++)
+                            <i class="fa-solid fa-star"></i>
+                        @endfor
                     </div>
-                    <p class="mb-6 leading-relaxed text-gray-700 dark:text-gray-300">"Sumpah ini seblak terenak di Dago! Kuahnya kencur banget, pedesnya nampol tapi nagih. Wajib cobain dumpling kejunya lumer parah."</p>
+                    <p class="mb-6 leading-relaxed text-gray-700 dark:text-gray-300">"{{ $testimonial->ulasan }}"</p>
                     <div class="flex items-center gap-4">
-                        <img src="https://placehold.co/100x100/orange/white?text=SF" class="object-cover w-12 h-12 border-2 rounded-full border-brand-red">
+                        <img src="https://placehold.co/100x100/orange/white?text={{ $testimonial->name }}" class="object-cover w-12 h-12 border-2 rounded-full border-brand-red">
                         <div>
-                            <h4 class="text-sm font-bold text-gray-900 dark:text-white">Siti Fatimah</h4>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Mahasiswi</p>
+                            <h4 class="text-sm font-bold text-gray-900 dark:text-white">{{ $testimonial->name }}</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Pelanggan</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Review Card 2 -->
-                <div class="min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] snap-start bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative">
-                    <i class="absolute text-4xl text-gray-100 fa-solid fa-quote-right top-6 right-6 dark:text-gray-700"></i>
-                    <div class="flex items-center gap-1 mb-4 text-sm text-yellow-400">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star-half-stroke"></i>
-                    </div>
-                    <p class="mb-6 leading-relaxed text-gray-700 dark:text-gray-300">"Suka banget sama konsep prasmanannya, jadi bisa ngukur sendiri mau jajan berapa. Pilihan toppingnya banyak banget sampe bingung milih!"</p>
-                    <div class="flex items-center gap-4">
-                        <img src="https://placehold.co/100x100/red/white?text=BP" class="object-cover w-12 h-12 border-2 rounded-full border-brand-red">
-                        <div>
-                            <h4 class="text-sm font-bold text-gray-900 dark:text-white">Budi Pratama</h4>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Freelancer</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Review Card 3 -->
-                <div class="min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] snap-start bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative">
-                    <i class="absolute text-4xl text-gray-100 fa-solid fa-quote-right top-6 right-6 dark:text-gray-700"></i>
-                    <div class="flex items-center gap-1 mb-4 text-sm text-yellow-400">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                    <p class="mb-6 leading-relaxed text-gray-700 dark:text-gray-300">"Pesen lewat web gampang banget, tinggal klik-klik doang. Pas dateng pesanan udah siap, gak perlu antri lama. Mantap!"</p>
-                    <div class="flex items-center gap-4">
-                        <img src="https://placehold.co/100x100/green/white?text=AR" class="object-cover w-12 h-12 border-2 rounded-full border-brand-red">
-                        <div>
-                            <h4 class="text-sm font-bold text-gray-900 dark:text-white">Anisa Rahma</h4>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Karyawan Swasta</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Review Card 4 (Added for demo scrolling) -->
-                <div class="min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] snap-start bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative">
-                    <i class="absolute text-4xl text-gray-100 fa-solid fa-quote-right top-6 right-6 dark:text-gray-700"></i>
-                    <div class="flex items-center gap-1 mb-4 text-sm text-yellow-400">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                    <p class="mb-6 leading-relaxed text-gray-700 dark:text-gray-300">"Rekomendasi banget buat yang suka pedes. Level 5 nya beneran bikin melek. Pelayanan juga ramah banget."</p>
-                    <div class="flex items-center gap-4">
-                        <img src="https://placehold.co/100x100/purple/white?text=DN" class="object-cover w-12 h-12 border-2 rounded-full border-brand-red">
-                        <div>
-                            <h4 class="text-sm font-bold text-gray-900 dark:text-white">Doni Nugraha</h4>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Mahasiswa</p>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
 
             </div>
         </div>

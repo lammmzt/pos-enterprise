@@ -199,10 +199,10 @@
                                         <div>
                                             <label class="text-[10px] uppercase font-bold text-gray-400">Kuah</label>
                                             <select wire:model.live="bowls.{{$index}}.tipe_kuah" class="w-full p-2 mt-1 text-xs text-gray-800 bg-white border border-gray-200 rounded-lg outline-none dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200">
-                                                <option value="Kuah Kencur (Original)">Kuah Kencur (Original)</option>
-                                                <option value="Kuah Jeletot (Merah)">Kuah Jeletot (Merah)</option>
-                                                <option value="Kuah Kacang">Kuah Kacang</option>
-                                                <option value="Goreng (Tanpa Kuah)">Goreng (Tanpa Kuah)</option>
+                                                <option value="Seblak Kuah Original">Seblak Kuah Original</option>
+                                                <option value="Seblak Kuah Jeletot">Seblak Kuah Jeletot</option>
+                                                <option value="Seblak Kuah Tomyam">Seblak Kuah Tomyam</option>
+                                                <option value="Kuah Nyemek">Kuah Nyemek</option>
                                             </select>
                                         </div>
                                         <div>
