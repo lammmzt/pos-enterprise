@@ -43,7 +43,7 @@ class TestimoniIndex extends Component
     // Mengamankan variabel search
     $search = $this->search;
 
-    $data['testimonis'] = Testimoni::with(['pesanan', 'user'])
+    $data['testimonis'] = Testimoni::with(['pesanan', 'pesanan.pelanggan'])
         // Menggunakan when() agar pencarian hanya berjalan jika $search tidak kosong
         ->when($search, function ($query) use ($search) {
             // Bungkus dalam parameter closure agar orWhere tidak bocor ke query lain
@@ -59,7 +59,7 @@ class TestimoniIndex extends Component
         })
         ->orderBy('created_at', 'desc')
         ->paginate($this->view);
-
+    // dd($data['testimonis']);
     $data['title'] = 'Manajemen Testimoni';
     $data['desc_page'] = 'Kelola master data Testimoni.';
 

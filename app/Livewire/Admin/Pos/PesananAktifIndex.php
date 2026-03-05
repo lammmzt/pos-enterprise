@@ -43,7 +43,7 @@ class PesananAktifIndex extends Component
         }
 
         $pesanans = $query->orderBy('created_at', 'asc')->get();
-
+        // dd($pesanans);
         return view('livewire.admin.pos.pesanan-aktif-index', [
             'pesanans' => $pesanans
         ])->layout('components.layouts.app', ['title' => 'Dapur: Pesanan Aktif']);
@@ -115,12 +115,12 @@ class PesananAktifIndex extends Component
                     MutasiStok::create([
                         'id_produk' => $detail->id_produk,
                         'id_batch' => $detail->id_batch,
-                        'id_user' => $pesanan->id_user,
+                        'id_user' => auth()->id(),
                         'tipe' => 'masuk',
                         'jumlah' => $detail->jumlah,
                         'tipe_referensi' => 'Penjualan',
                         'id_referensi' => $pesanan->id_pesanan,
-                        'catatan' => 'Pengembalian stok (Otomatis) - Waktu pembayaran habis. Invoice: ' . $pesanan->nomor_invoice,
+                        'catatan' => 'Pembatalan Pesanan - Oleh: ' . auth()->user()->name . '. Invoice: ' . $pesanan->nomor_invoice
                     ]);
 
                     
@@ -178,7 +178,7 @@ class PesananAktifIndex extends Component
                 return;
             }
 
-            $pesanan->update(['status_pesanan' => 'selesai']);
+            $pesanan->update(['status_pesanan' => 'selesai','id_kasir' => auth()->id()]);
             $this->dispatch('toast', type: 'success', message: 'Pesanan ' . $pesanan->nomor_invoice . ' diselesaikan!');
         }
         

@@ -205,6 +205,12 @@ class Order extends Component
                     $this->dispatch('toast', type: 'error', message: "Stok {$produk->nama} tidak mencukupi!");
                     return;
                 }
+                // check seluruh stock batch untuk produk ini, pastikan total stok batch mencukupi
+                $totalBatchStok = BatchProduk::where('id_produk', $item['id'])->where('jumlah', '>', 0)->where('tanggal_kedaluwarsa', '>=', now())->sum('jumlah');
+                if ($totalBatchStok < $item['qty']) {
+                    $this->dispatch('toast', type: 'error', message: "Stok batch untuk {$produk->nama} tidak mencukupi!");
+                    return;
+                }
             }
         }
 
@@ -242,6 +248,7 @@ class Order extends Component
                         $qtyNeeded = $item['qty'];
                         $batches = BatchProduk::where('id_produk', $item['id'])
                             ->where('jumlah', '>', 0)
+                            ->where('tanggal_kedaluwarsa', '>=', now())
                             ->orderByRaw('ISNULL(tanggal_kedaluwarsa), tanggal_kedaluwarsa ASC')
                             ->lockForUpdate()
                             ->get();
@@ -285,7 +292,7 @@ class Order extends Component
             });
 
             // Redirect ke halaman Pembayaran denagn livewire
-            $this->redirect(route('Payment', ['pesanan_id' => $pesananId]));
+            $this->redirect(route('Payment', ['id' => $pesananId]));
 
         } catch (\Exception $e) {
             $this->dispatch('toast', type: 'error', message: 'Terjadi kesalahan sistem: ' . $e->getMessage());

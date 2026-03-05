@@ -176,23 +176,19 @@
 
             <!-- Slider Container (Updated) -->
             <div id="reviews-container" class="flex gap-6 pb-4 overflow-x-auto hide-scroll snap-x snap-mandatory scroll-smooth">
+                  
                 @foreach ($testimonials as $testimonial)
                 <!-- Review Card 1 -->
                 <div class="min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] snap-start bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative">
                     <i class="absolute text-4xl text-gray-100 fa-solid fa-quote-right top-6 right-6 dark:text-gray-700"></i>
-                    <div class="flex items-center gap-1 mb-4 text-sm text-yellow-400">
-                        {{-- <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i> --}}
-                        @for ($i = 0; $i < $testimonial->rating; $i++)
-                            <i class="fa-solid fa-star"></i>
+                    <div class="flex items-center gap-1 mb-4 text-sm ">
+                        @for ($i = 0; $i <=5; $i++)
+                            <i class="fa-solid fa-star {{ $i < $testimonial->rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-700' }}"></i>
                         @endfor
                     </div>
                     <p class="mb-6 leading-relaxed text-gray-700 dark:text-gray-300">"{{ $testimonial->ulasan }}"</p>
                     <div class="flex items-center gap-4">
-                        <img src="https://placehold.co/100x100/orange/white?text={{ $testimonial->name }}" class="object-cover w-12 h-12 border-2 rounded-full border-brand-red">
+                        <img src="https://placehold.co/100x100/orange/white?text={{ strtoupper(substr($testimonial->pesanan->pelanggan->nama, 0, 2)) }}" class="object-cover w-12 h-12 border-2 rounded-full border-brand-red">
                         <div>
                             <h4 class="text-sm font-bold text-gray-900 dark:text-white">{{ $testimonial->name }}</h4>
                             <p class="text-xs text-gray-500 dark:text-gray-400">Pelanggan</p>

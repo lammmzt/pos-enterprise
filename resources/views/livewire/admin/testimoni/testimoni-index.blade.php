@@ -55,7 +55,9 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-gray-100 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-800">
-                                
+                                <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('id_pesanan')">
+                                    <div class="flex items-center gap-2">Nama Pelanggan<i class="opacity-50 ti ti-arrows-sort"></i></div>
+                                </th>
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('rating')">
                                     <div class="flex items-center gap-2">Rating <i class="opacity-50 ti ti-arrows-sort"></i></div>
                                 </th>
@@ -67,7 +69,7 @@
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                             @forelse ($testimonis as $testimoni)
                                 <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/40 group">
-                                    
+                                    <td class="px-6 py-4 font-bold text-gray-600 dark:text-gray-400">{{ $testimoni->pesanan->pelanggan->nama }}</td>
                                     
                                     {{-- Kolom Rating dengan Bintang --}}
                                     <td class="px-6 py-4">

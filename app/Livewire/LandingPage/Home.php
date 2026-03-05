@@ -9,7 +9,7 @@ class Home extends Component
 {
     public function render()
     {
-        $data['testimonials'] = Testimoni::with(['user', 'pesanan'])->where('status_tampil', '1')->get();
+        $data['testimonials'] = Testimoni::with(['pesanan.pelanggan', 'pesanan'])->where('status_tampil', '1')->get();
         $data['title'] = 'Home';
         $data['active'] = 'Home';
         // dd($data);
