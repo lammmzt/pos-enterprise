@@ -93,7 +93,7 @@
                             <i class="ti ti-cash"></i> Konfirmasi Bayar
                         </button>
                         <button wire:click="openModalBatal({{ $pesanan->id_pesanan }})" class="flex items-center justify-center w-full gap-2 py-2 text-xs font-bold text-white transition-all bg-red-500 shadow-sm rounded-xl hover:bg-red-600">
-                            <i class="ti ti-cash"></i> Batalkan Pesanan & Refund
+                            <i class="ti ti-shield-question"></i> Batalkan Pesanan & Refund
                         </button>
                     @endif
                     
@@ -125,11 +125,13 @@
         <div x-show="open" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
         <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="relative w-full max-w-md p-6 text-center bg-white border border-gray-100 shadow-xl dark:bg-gray-900 rounded-2xl dark:border-gray-800">
             
-            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-3xl rounded-full text-danger-500 bg-danger-100"><i class="ti ti-IconQuestionMark"></i></div>
-            <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Konfirmasi Pembatalan Pesanan</h3>
-            <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">Pastikan Anda akan menbatalkan pesanan dari pelanggan ini.</p>
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-3xl rounded-full text-red-500 bg-red-100">
+                <i class="ti ti-shield-question"></i>
+            </div>
+            <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Konfirmasi Pembatalan</h3>
+            <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">Pastikan Anda akan membatalkan pesanan dari pelanggan ini.</p>
             
-            <div class="p-4 mb-6 space-y-3 text-left border border-gray-100 bg-gray-50 dark:bg-gray-800/50 rounded-xl dark:border-gray-700">
+            <div class="p-4 mb-4 space-y-3 text-left border border-gray-100 bg-gray-50 dark:bg-gray-800/50 rounded-xl dark:border-gray-700">
                 <div class="flex items-center justify-between text-sm">
                     <span class="font-medium text-gray-500">Pelanggan</span>
                     <span class="font-bold text-gray-900 dark:text-white">{{ $paymentCustomer }}</span>
@@ -138,16 +140,35 @@
                     <span class="font-medium text-gray-500">Metode</span>
                     <span class="font-bold text-gray-900 dark:text-white">{{ $paymentMethod }}</span>
                 </div>
+                
                 <div class="flex items-center justify-between pt-3 border-t border-gray-200 border-dashed dark:border-gray-700">
                     <span class="text-xs font-bold text-gray-500 uppercase">Total Tagihan</span>
                     <span class="text-lg font-black text-emerald-600 dark:text-emerald-400">Rp {{ number_format($paymentTotal, 0, ',', '.') }}</span>
                 </div>
             </div>
 
+            <div class="mb-6 text-left">
+                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-300">
+                    Alasan Pembatalan <span class="text-red-500">*</span>
+                </label>
+                <textarea 
+                    wire:model="catatanPembatalan" 
+                    rows="3" 
+                    placeholder="Contoh: Stok habis, pelanggan tidak merespon..." 
+                    class="w-full p-3 text-sm transition-colors border border-gray-200 outline-none resize-none bg-gray-50 dark:bg-gray-800 dark:border-gray-700 rounded-xl dark:text-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white dark:focus:bg-gray-900"
+                ></textarea>
+                @error('catatanPembatalan') 
+                    <span class="block mt-1 text-xs font-medium text-red-500">{{ $message }}</span> 
+                @enderror
+            </div>
+            
             <div class="flex gap-3">
-                <button wire:click="resetModal" class="flex-1 px-4 py-3 font-bold text-gray-700 transition-colors bg-gray-100 rounded-xl hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300">Tutup</button>
-                <button wire:click="batalkanPesanan" class="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-bold text-white transition-colors bg-red-500 shadow-md rounded-xl hover:bg-red-600">
-                    Ya, Batalkan
+                <button wire:click="resetModal" class="flex-1 px-4 py-3 font-bold text-gray-700 transition-colors bg-gray-100 rounded-xl hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
+                    Tutup
+                </button>
+                <button wire:click="batalkanPesanan" wire:loading.attr="disabled" class="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-bold text-white transition-colors bg-red-500 shadow-md rounded-xl hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span wire:loading.remove wire:target="batalkanPesanan">Ya, Batalkan</span>
+                    <span wire:loading wire:target="batalkanPesanan"><i class="ti ti-loader animate-spin"></i> Memproses...</span>
                 </button>
             </div>
         </div>

@@ -26,6 +26,7 @@ class PesananAktifIndex extends Component
     public $paymentTotal = 0;
     public $paymentMethod = '';
     public $paymentCustomer = '';
+    public $catatanPembatalan = '';
 
     public function render()
     {
@@ -96,7 +97,12 @@ class PesananAktifIndex extends Component
         // Jika statusnya belum dibayar/proses, batalkan
         $pesanan = Pesanan::find($this->selectedPesananId);
         if ($pesanan->status_pembayaran !== 'lunas') {
-            
+            $this->validate([
+                'catatanPembatalan' => 'required|string|min:5|max:255',
+            ], [
+                'catatanPembatalan.required' => 'Alasan pembatalan wajib diisi.',
+                'catatanPembatalan.min' => 'Alasan terlalu singkat.'
+            ]);
             // 1. Kembalikan Stok (Logika Reverse FEFO)
             foreach ($pesanan->mangkuk as $mangkuk) {
                 foreach ($mangkuk->detailPesanan as $detail) {
@@ -120,10 +126,9 @@ class PesananAktifIndex extends Component
                         'jumlah' => $detail->jumlah,
                         'tipe_referensi' => 'Penjualan',
                         'id_referensi' => $pesanan->id_pesanan,
-                        'catatan' => 'Pembatalan Pesanan - Oleh: ' . auth()->user()->name . '. Invoice: ' . $pesanan->nomor_invoice
+                        'catatan' => 'Pembatalan Pesanan Invoice: ' . $pesanan->nomor_invoice. ' dengan catatan : ' . $this->catatanPembatalan,
                     ]);
 
-                    
                 }
             }
 
@@ -191,6 +196,7 @@ class PesananAktifIndex extends Component
         $this->showModalBatalPesanan = false;
         $this->showModalSelesai = false;
         $this->showModalDelivery = false;
+        $this->catatanPembatalan = '';
         $this->selectedPesananId = null;
         $this->inputLinkDelivery = '';
         $this->dispatch('focus-search-input');
