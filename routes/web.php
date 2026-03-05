@@ -31,6 +31,29 @@ use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Api\MidtransWebhookController;
 // use App\Http\Controllers\PosController;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+
+/*
+|--------------------------------------------------------------------------
+| AUTO LOGIN
+|--------------------------------------------------------------------------
+*/
+Route::get('/auto-login/{token}', function($token) {
+    // Decode username dari token base64
+    $username = base64_decode($token);
+    
+    // Cari user antrean_
+    $user = User::where('username', $username)->first();
+    
+    if($user && str_starts_with(strtolower($user->username), 'antrean_')) {
+        Auth::login($user);
+        return redirect()->route('Order')->with('success', 'Berhasil login ke sistem antrean.');
+    }
+    
+    return redirect()->route('Auth')->with('error', 'Token QR Tidak Valid.');
+})->name('auto.login');
 
 
 /*
@@ -42,12 +65,8 @@ Route::get('/', Home::class)->name('Home');
 Route::get('Order', Order::class)->name('Order');
 Route::get('/Auth', AuthLanding::class)->name('Auth');
 Route::get('Riwayat', Riwayat::class)->name('Riwayat');
-// Route::get('Payment', Payment::class)->name('Payment');
 Route::get('Profile', Profile::class)->name('Profile');
-// Route::get('/dashboard', [FrontController::class, 'index'])->name('dashboard');
-// Route::get('/', [FrontController::class, 'index'])->name('home');
-// Route::get('/produk', [FrontController::class, 'produk'])->name('produk.index');
-// Route::get('/produk/{slug}', [FrontController::class, 'detailProduk'])->name('produk.detail');
+
 /*
 |--------------------------------------------------------------------------
 | AREA AUTENTIKASI (Custom murni, tanpa Laravel UI)

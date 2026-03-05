@@ -177,7 +177,7 @@ class PesananAktifIndex extends Component
         $pesanan = Pesanan::find($this->selectedPesananId);
         
         if ($pesanan) {
-            if ($pesanan->status_pembayaran === 'belum_bayar' || $pesanan->status_pembayaran === 'prose_bayar') {
+            if ($pesanan->status_pembayaran === 'belum_bayar' || $pesanan->status_pembayaran === 'proses_bayar') {
                 $this->dispatch('toast', type: 'error', message: 'Gagal! Pastikan pelanggan sudah membayar.');
                 $this->resetModal();
                 return;

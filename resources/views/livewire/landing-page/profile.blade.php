@@ -30,7 +30,7 @@
                     </div>
                 </div>
 
-                <button wire:click="logout" class="flex items-center justify-between w-full p-5 font-bold text-red-500 transition-all bg-white border border-gray-100 shadow-lg dark:bg-gray-800 rounded-3xl dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 group">
+                <button onclick="handleLogout()" class="flex items-center justify-between w-full p-5 font-bold text-red-500 transition-all bg-white border border-gray-100 shadow-lg dark:bg-gray-800 rounded-3xl dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 group">
                     <div class="flex items-center gap-3">
                         <span class="flex items-center justify-center w-10 h-10 bg-red-100 rounded-xl dark:bg-red-900/30">
                             <i class="fa-solid fa-power-off"></i>
