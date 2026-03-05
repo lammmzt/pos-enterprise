@@ -30,6 +30,8 @@ class AuthLanding extends Component
     {
         $data['title'] = 'Login & Daftar';
         $data['active'] = 'Auth';
+        // jika ada auth
+        
         return view('livewire.landing-page.auth', $data)->layout('components.layouts.guest', $data);
     }
 
@@ -191,13 +193,12 @@ class AuthLanding extends Component
         if ($user && Hash::check($this->password, $user->password)) {
             if ($user->status == 'aktif') {
                 // check apakah user pelanggan
-                if ($user->role == 'pelanggan') {
+                if ($user->role != 'pelanggan') {
                     Auth::logout();
-                    $request->session()->invalidate();
-                    $request->session()->regenerateToken();
                     return response()->error('Pengguna tidak terdaftar', 404);
                 }
                 Auth::login($user); // Login manual jika sudah aktif
+                
                 return redirect()->route('Order');
             } else {
                 // Mengaktifkan akun dengan otp

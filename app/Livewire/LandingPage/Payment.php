@@ -47,8 +47,8 @@ class Payment extends Component
         // $this->status_pesanan = $this->pesanan->status_pesanan ?? 'menunggu_pembayaran';
 
         // Cek apakah user ini adalah 'antrean_' (Kasir)
-        $namaUser = strtolower(Auth::user()->nama ?? Auth::user()->username ?? '');
-        $this->isKasir = (strpos($namaUser, 'antrean_') !== false);
+        $usernameUser = strtolower(Auth::user()->username ?? Auth::user()->username ?? '');
+        $this->isKasir = (strpos($usernameUser, 'antrean_') !== false);
 
         // Inisialisasi form delivery dengan data user yang login
         $this->nomor_hp = Auth::user()->no_hp;
