@@ -9,7 +9,7 @@ use App\Models\User;
 
 class Profile extends Component
 {
-    public $nama, $no_hp, $alamat, $password, $password_confirmation;
+    public $nama, $username, $no_hp, $alamat, $password, $password_confirmation;
     public $isAntrean = false;
 
     public function mount()
@@ -18,11 +18,12 @@ class Profile extends Component
         if (!$user) return redirect()->route('Auth');
 
         $this->nama = $user->nama;
+        $this->username = $user->username;
         $this->no_hp = $user->nomor_hp ?? $user->no_hp;
         $this->alamat = $user->alamat ?? '';
 
         // Deteksi akun kasir/antrean
-        $this->isAntrean = str_starts_with(strtolower($this->nama), 'antrean_');
+        $this->isAntrean = str_starts_with(strtolower($this->username), 'antrean_');
     }
 
     public function updateProfile()
