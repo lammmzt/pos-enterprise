@@ -237,6 +237,23 @@ class PosIndex extends Component
             return;
         }
 
+        // check apakah stok mencukupi sebelum memproses transaksi
+        foreach ($this->bowls as $bowl) {
+            foreach ($bowl['items'] as $item) {
+                $produk = Produk::find($item['id']);
+                if (!$produk || $produk->stok < $item['qty']) {
+                     $this->dispatch('toast', type: 'error', message: "Stok {$produk->nama} tidak mencukupi!");
+                     return;
+                }
+                // check seluruh stock batch untuk produk ini, pastikan total stok batch mencukupi
+                $totalBatchStok = BatchProduk::where('id_produk', $item['id'])->where('jumlah', '>', 0)->where('tanggal_kedaluwarsa', '>=', now())->sum('jumlah');
+                if ($totalBatchStok < $item['qty']) {
+                    $this->dispatch('toast', type: 'error', message: "Stok batch untuk {$produk->nama} tidak mencukupi!");
+                    return;
+                }
+            }
+        }
+
         try {
             DB::transaction(function () {
                 // 1. Buat Master Pesanan
@@ -276,6 +293,7 @@ class PosIndex extends Component
                         // Algoritma FEFO (First Expired First Out)
                         $batches = BatchProduk::where('id_produk', $produkId)
                             ->where('jumlah', '>', 0)
+                            ->where('tanggal_kedaluwarsa', '>=', now()) // Pastikan batch belum kedaluwarsa
                             ->orderByRaw('ISNULL(tanggal_kedaluwarsa), tanggal_kedaluwarsa ASC')
                             ->lockForUpdate()
                             ->get();

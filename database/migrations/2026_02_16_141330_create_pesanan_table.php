@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('id_kasir')->nullable()->constrained('users', 'id_user'); // Kasir jika offline
             $table->string('nomor_invoice')->unique();
             $table->decimal('total_harga', 15, 2);
-            $table->enum('status_pembayaran', ['belum_bayar', 'lunas', 'gagal', 'refund'])->default('belum_bayar');
-            $table->enum('status_pesanan', ['proses', 'delivery', 'selesai', 'dibatalkan'])->default('proses');
+            $table->enum('status_pembayaran', ['belum_bayar', 'prose_bayar', 'lunas', 'gagal', 'refund'])->default('belum_bayar');
+            $table->enum('status_pesanan', ['menunggu_pembayaran','proses', 'delivery', 'selesai', 'dibatalkan'])->default('proses');
             $table->enum('tipe_pesanan', ['takeaway', 'dinein', 'delivery', ])->nullable();
             $table->string('metode_pembayaran')->nullable(); // midtrans, tunai, transfer
             $table->text('link_delivery')->nullable();

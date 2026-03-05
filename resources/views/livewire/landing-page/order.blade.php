@@ -187,7 +187,7 @@
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Rp {{ number_format($item['harga'] * $item['qty'], 0, ',', '.') }}</span>
-                                                    <button wire:click="updateItem({{ $id }}, -1)" class="w-5 h-5 text-gray-400 bg-gray-100 rounded hover:text-red-500"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                                                    <button wire:click="updateItem({{ $id }}, -1)" class="w-5 h-5 text-gray-400 bg-gray-100 rounded hover:text-red-500"><i class="fa-solid fa-trash-can text-[13px]"></i></button>
                                                 </div>
                                             </li>
                                         @empty
@@ -199,10 +199,10 @@
                                         <div>
                                             <label class="text-[10px] uppercase font-bold text-gray-400">Kuah</label>
                                             <select wire:model.live="bowls.{{$index}}.tipe_kuah" class="w-full p-2 mt-1 text-xs text-gray-800 bg-white border border-gray-200 rounded-lg outline-none dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200">
-                                                <option value="Kuah Kencur (Original)">Kuah Kencur (Original)</option>
-                                                <option value="Kuah Jeletot (Merah)">Kuah Jeletot (Merah)</option>
-                                                <option value="Kuah Kacang">Kuah Kacang</option>
-                                                <option value="Goreng (Tanpa Kuah)">Goreng (Tanpa Kuah)</option>
+                                                <option value="Seblak Kuah Original">Seblak Kuah Original</option>
+                                                <option value="Seblak Kuah Jeletot">Seblak Kuah Jeletot</option>
+                                                <option value="Seblak Kuah Tomyam">Seblak Kuah Tomyam</option>
+                                                <option value="Kuah Nyemek">Kuah Nyemek</option>
                                             </select>
                                         </div>
                                         <div>

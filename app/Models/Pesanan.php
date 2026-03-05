@@ -14,6 +14,7 @@ class Pesanan extends Model
         'id_kasir',
         'nomor_invoice',
         'total_harga',
+        'snap_token',
         'status_pembayaran',
         'status_pesanan',
         'tipe_pesanan',

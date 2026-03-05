@@ -18,7 +18,13 @@ class AuthController extends Controller
         // 2. Coba melakukan autentikasi
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $user = Auth::user();
+            //  if ($user->role === 'pelanggan') {
+            //     Auth::logout();
+            //     $request->session()->invalidate();
+            //     $request->session()->regenerateToken();
 
+            //     return response()->error('Pengguna tidak terdaftar', 404);
+            // }
             // 3. Cek apakah akun aktif (Sesuai PRD)
             if ($user->status === 'tidak_aktif') {
                 Auth::logout();
@@ -27,7 +33,8 @@ class AuthController extends Controller
 
                 return response()->error('Pengguna tidak aktif', 404);
             }
-
+            
+            
             // 4. Jika sukses dan aktif, regenerasi session untuk keamanan (mencegah session fixation)
             $request->session()->regenerate();
 

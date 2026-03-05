@@ -29,8 +29,24 @@ class Order extends Component
 
     public function mount()
     {
-        // Inisialisasi Mangkuk Pertama
-        $this->addBowl('Mangkuk 1');
+       // Cek apakah ada data reorder dari halaman Riwayat
+        if (session()->has('reorder_cart')) {
+            // Ambil data dari session dan masukkan ke keranjang aktif
+            $this->bowls = session()->get('reorder_cart');
+            $this->activeBowlIndex = 0;
+            
+            // Hitung total harga sesuai mangkuk yang baru di-load
+            $this->calculateTotal();
+            
+            // Hapus session agar tidak terus-terusan meload jika halaman di-refresh
+            session()->forget('reorder_cart');
+            
+            // (Opsional) Kirim notifikasi sukses
+            session()->flash('success', 'Keranjang berhasil diisi dengan pesanan lama Anda.');
+        } else {
+            // Jika tidak ada reorder, inisialisasi Mangkuk Pertama kosong seperti biasa
+            $this->addBowl('Mangkuk 1');
+        }
     }
 
     public function render()
@@ -71,7 +87,7 @@ class Order extends Component
         $this->bowls[] = [
             'id' => uniqid('bowl_'),
             'nama_pemesan' => $namaPemesan,
-            'tipe_kuah' => 'Kuah Kencur (Original)',
+            'tipe_kuah' => 'Seblak Kuah Original',
             'level_pedas' => 1,
             'catatan' => '',
             'items' => [] 
@@ -189,6 +205,12 @@ class Order extends Component
                     $this->dispatch('toast', type: 'error', message: "Stok {$produk->nama} tidak mencukupi!");
                     return;
                 }
+                // check seluruh stock batch untuk produk ini, pastikan total stok batch mencukupi
+                $totalBatchStok = BatchProduk::where('id_produk', $item['id'])->where('jumlah', '>', 0)->where('tanggal_kedaluwarsa', '>=', now())->sum('jumlah');
+                if ($totalBatchStok < $item['qty']) {
+                    $this->dispatch('toast', type: 'error', message: "Stok batch untuk {$produk->nama} tidak mencukupi!");
+                    return;
+                }
             }
         }
 
@@ -205,7 +227,7 @@ class Order extends Component
                     'nomor_invoice' => $invoice_no,
                     'total_harga' => $this->total_harga,
                     'status_pembayaran' => 'belum_bayar',
-                    'status_pesanan' => 'proses', // Masuk antrean dapur tapi ditahan status pembayarannya
+                    'status_pesanan' => 'menunggu_pembayaran', // Masuk antrean dapur tapi ditahan status pembayarannya
                 ]);
                 
                 $pesananId = $pesanan->id_pesanan;
@@ -226,6 +248,7 @@ class Order extends Component
                         $qtyNeeded = $item['qty'];
                         $batches = BatchProduk::where('id_produk', $item['id'])
                             ->where('jumlah', '>', 0)
+                            ->where('tanggal_kedaluwarsa', '>=', now())
                             ->orderByRaw('ISNULL(tanggal_kedaluwarsa), tanggal_kedaluwarsa ASC')
                             ->lockForUpdate()
                             ->get();
@@ -258,7 +281,7 @@ class Order extends Component
                                 'jumlah' => $qtyDiambil,
                                 'tipe_referensi' => 'Penjualan',
                                 'id_referensi' => $pesanan->id_pesanan,
-                                'catatan' => 'Penjualan Mangkuk: ' . $mangkuk->id_mangkuk
+                                'catatan' => 'Penjualan Mangkuk: ' . $mangkuk->nama_pemesan . ' (Invoice: ' . $pesanan->nomor_invoice . ')',
                                 
                             ]);
 
@@ -268,7 +291,7 @@ class Order extends Component
                 }
             });
 
-            // Redirect ke halaman Pembayaran
+            // Redirect ke halaman Pembayaran denagn livewire
             $this->redirect(route('Payment', ['id' => $pesananId]));
 
         } catch (\Exception $e) {

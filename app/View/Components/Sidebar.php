@@ -59,6 +59,13 @@ class Sidebar extends Component
                         ]
                     ],
                     [
+                        'name' => 'Testimoni', 
+                        'icon' => 'message',
+                        'activePattern' => 'admin.testimoni',
+                        'route' => 'admin.testimoni',
+                        'roles' => ['admin', 'owner',], // Semua role bisa lihat
+                    ],
+                    [
                         'name' => 'Laporan',
                         'icon' => 'report',
                         'activePattern' => 'laporan.*',

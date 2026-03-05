@@ -24,7 +24,7 @@ class AuthLanding extends Component
     public $showOtpModal = false;
     public $otp = ['', '', '', ''];
     public $tempUserId = null;
-    public $otpContext = 'registrasi'; // 'registrasi' atau 'reset_password'
+    public $otpContext = 'registrasi'; // 'registrasi', 'reset_password', atau 'login'
 
     public function render()
     {
@@ -46,7 +46,7 @@ class AuthLanding extends Component
     {
         $kodeOtp = rand(1000, 9999);
         VerifikasiOtp::create([
-            'id_user' => $user->id_user,
+            'id_user' => $user->id_user, // Pastikan kolom ini sesuai dengan database
             'kode_otp' => $kodeOtp,
             'tipe' => $konteks,
             'waktu_kedaluwarsa' => Carbon::now()->addMinutes(5),
@@ -64,7 +64,7 @@ class AuthLanding extends Component
     // --- LOGIKA REGISTER ---
     public function register()
     {
-        // jika no hp sudah ada dan satus tidak aktif, maka kirim ulang OTP
+        // jika no hp sudah ada dan status tidak aktif, maka kirim ulang OTP
         $user = User::where('no_hp', $this->no_hp)->first();
 
         if ($user && $user->status == 'tidak_aktif') {
@@ -118,7 +118,9 @@ class AuthLanding extends Component
     // --- LOGIKA KIRIM ULANG OTP ---
     public function resendOtp()
     {
-        $user = User::find($this->tempUserId);
+        // PENTING: Jika primary key bukan 'id', User::find() mungkin tidak berfungsi
+        // Gunakan where('id_user', ...)->first() jika primary key custom
+        $user = User::where('id_user', $this->tempUserId)->first();
         if ($user) {
             $this->sendOtpCode($user, $this->otpContext);
         }
@@ -148,11 +150,16 @@ class AuthLanding extends Component
 
         $otpRecord->update(['status_terpakai' => true]);
         
-        if ($this->otpContext === 'registrasi') {
-            $user = User::find($this->tempUserId);
-            $user->save(['status' => 'aktif']);// kenapa erro disini? apa karena id buka int?
+        // Gabungkan konteks 'registrasi' dan 'login' karena perlakuannya sama
+        if ($this->otpContext === 'registrasi' || $this->otpContext === 'login') {
+            $user = User::where('id_user', $this->tempUserId)->first();
+            
+            // PERBAIKAN: Gunakan update(), bukan save() jika memakai array
+            $user->update(['status' => 'aktif']); 
+            
             Auth::login($user);
             return redirect()->route('Order'); 
+            
         } elseif ($this->otpContext === 'reset_password') {
             $this->showOtpModal = false;
             $this->otp = ['', '', '', '']; // Reset OTP input
@@ -167,7 +174,7 @@ class AuthLanding extends Component
             'new_password' => 'required|min:6|same:new_password_confirmation'
         ]);
 
-        $user = User::find($this->tempUserId);
+        $user = User::where('id_user', $this->tempUserId)->first();
         $user->update(['password' => Hash::make($this->new_password)]);
         
         session()->flash('success', 'Kata sandi berhasil diubah! Silakan masuk.');
@@ -180,16 +187,21 @@ class AuthLanding extends Component
         $this->validate(['no_hp' => 'required', 'password' => 'required']);
         $user = User::where('no_hp', $this->no_hp)->first();
 
-        if ($user && Auth::attempt(['no_hp' => $this->no_hp, 'password' => $this->password])) {
+        // PERBAIKAN: Gunakan Hash::check agar tidak langsung Auth::attempt (login otomatis)
+        if ($user && Hash::check($this->password, $user->password)) {
             if ($user->status == 'aktif') {
+                Auth::login($user); // Login manual jika sudah aktif
                 return redirect()->route('Order');
-            }else{
-                // mengaktifkan akun dengan otp
+            } else {
+                // Mengaktifkan akun dengan otp
                 $this->tempUserId = $user->id_user;
                 $this->otpContext = 'login';
                 $this->sendOtpCode($user, 'login');
+                // Note: showOtpModal = true sudah dipanggil di dalam sendOtpCode()
+                return;
             }
         }
+        
         session()->flash('error', 'Nomor HP atau Password salah.');
     }
 }

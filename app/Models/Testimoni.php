@@ -23,9 +23,11 @@ class Testimoni extends Model
         ];
     }
 
-    // Relasi
     public function pesanan()
     {
-        return $this->belongsTo(Pesanan::class, 'id_pesanan', 'id_pesanan');
+        return $this->belongsTo(Pesanan::class, 'id_pesanan');
     }
+    
+    
+    
 }

@@ -11,6 +11,7 @@
                 <div class="flex flex-wrap items-center w-full gap-3 lg:w-auto">
                     <select wire:model.live="filterStatus" class="px-4 py-2 text-xs font-bold transition-all bg-white border border-gray-200 border-none outline-none appearance-none cursor-pointer dark:bg-gray-800 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
                         <option value="">Semua Status</option>
+                        <option value="menunggu_pembayaran">Menunggu Pembayaran</option>
                         <option value="proses">Proses (Dapur)</option>
                         <option value="selesai">Selesai</option>
                         <option value="dibatalkan">Dibatalkan</option>
@@ -62,7 +63,7 @@
                             <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/40">
                                 <td class="px-6 py-4">
                                     <div class="flex flex-col">
-                                        <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ $item->id_pesanan }}</span>
+                                        <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ $item->nomor_invoice }}</span>
                                         <span class="text-[10px] text-gray-500">{{ $item->created_at->format('d M Y, H:i') }}</span>
                                     </div>
                                 </td>
@@ -75,7 +76,7 @@
                                 <td class="px-6 py-4">
                                     <span class="px-2 py-1 text-[10px] font-bold uppercase rounded-md 
                                         {{ $item->tipe_pesanan == 'dinein' ? 'bg-blue-100 text-blue-700' : ($item->tipe_pesanan == 'takeaway' ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700') }}">
-                                        {{ $item->tipe_pesanan }}
+                                        {{ $item->tipe_pesanan == '' ? 'N/A' : $item->tipe_pesanan }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
@@ -94,6 +95,8 @@
                                         <span class="px-3 py-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 rounded-full dark:bg-emerald-500/10"><i class="ti ti-check"></i> Selesai</span>
                                     @elseif($item->status_pesanan === 'proses')
                                         <span class="px-3 py-1 text-[10px] font-bold text-yellow-600 bg-yellow-50 rounded-full dark:bg-yellow-500/10 animate-pulse"><i class="ti ti-loader"></i> Dapur</span>
+                                    @elseif($item->status_pesanan === 'menunggu_pembayaran')
+                                        <span class="px-3 py-1 text-[10px] font-bold text-grey-600 bg-grey-50 rounded-full dark:bg-grey-500/10 animate-pulse"><i class="ti ti-loader"></i> Menunggu Pembayaran</span>
                                     @else
                                         <span class="px-3 py-1 text-[10px] font-bold text-red-600 bg-red-50 rounded-full dark:bg-red-500/10"><i class="ti ti-x"></i> Dibatalkan</span>
                                     @endif
@@ -135,7 +138,7 @@
                     @if($detailPesanan)
                         <div class="flex items-start justify-between pb-4 mb-6 border-b border-gray-100 dark:border-gray-800">
                             <div>
-                                <h4 class="text-2xl font-black text-gray-900 dark:text-white">{{ $detailPesanan->id_pesanan }}</h4>
+                                <h4 class="text-2xl font-black text-gray-900 dark:text-white">{{ $detailPesanan->nomor_invoice }}</h4>
                                 <p class="mt-1 text-xs text-gray-500">{{ $detailPesanan->created_at->format('d F Y, H:i:s') }} | Kasir: {{ $detailPesanan->kasir->nama ?? 'Sistem' }}</p>
                             </div>
                             <div class="flex gap-2">

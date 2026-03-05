@@ -4,12 +4,19 @@
         <div class="relative z-10 flex flex-col items-center justify-center w-full max-w-md px-4 pt-24 pb-12 overflow-hidden">
             
             <nav class="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 border-b border-gray-200 glass-header dark:border-gray-800">
-                <div class="flex items-center justify-between max-w-md px-4 py-3 mx-auto">
-                    <a wire:navigate href="{{ route('Order') }}" class="flex items-center gap-2 text-gray-600 transition-colors dark:text-gray-300 hover:text-brand-red">
-                        <i class="text-xl fa-solid fa-arrow-left"></i>
-                        <span class="font-bold">Kembali</span>
-                    </a>
+                <div class="flex items-center justify-between px-4 py-3 mx-auto max-w-7xl lg:px-8">
+            <div class="flex items-center gap-3">
+                <a wire:navigate href="{{ route('Order') }}" class="flex items-center justify-center w-8 h-8 text-gray-600 transition-all bg-gray-100 rounded-full dark:bg-gray-800 dark:text-gray-300 hover:bg-brand-red hover:text-white active:scale-95">
+                    <i class="text-sm fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center justify-center w-8 h-8 text-white shadow-lg rounded-xl bg-gradient-to-br from-brand-red to-orange-500 shadow-orange-500/20 rotate-3">
+                        <i class="text-sm fa-solid fa-fire-flame-curved"></i>
+                    </div>
+                    <h1 class="text-lg font-extrabold tracking-tight text-gray-800 dark:text-white">Seblak-Bucin</h1>
                 </div>
+            </div>
+        </div>
             </nav>
 
             <div class="w-full mb-8 text-center">

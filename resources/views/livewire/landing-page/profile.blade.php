@@ -1,98 +1,128 @@
-<div>
+<div class="min-h-screen pb-12 font-sans text-gray-800 transition-colors duration-300 bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
+    
    {{-- include header --}}
     @include('livewire.landing-page.layout.header', ['active' => $active])
-   <!-- Main Content -->
-    <main class="flex-1 w-full max-w-lg p-4 pb-24 mx-auto">
+
+    <main class="max-w-5xl px-4 pt-24 mx-auto">
         
-        <!-- Profile Header -->
-        <div class="flex items-center gap-4 mb-8 animate-fade-in">
-            <div class="flex items-center justify-center w-16 h-16 text-3xl text-gray-400 bg-gray-200 border-2 border-white rounded-full shadow-md dark:bg-gray-700 dark:text-gray-500 dark:border-gray-800">
-                <i class="fa-solid fa-user"></i>
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            
+            <div class="space-y-6 lg:col-span-1">
+                <div class="relative overflow-hidden bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-xl border border-gray-100 dark:border-gray-700 p-8 text-center group">
+                    <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-brand-red to-brand-orange opacity-10"></div>
+                    
+                    <div class="relative">
+                        <div class="inline-flex items-center justify-center mb-4 text-4xl text-white transition-transform duration-500 transform shadow-2xl w-28 h-28 bg-gradient-to-tr from-brand-red to-brand-orange rounded-3xl group-hover:scale-105">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <h3 class="text-xl font-black truncate">{{ $nama }}</h3>
+                        <p class="mb-6 text-sm font-medium text-gray-500 dark:text-gray-400">{{ $no_hp }}</p>
+                        
+                        <div class="flex flex-col gap-2">
+                            <div class="px-4 py-2 text-xs italic font-bold text-gray-600 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300">
+                                @if($isAntrean)
+                                    <i class="mr-1 fa-solid fa-lock"></i> Akun Antrean (Terbatas)
+                                @else
+                                    <i class="mr-1 text-green-500 fa-solid fa-check-circle"></i> Akun Pelanggan Aktif
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button wire:click="logout" class="flex items-center justify-between w-full p-5 font-bold text-red-500 transition-all bg-white border border-gray-100 shadow-lg dark:bg-gray-800 rounded-3xl dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 group">
+                    <div class="flex items-center gap-3">
+                        <span class="flex items-center justify-center w-10 h-10 bg-red-100 rounded-xl dark:bg-red-900/30">
+                            <i class="fa-solid fa-power-off"></i>
+                        </span>
+                        Keluar Akun
+                    </div>
+                    <i class="text-xs transition-transform fa-solid fa-chevron-right group-hover:translate-x-1"></i>
+                </button>
             </div>
-            <div>
-                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Budi Santoso</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400">0812-3456-7890</p>
-                <span class="inline-block mt-1 px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 text-[10px] font-bold rounded-md uppercase tracking-wider">Member Gold</span>
+
+            <div class="space-y-6 lg:col-span-2">
+                
+                @if (session()->has('success'))
+                    <div class="flex items-center gap-3 p-4 text-sm font-bold text-green-700 border border-green-200 bg-green-50 rounded-2xl dark:bg-green-900/30 dark:text-green-400 dark:border-green-800/50 animate-bounce">
+                        <i class="text-xl fa-solid fa-circle-check"></i> {{ session('success') }}
+                    </div>
+                @endif
+
+                @if($isAntrean)
+                    <div class="flex gap-4 p-5 border bg-amber-50 border-amber-200 rounded-3xl dark:bg-amber-900/20 dark:border-amber-800/50">
+                        <div class="text-2xl text-amber-500"><i class="fa-solid fa-circle-info"></i></div>
+                        <div class="text-sm">
+                            <p class="font-bold text-amber-800 dark:text-amber-500">Informasi Penting</p>
+                            <p class="text-amber-700 dark:text-amber-400">Profil akun kasir/antrean dikelola oleh sistem dan tidak dapat diedit secara mandiri untuk keperluan keamanan data.</p>
+                        </div>
+                    </div>
+                @endif
+
+                <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-xl border border-gray-100 dark:border-gray-700 p-8 sm:p-10">
+                    <form wire:submit.prevent="updateProfile" class="space-y-6">
+                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div class="space-y-2">
+                                <label class="ml-1 text-sm font-bold">Nama Lengkap</label>
+                                <div class="relative group">
+                                    <i class="absolute text-gray-400 transition-colors -translate-y-1/2 left-4 top-1/2 fa-solid fa-id-card group-focus-within:text-brand-red"></i>
+                                    <input type="text" wire:model="nama" {{ $isAntrean ? 'disabled' : '' }} 
+                                        class="w-full py-3.5 pl-12 pr-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl outline-none focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red transition-all disabled:opacity-50">
+                                </div>
+                                @error('nama') <span class="ml-1 text-xs text-red-500">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="ml-1 text-sm font-bold">Nomor WhatsApp</label>
+                                <div class="relative group">
+                                    <i class="absolute text-gray-400 transition-colors -translate-y-1/2 left-4 top-1/2 fa-brands fa-whatsapp group-focus-within:text-brand-red"></i>
+                                    <input type="text" wire:model="no_hp" {{ $isAntrean ? 'disabled' : '' }} 
+                                        class="w-full py-3.5 pl-12 pr-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl outline-none focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red transition-all disabled:opacity-50">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="ml-1 text-sm font-bold">Alamat Pengiriman</label>
+                            <div class="relative group">
+                                <i class="absolute text-gray-400 transition-colors left-4 top-5 fa-solid fa-map-location-dot group-focus-within:text-brand-red"></i>
+                                <textarea wire:model="alamat" {{ $isAntrean ? 'disabled' : '' }} rows="3"
+                                    class="w-full py-3.5 pl-12 pr-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl outline-none focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red transition-all disabled:opacity-50"></textarea>
+                            </div>
+                        </div>
+
+                        @if(!$isAntrean)
+                        <div class="pt-6 border-t dark:border-gray-700">
+                            <h4 class="mb-6 text-xs italic font-black tracking-widest text-gray-400 uppercase">Ganti Kata Sandi (Opsional)</h4>
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <div class="relative group" x-data="{ show: false }">
+                                    <i class="absolute text-gray-400 -translate-y-1/2 left-4 top-1/2 fa-solid fa-lock"></i>
+                                    <input :type="show ? 'text' : 'password'" wire:model="password" placeholder="Sandi Baru" 
+                                        class="w-full py-3.5 pl-12 pr-12 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl outline-none focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red transition-all">
+                                    <button type="button" @click="show = !show" class="absolute text-gray-400 -translate-y-1/2 right-4 top-1/2">
+                                        <i class="fa-solid" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                    </button>
+                                </div>
+                                <div class="relative group" x-data="{ show: false }">
+                                    <i class="absolute text-gray-400 -translate-y-1/2 left-4 top-1/2 fa-solid fa-shield-check"></i>
+                                    <input :type="show ? 'text' : 'password'" wire:model="password_confirmation" placeholder="Ulangi Sandi" 
+                                        class="w-full py-3.5 pl-12 pr-12 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl outline-none focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red transition-all">
+                                    <button type="button" @click="show = !show" class="absolute text-gray-400 -translate-y-1/2 right-4 top-1/2">
+                                        <i class="fa-solid" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            @error('password') <p class="mt-2 ml-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                        </div>
+
+                        <button type="submit" wire:loading.attr="disabled" class="w-full py-4 bg-gradient-to-r from-brand-red to-brand-orange text-white font-black rounded-2xl shadow-xl shadow-red-500/30 hover:shadow-red-500/50 active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-wider">
+                            <span wire:loading.remove wire:target="updateProfile">Simpan Perubahan</span>
+                            <span wire:loading wire:target="updateProfile"><i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...</span>
+                        </button>
+                        @endif
+                    </form>
+                </div>
             </div>
         </div>
-
-        <!-- Form Container -->
-        <form onsubmit="handleSaveProfile(event)" class="space-y-6 animate-slide-up">
-            
-            <!-- Section: Data Diri -->
-            <div class="p-5 bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-2xl dark:border-gray-700">
-                <h3 class="flex items-center gap-2 mb-4 font-bold text-gray-800 dark:text-white">
-                    <i class="fa-solid fa-address-card text-brand-red"></i> Data Pengiriman
-                </h3>
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Alamat Lengkap</label>
-                        <textarea id="address-input" rows="3" class="w-full p-3 text-sm text-gray-800 transition-all border border-gray-200 outline-none resize-none bg-gray-50 dark:bg-gray-900 dark:border-gray-700 rounded-xl dark:text-white focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red" placeholder="Masukkan alamat lengkap...">Jl. Dago Atas No. 123, RT 01/RW 02, Coblong, Bandung</textarea>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Catatan Alamat (Opsional)</label>
-                        <input type="text" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm text-gray-800 dark:text-white focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red outline-none transition-all" placeholder="Contoh: Pagar hitam, rumah tingkat 2">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section: Keamanan -->
-            <div class="p-5 bg-white border border-gray-100 shadow-sm dark:bg-gray-800 rounded-2xl dark:border-gray-700">
-                <h3 class="flex items-center gap-2 mb-4 font-bold text-gray-800 dark:text-white">
-                    <i class="fa-solid fa-lock text-brand-red"></i> Ubah Kata Sandi
-                </h3>
-                <p class="mb-4 text-xs text-gray-400 dark:text-gray-500">Kosongkan jika tidak ingin mengubah kata sandi.</p>
-
-                <div class="space-y-4">
-                    <!-- Current Password -->
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Kata Sandi Saat Ini</label>
-                        <div class="relative">
-                            <input id="current-pass" type="password" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-3 pr-10 py-2.5 text-sm text-gray-800 dark:text-white focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red outline-none transition-all" placeholder="••••••••">
-                            <button type="button" onclick="togglePassword('current-pass', this)" class="absolute text-gray-400 transition-colors -translate-y-1/2 right-3 top-1/2 hover:text-brand-red">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- New Password -->
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Kata Sandi Baru</label>
-                        <div class="relative">
-                            <input id="new-pass" type="password" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-3 pr-10 py-2.5 text-sm text-gray-800 dark:text-white focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red outline-none transition-all" placeholder="Minimal 6 karakter">
-                            <button type="button" onclick="togglePassword('new-pass', this)" class="absolute text-gray-400 transition-colors -translate-y-1/2 right-3 top-1/2 hover:text-brand-red">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Confirm Password -->
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Konfirmasi Kata Sandi Baru</label>
-                        <div class="relative">
-                            <input id="confirm-pass" type="password" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-3 pr-10 py-2.5 text-sm text-gray-800 dark:text-white focus:ring-2 focus:ring-brand-red/20 focus:border-brand-red outline-none transition-all" placeholder="Ulangi kata sandi baru">
-                            <button type="button" onclick="togglePassword('confirm-pass', this)" class="absolute text-gray-400 transition-colors -translate-y-1/2 right-3 top-1/2 hover:text-brand-red">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex flex-col gap-3 pt-4">
-                <button type="submit" class="w-full bg-brand-red hover:bg-red-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-red-500/20 active:scale-95 transition-all flex justify-center items-center gap-2">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
-                </button>
-                <button type="button" onclick="handleLogout()" class="w-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold py-3.5 rounded-xl transition-all active:scale-95 flex justify-center items-center gap-2">
-                    <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
-                </button>
-            </div>
-
-        </form>
-
     </main>
 </div>
-
