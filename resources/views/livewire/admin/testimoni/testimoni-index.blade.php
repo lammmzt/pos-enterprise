@@ -13,13 +13,13 @@
         <section class="space-y-4">
             <div class="overflow-hidden transition-all bg-white border border-gray-200 shadow-sm dark:bg-gray-900 rounded-3xl dark:border-gray-800">
                 
-                <div class="row">
+                {{-- <div class="row">
                     <div class="flex flex-col items-center justify-end p-4 border-b border-gray-100 col-12 dark:border-gray-800 md:flex-row">
                         <button wire:click="create" class="px-6 py-3 text-sm font-bold text-white transition-all bg-gray-100 bg-indigo-600 hover:bg-indigo-700 rounded-xl">
                             <i class="mr-2 ti ti-plus"></i> Tambah Testimoni
                         </button>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="flex flex-col items-center justify-between gap-4 p-6 border-b border-gray-100 dark:border-gray-800 md:flex-row">
                     <div class="flex items-center w-full gap-4 md:w-auto">
@@ -55,9 +55,7 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-gray-100 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-800">
-                                <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('id_pesanan')">
-                                    <div class="flex items-center gap-2">ID Pesanan <i class="opacity-50 ti ti-arrows-sort"></i></div>
-                                </th>
+                                
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('rating')">
                                     <div class="flex items-center gap-2">Rating <i class="opacity-50 ti ti-arrows-sort"></i></div>
                                 </th>
@@ -69,7 +67,7 @@
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                             @forelse ($testimonis as $testimoni)
                                 <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/40 group">
-                                    <td class="px-6 py-4 font-bold text-gray-600 dark:text-gray-400">{{ $testimoni->id_pesanan }}</td>
+                                    
                                     
                                     {{-- Kolom Rating dengan Bintang --}}
                                     <td class="px-6 py-4">
@@ -87,8 +85,8 @@
                                     </td>
                                     
                                     <td class="px-6 py-4">
-                                        <span class="px-3 py-1 rounded-full text-[9px] font-bold uppercase {{ $testimoni->status_tampil === 'tampil' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600' : 'bg-amber-50 dark:bg-amber-500/10 text-amber-600' }}">
-                                            {{ str_replace('_', ' ', $testimoni->status_tampil) }}
+                                        <span class="px-3 py-1 rounded-full text-[9px] font-bold uppercase {{ $testimoni->status_tampil === 1 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600' : 'bg-amber-50 dark:bg-amber-500/10 text-amber-600' }}">
+                                            {{ $testimoni->status_tampil === 1 ? 'Tampil' : 'Tidak Tampil' }}
                                         </span>
                                     </td>
                                     
@@ -166,8 +164,8 @@
                             <div>
                                 <label class="block font-bold text-gray-700 dark:text-gray-300">Status Tampil</label>
                                 <select wire:model="form.status_tampil" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
-                                    <option value="tampil">Tampil</option>
-                                    <option value="sembunyi">Sembunyi</option>
+                                    <option value="1">Tampil</option>
+                                    <option value="0">Sembunyi</option>
                                 </select>
                                 @error('form.status_tampil') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                             </div>
