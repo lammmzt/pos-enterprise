@@ -86,13 +86,11 @@
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
-                                            
-                                            @if(str_starts_with(strtolower($user->nama), 'antrean_') || str_starts_with(strtolower($user->username), 'antrean_'))
+                                            @if(str_starts_with(strtolower($user->username), 'antrean_') && $user->role === 'pelanggan')
                                                 <button wire:click="showQrCode({{ $user->id_user }})" title="Cetak QR Antrean" class="p-2 text-emerald-500 transition-colors bg-emerald-100 rounded-lg hover:bg-emerald-200 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50">
                                                     <i class="ti ti-qrcode"></i>
                                                 </button>
                                             @endif
-
                                             <button wire:click="edit({{ $user->id_user }})" class="p-2 text-blue-500 transition-colors bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50">
                                                 <i class="ti ti-pencil"></i>
                                             </button>
