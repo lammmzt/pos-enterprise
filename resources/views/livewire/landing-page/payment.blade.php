@@ -1,26 +1,23 @@
 @php
     // PERBAIKAN LOGIKA WAKTU (ANTI-BUG REFRESH)
-    // 1. Ambil waktu pesanan dibuat
     $waktuDibuat = \Carbon\Carbon::parse($pesanan->created_at);
-    
-    // 2. Tambahkan 10 menit sebagai batas kedaluwarsa
     $waktuKedaluwarsa = $waktuDibuat->copy()->addMinutes(20);
-    
-    // 3. Hitung selisih dari waktu kedaluwarsa dengan detik saat ini
-    // (false digunakan agar jika waktu sudah lewat, hasilnya menjadi minus)
     $sisaDetik = now()->diffInSeconds($waktuKedaluwarsa, false);
     
-    // 4. Pastikan sisa waktu tidak kurang dari 0 dan tidak lebih dari 1200 detik
     $sisaWaktu = $sisaDetik > 0 ? (int) $sisaDetik : 0;
     if ($sisaWaktu > 1200) {
         $sisaWaktu = 1200;
     }
+
+    // CEK STATUS LOCK DARI BACKEND
+    // Jika status bukan belum_bayar (misal: proses_bayar, pending), kunci form sejak awal
+    $isLockedBackend = $pesanan->status_pembayaran !== 'belum_bayar';
 @endphp
 
-<div x-data="paymentTimer({{ $sisaWaktu }})" 
-     @open-payment-modal.window="showPaymentModal = true" 
+<div x-data="paymentTimer({{ $sisaWaktu }}, {{ $isLockedBackend ? 'true' : 'false' }})" 
+     @open-payment-modal.window="showPaymentModal = true; isLocked = true" 
      @close-payment-modal.window="closeModal()"
-     @open-qrcode-modal.window="showQrcodePayment = true" 
+     @open-qrcode-modal.window="showQrcodePayment = true; isLocked = true" 
      @close-qrcode-modal.window="closeModal()"
      class="relative min-h-screen pb-24 font-sans bg-gray-50 dark:bg-gray-900 selection:bg-brand-red/30">
     
@@ -35,18 +32,18 @@
                 <div class="p-5 bg-white border border-gray-100 shadow-sm rounded-2xl dark:bg-gray-800 dark:border-gray-700">
                     <h2 class="mb-4 text-base font-bold text-gray-800 dark:text-white">Tipe Pesanan</h2>
                     <div class="grid grid-cols-3 gap-3">
-                        <label class="relative flex flex-col items-center p-3 text-center transition-all border-2 cursor-pointer rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 {{ $tipe_pesanan === 'dinein' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
-                            <input type="radio" wire:model.live="tipe_pesanan" value="dinein" class="hidden" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
+                        <label :class="isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700'" class="relative flex flex-col items-center p-3 text-center transition-all border-2 rounded-xl {{ $tipe_pesanan === 'dinein' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
+                            <input type="radio" wire:model.live="tipe_pesanan" value="dinein" class="hidden" :disabled="isLocked">
                             <i class="mb-2 text-2xl fa-solid fa-utensils {{ $tipe_pesanan === 'dinein' ? 'text-brand-red' : 'text-gray-400' }}"></i>
                             <span class="text-xs font-bold {{ $tipe_pesanan === 'dinein' ? 'text-brand-red' : 'text-gray-500' }}">Makan Sini</span>
                         </label>
-                        <label class="relative flex flex-col items-center p-3 text-center transition-all border-2 cursor-pointer rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 {{ $tipe_pesanan === 'takeaway' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
-                            <input type="radio" wire:model.live="tipe_pesanan" value="takeaway" class="hidden" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
+                        <label :class="isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700'" class="relative flex flex-col items-center p-3 text-center transition-all border-2 rounded-xl {{ $tipe_pesanan === 'takeaway' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
+                            <input type="radio" wire:model.live="tipe_pesanan" value="takeaway" class="hidden" :disabled="isLocked">
                             <i class="mb-2 text-2xl fa-solid fa-bag-shopping {{ $tipe_pesanan === 'takeaway' ? 'text-brand-red' : 'text-gray-400' }}"></i>
                             <span class="text-xs font-bold {{ $tipe_pesanan === 'takeaway' ? 'text-brand-red' : 'text-gray-500' }}">Bawa Pulang</span>
                         </label>
-                        <label class="relative flex flex-col items-center p-3 text-center transition-all border-2 cursor-pointer rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 {{ $tipe_pesanan === 'delivery' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
-                            <input type="radio" wire:model.live="tipe_pesanan" value="delivery" class="hidden" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
+                        <label :class="isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700'" class="relative flex flex-col items-center p-3 text-center transition-all border-2 rounded-xl {{ $tipe_pesanan === 'delivery' ? 'border-brand-red bg-red-50/50 dark:bg-red-900/20' : 'border-gray-100 dark:border-gray-700' }}">
+                            <input type="radio" wire:model.live="tipe_pesanan" value="delivery" class="hidden" :disabled="isLocked">
                             <i class="mb-2 text-2xl fa-solid fa-motorcycle {{ $tipe_pesanan === 'delivery' ? 'text-brand-red' : 'text-gray-400' }}"></i>
                             <span class="text-xs font-bold {{ $tipe_pesanan === 'delivery' ? 'text-brand-red' : 'text-gray-500' }}">Delivery</span>
                         </label>
@@ -62,17 +59,17 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block mb-1 text-xs font-bold text-gray-500 uppercase">No WhatsApp (Penerima)</label>
-                                <input type="number" wire:model="nomor_hp" class="w-full p-3 text-sm bg-gray-50 dark:bg-gray-900 border @error('nomor_hp') border-red-500 @else border-gray-200 dark:border-gray-700 @enderror rounded-xl outline-none focus:ring-2 focus:ring-brand-orange dark:text-white" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
+                                <input type="number" wire:model="nomor_hp" :disabled="isLocked" :class="isLocked ? 'bg-gray-200 dark:bg-gray-800 opacity-60 cursor-not-allowed' : 'bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-brand-orange'" class="w-full p-3 text-sm border @error('nomor_hp') border-red-500 @else border-gray-200 dark:border-gray-700 @enderror rounded-xl outline-none dark:text-white transition-all">
                                 @error('nomor_hp') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-bold text-gray-500 uppercase">Alamat Lengkap</label>
-                                <textarea wire:model="alamat" rows="2" class="w-full p-3 text-sm bg-gray-50 dark:bg-gray-900 border @error('alamat') border-red-500 @else border-gray-200 dark:border-gray-700 @enderror rounded-xl outline-none focus:ring-2 focus:ring-brand-orange dark:text-white" placeholder="Nama Jalan, RT/RW, Patokan..."></textarea>
+                                <textarea wire:model="alamat" rows="2" :disabled="isLocked" :class="isLocked ? 'bg-gray-200 dark:bg-gray-800 opacity-60 cursor-not-allowed' : 'bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-brand-orange'" class="w-full p-3 text-sm border @error('alamat') border-red-500 @else border-gray-200 dark:border-gray-700 @enderror rounded-xl outline-none dark:text-white transition-all" placeholder="Nama Jalan, RT/RW, Patokan..."></textarea>
                                 @error('alamat') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="block mb-1 text-xs font-bold text-gray-500 uppercase">Catatan Tambahan (Opsional)</label>
-                                <input type="text" wire:model="catatan" class="w-full p-3 text-sm border border-gray-200 outline-none bg-gray-50 dark:bg-gray-900 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-brand-orange dark:text-white" placeholder="Cth: Pagar warna hitam" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
+                                <input type="text" wire:model="catatan" :disabled="isLocked" :class="isLocked ? 'bg-gray-200 dark:bg-gray-800 opacity-60 cursor-not-allowed' : 'bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-brand-orange'" class="w-full p-3 text-sm border border-gray-200 outline-none dark:border-gray-700 rounded-xl dark:text-white transition-all" placeholder="Cth: Pagar warna hitam">
                             </div>
                         </div>
                     </div>
@@ -127,7 +124,7 @@
                     <div>
                         <h2 class="mb-3 text-base font-bold text-gray-800 dark:text-white">Metode Pembayaran</h2>
                         <div class="space-y-3">
-                            <label class="flex items-center justify-between p-4 transition-colors border-2 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50 {{ $metode_pembayaran === 'qris' ? 'border-brand-red bg-red-50/30 dark:bg-red-900/10' : 'border-gray-100 dark:border-gray-700' }}">
+                            <label :class="isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50'" class="flex items-center justify-between p-4 transition-colors border-2 rounded-xl {{ $metode_pembayaran === 'qris' ? 'border-brand-red bg-red-50/30 dark:bg-red-900/10' : 'border-gray-100 dark:border-gray-700' }}">
                                 <div class="flex items-center gap-3">
                                     <div class="text-2xl text-blue-600"><i class="fa-solid fa-qrcode"></i></div>
                                     <div>
@@ -135,11 +132,12 @@
                                         <p class="text-[10px] text-gray-500">Gopay, ShopeePay, Dana, M-Banking</p>
                                     </div>
                                 </div>
-                                <input type="radio" wire:model="metode_pembayaran" wire:model.live="metode_pembayaran" value="qris" class="w-5 h-5 text-brand-red focus:ring-brand-red" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
+                                <input type="radio" wire:model.live="metode_pembayaran" value="qris" class="hidden" :disabled="isLocked">
+                                @if($metode_pembayaran === 'qris') <i class="fa-solid fa-circle-check text-brand-red"></i> @endif
                             </label>
 
                             @if($isKasir)
-                                <label class="flex items-center justify-between p-4 transition-colors border-2 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50 {{ $metode_pembayaran === 'tunai' ? 'border-brand-red bg-red-50/30 dark:bg-red-900/10' : 'border-gray-100 dark:border-gray-700' }}">
+                                <label :class="isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50'" class="flex items-center justify-between p-4 transition-colors border-2 rounded-xl {{ $metode_pembayaran === 'tunai' ? 'border-brand-red bg-red-50/30 dark:bg-red-900/10' : 'border-gray-100 dark:border-gray-700' }}">
                                     <div class="flex items-center gap-3">
                                         <div class="text-2xl text-emerald-500"><i class="fa-solid fa-money-bill-wave"></i></div>
                                         <div>
@@ -147,7 +145,8 @@
                                             <p class="text-[10px] text-gray-500">Bayar langsung di tempat</p>
                                         </div>
                                     </div>
-                                    <input type="radio" wire:model="metode_pembayaran" wire:model.live="metode_pembayaran" value="tunai" class="w-5 h-5 text-brand-red focus:ring-brand-red" {{ $status_pembayaran === 'prose_bayar' ? 'disabled' : '' }} wire:model.live="status_pembayaran">
+                                    <input type="radio" wire:model.live="metode_pembayaran" value="tunai" class="hidden" :disabled="isLocked">
+                                    @if($metode_pembayaran === 'tunai') <i class="fa-solid fa-circle-check text-brand-red"></i> @endif
                                 </label>
                             @endif
                         </div>
@@ -159,8 +158,8 @@
                             <span class="text-2xl font-black text-brand-red">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
                         </div>
 
-                        <button wire:click="processPayment" wire:loading.attr="disabled" :disabled="timeLeft <= 0" class="relative flex items-center justify-center w-full py-4 font-bold text-white transition-all shadow-lg bg-brand-red rounded-xl hover:bg-red-700 active:scale-95 disabled:opacity-50">
-                            <span wire:loading.remove wire:target="processPayment" x-text="timeLeft > 0 ? 'Bayar Sekarang' : 'Waktu Habis'"></span>
+                        <button wire:click="processPayment" wire:loading.attr="disabled" :disabled="timeLeft <= 0" class="relative flex items-center justify-center w-full py-4 font-bold text-white transition-all shadow-lg bg-brand-red rounded-xl hover:bg-red-700 active:scale-95 disabled:opacity-50 disabled:bg-gray-400">
+                            <span wire:loading.remove wire:target="processPayment" x-text="timeLeft > 0 ? (isLocked ? 'Lihat Pembayaran' : 'Bayar Sekarang') : 'Waktu Habis'"></span>
                             <span wire:loading wire:target="processPayment"><i class="mr-2 fa-solid fa-spinner fa-spin"></i> Memproses...</span>
                         </button>
                     </div>
@@ -171,34 +170,19 @@
 
     <div x-show="showPaymentModal" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" x-cloak>
         <div x-show="showPaymentModal" x-transition.opacity @click="closeModal()" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm"></div>
-        
-        <div x-show="showPaymentModal" 
-             x-transition:enter="transition ease-out duration-300" 
-             x-transition:enter-start="opacity-0 translate-y-full sm:translate-y-4 sm:scale-95" 
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
-             x-transition:leave="transition ease-in duration-200" 
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
-             x-transition:leave-end="opacity-0 translate-y-full sm:translate-y-4 sm:scale-95" 
-             class="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[85vh] sm:max-h-[90vh]">
-            
-            <div class="flex justify-center w-full pt-3 pb-1 bg-white sm:hidden dark:bg-gray-900">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
-            </div>
-
+        <div x-show="showPaymentModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-full sm:translate-y-4 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[85vh] sm:max-h-[90vh]">
             <div class="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100 dark:bg-gray-900 dark:border-gray-800">
                 <div class="flex items-center gap-2">
                     <i class="text-xl fa-solid fa-shield-halved text-brand-red"></i>
                     <h3 class="font-bold text-gray-900 dark:text-white">Pembayaran Aman</h3>
                 </div>
-                <button @click="closeModal()" class="flex items-center justify-center w-8 h-8 text-gray-400 transition-colors bg-gray-100 rounded-full dark:bg-gray-800 hover:text-red-500 hover:bg-red-50">
+                <button @click="closeModal()" class="flex items-center justify-center w-8 h-8 text-gray-400 transition-colors bg-gray-100 rounded-full dark:bg-gray-800 hover:text-red-500">
                     <i class="text-lg fa-solid fa-xmark"></i>
                 </button>
             </div>
-
             <div id="snap-wrapper" class="flex-1 w-full overflow-y-auto bg-gray-50 dark:bg-gray-900">
                 <div class="flex flex-col items-center justify-center h-full min-h-[450px] gap-3 text-gray-400">
                     <i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i>
-                    <span class="text-xs font-medium tracking-widest uppercase animate-pulse">Menyiapkan Pembayaran...</span>
                 </div>
             </div>
         </div>
@@ -206,34 +190,19 @@
 
     <div x-show="showQrcodePayment" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" x-cloak>
         <div x-show="showQrcodePayment" x-transition.opacity @click="closeModal()" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm"></div>
-        
-        <div x-show="showQrcodePayment" 
-             x-transition:enter="transition ease-out duration-300" 
-             x-transition:enter-start="opacity-0 translate-y-full sm:translate-y-4 sm:scale-95" 
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
-             x-transition:leave="transition ease-in duration-200" 
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
-             x-transition:leave-end="opacity-0 translate-y-full sm:translate-y-4 sm:scale-95" 
-             class="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[85vh] sm:max-h-[90vh]">
-            
-            <div class="flex justify-center w-full pt-3 pb-1 bg-white sm:hidden dark:bg-gray-900">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
-            </div>
-
+        <div x-show="showQrcodePayment" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-full sm:translate-y-4 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[85vh] sm:max-h-[90vh]">
             <div class="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100 dark:bg-gray-900 dark:border-gray-800">
                 <div class="flex items-center gap-2">
                     <i class="text-xl fa-solid fa-money-bill-wave text-brand-red"></i>
                     <h3 class="font-bold text-gray-900 dark:text-white">Detail Pembayaran Tunai</h3>
                 </div>
-                <button @click="closeModal()" class="flex items-center justify-center w-8 h-8 text-gray-400 transition-colors bg-gray-100 rounded-full dark:bg-gray-800 hover:text-red-500 hover:bg-red-50" wire:model.live="metode_pembayaran">
+                <button @click="closeModal()" class="flex items-center justify-center w-8 h-8 text-gray-400 transition-colors bg-gray-100 rounded-full dark:bg-gray-800 hover:text-red-500">
                     <i class="text-lg fa-solid fa-xmark"></i>
                 </button>
             </div>
-
             <div id="qrcode-wrapper" class="flex-1 w-full overflow-y-auto bg-gray-50 dark:bg-gray-900">
-               <div class="flex flex-col items-center justify-center h-full min-h-[450px] gap-3 text-gray-400">
+                <div class="flex flex-col items-center justify-center h-full min-h-[450px] gap-3 text-gray-400">
                     <i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i>
-                    <span class="text-xs font-medium tracking-widest uppercase animate-pulse">Menyiapkan Pembayaran...</span>
                 </div>
             </div>
         </div>
@@ -242,12 +211,11 @@
 
 @push('scripts')
 <script>
-    // 1. BUNGKUS LOGIKA ALPINE KE DALAM FUNGSI
     const initPaymentTimer = () => {
-        // Alpine mengizinkan deklarasi ulang komponen, jadi ini aman
-        Alpine.data('paymentTimer', (initialSeconds) => ({
+        Alpine.data('paymentTimer', (initialSeconds, initialLockState) => ({
             showPaymentModal: false,
             showQrcodePayment: false,
+            isLocked: initialLockState, // Diambil dari backend PHP
             timeLeft: parseInt(initialSeconds, 10), 
             timerInterval: null,
             
@@ -272,17 +240,13 @@
             
             formatTime(seconds) {
                 if (seconds <= 0) return "00 : 00";
-
                 let m = Math.floor(seconds / 60).toString().padStart(2, '0');
                 let s = Math.floor(seconds % 60).toString().padStart(2, '0');
-                
                 return m + ' : ' + s;
             },
             
             cancelOrder() {
-                if (this.$wire) {
-                    this.$wire.cancelExpiredOrder();
-                }
+                if (this.$wire) this.$wire.cancelExpiredOrder();
             },
 
             closeModal() {
@@ -295,31 +259,22 @@
 
                 setTimeout(() => {
                     let wrapper = document.getElementById('snap-wrapper');
-                    if(wrapper){
-                        wrapper.innerHTML = `<div id="snap-container" class="flex flex-col items-center justify-center w-full h-full min-h-[450px] gap-3 text-gray-400"><i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i><span class="text-xs font-medium tracking-widest uppercase animate-pulse">Menyiapkan...</span></div>`;
-                    }
+                    if(wrapper) wrapper.innerHTML = `<div id="snap-container" class="flex flex-col items-center justify-center w-full h-full min-h-[450px] gap-3 text-gray-400"><i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i></div>`;
+                    
                     let wrappe2 = document.getElementById('qrcode-wrapper');
-                    if(wrappe2){
-                        wrappe2.innerHTML = `<div id="qrcode-container" class="flex flex-col items-center justify-center w-full h-full min-h-[450px] gap-3 text-gray-400"><i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i><span class="text-xs font-medium tracking-widest uppercase animate-pulse">Menyiapkan...</span></div>`;
-                    }
+                    if(wrappe2) wrappe2.innerHTML = `<div id="qrcode-container" class="flex flex-col items-center justify-center w-full h-full min-h-[450px] gap-3 text-gray-400"><i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i></div>`;
                 }, 300);
             }
         }));
     };
 
-    // 2. CEK STATUS ALPINE UNTUK MENGAKALI wire:navigate
     if (window.Alpine) {
-        // Jika masuk dari wire:navigate, Alpine sudah "hidup". Langsung eksekusi!
         initPaymentTimer();
     } else {
-        // Jika ini adalah refresh halaman penuh, tunggu Alpine menyala
         document.addEventListener('alpine:init', initPaymentTimer);
     }
 
-    // 3. DAFTARKAN LISTENER LIVEWIRE DENGAN SISTEM CLEANUP (ANTI-DOUBLE TRIGGER)
     document.addEventListener('livewire:navigated', () => {
-        
-        // Hapus pendengar event sebelumnya (jika ada) saat pengguna bolak-balik halaman
         if (window.midtransCleanup) window.midtransCleanup();
         if (window.qrcodeCleanup) window.qrcodeCleanup();
 
@@ -329,9 +284,7 @@
                 alert("Gagal memuat Token Pembayaran."); return;
             }
             
-            if (window.snap && typeof window.snap.hide === 'function') {
-                window.snap.hide();
-            }
+            if (window.snap && typeof window.snap.hide === 'function') window.snap.hide();
             
             window.dispatchEvent(new CustomEvent('open-payment-modal'));
 
@@ -345,16 +298,12 @@
                         alert("Pembayaran Berhasil! Pesanan Anda sedang diproses.");
                         window.location.href = "{{ route('Order') }}"; 
                     },
-                    onPending: function(result){
-                        alert("Menunggu pembayaran diselesaikan.");
-                    },
+                    onPending: function(result){ alert("Menunggu pembayaran diselesaikan."); },
                     onError: function(result){
                         alert("Pembayaran Gagal. Silakan coba metode lain.");
                         window.dispatchEvent(new CustomEvent('close-payment-modal'));
                     },
-                    onClose: function(){
-                        console.log('Menutup iframe midtrans.');
-                    }
+                    onClose: function(){ console.log('Menutup iframe midtrans.'); }
                 });
             }, 100);
         });
@@ -374,12 +323,7 @@
                     </div>
                     <div class="w-full p-4 text-sm text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300">
                         <p><span class="font-bold">Total Pembayaran:</span> Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</p>
-                        @if(!empty($catatan))
-                            <p class="mt-2"><span class="font-bold">Catatan untuk Kasir:</span> {{ $catatan }}</p>
-                        @endif
                     </div>
-                    <hr class="w-full border-t border-gray-200 dark:border-gray-700">
-                    <p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-mono font-bold text-brand-red">* Pesanan anda tidak akan diproes selama pembayaran belum diselesaikan.</span></p>
                 </div>
             `;
         });

@@ -186,10 +186,17 @@ class AuthLanding extends Component
     {
         $this->validate(['no_hp' => 'required', 'password' => 'required']);
         $user = User::where('no_hp', $this->no_hp)->first();
-
+        
         // PERBAIKAN: Gunakan Hash::check agar tidak langsung Auth::attempt (login otomatis)
         if ($user && Hash::check($this->password, $user->password)) {
             if ($user->status == 'aktif') {
+                // check apakah user pelanggan
+                if ($user->role == 'pelanggan') {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+                    return response()->error('Pengguna tidak terdaftar', 404);
+                }
                 Auth::login($user); // Login manual jika sudah aktif
                 return redirect()->route('Order');
             } else {

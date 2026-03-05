@@ -34,7 +34,7 @@
                             </span>
                             @if($pesanan->status_pembayaran === 'belum_bayar')
                                 <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded-md bg-red-100 text-red-700 animate-pulse">Belum Bayar</span>
-                            @elseif($pesanan->status_pembayaran === 'prose_bayar')
+                            @elseif($pesanan->status_pembayaran === 'proses_bayar')
                                 <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded-md bg-yellow-100 text-yellow-700 animate-pulse">Proses Bayar</span>
                             @else
                                 <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded-md bg-emerald-100 text-emerald-700">Lunas</span>
@@ -88,7 +88,7 @@
                 </div>
 
                 <div class="p-3 space-y-2 border-t border-gray-100 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-800">
-                    @if($pesanan->status_pembayaran === 'prose_bayar' )
+                    @if($pesanan->status_pembayaran === 'proses_bayar' )
                         <button wire:click="openModalPembayaran({{ $pesanan->id_pesanan }})" class="flex items-center justify-center w-full gap-2 py-2 text-xs font-bold text-white transition-all bg-yellow-500 shadow-sm rounded-xl hover:bg-yellow-600">
                             <i class="ti ti-cash"></i> Konfirmasi Bayar
                         </button>

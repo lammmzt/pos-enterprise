@@ -80,7 +80,7 @@ class Payment extends Component
         // 3. Logika Pembayaran
         if ($this->metode_pembayaran === 'tunai') {
             $this->pesanan->update([
-                'status_pembayaran' => 'prose_bayar',
+                'status_pembayaran' => 'proses_bayar',
                 'tipe_pesanan' => $this->tipe_pesanan
             ]);
             // open modal qrcode 
@@ -124,7 +124,7 @@ class Payment extends Component
                 // SIMPAN KE DATABASE AGAR BISA DIGUNAKAN LAGI
                 $this->pesanan->update([
                     'snap_token' => $snapToken,
-                    'status_pembayaran' => 'prose_bayar',
+                    'status_pembayaran' => 'proses_bayar',
                     'tipe_pesanan' => $this->tipe_pesanan
                 ]);
 

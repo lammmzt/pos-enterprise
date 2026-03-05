@@ -22,7 +22,10 @@ class UserIndex extends Component
     // Modal State
     public $isModalOpen = false;
     public $isDeleteModalOpen = false;
+    public $isQrModalOpen = false; // STATE BARU UNTUK QR CODE
+    
     public $userIdToDelete = null;
+    public $qrUser = null; // MENYIMPAN DATA USER YANG DI-QR
 
     protected $paginationTheme = 'tailwind';
 
@@ -42,12 +45,12 @@ class UserIndex extends Component
 
     public function render()
     {
-        
         $data['users'] = User::where('nama', 'like', '%' . $this->search . '%')
             ->orWhere('username', 'like', '%' . $this->search . '%')
             ->orWhere('alamat', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortColumn, $this->sortDirection)
             ->paginate($this->view);
+            
         $data['title'] = 'Manajemen Pengguna';
         $data['desc_page'] = 'Kelola master data pengguna, hak akses, dan status akun di sini.';
         return view('livewire.admin.user.user-index', $data)->layout('components.layouts.app', $data);
@@ -89,9 +92,24 @@ class UserIndex extends Component
         $this->isDeleteModalOpen = false;
     }
 
+    // FUNGSI BARU: MENAMPILKAN MODAL QR CODE
+    public function showQrCode(User $user)
+    {
+        $this->qrUser = $user;
+        $this->isQrModalOpen = true;
+    }
+
+    // FUNGSI BARU: MENUTUP MODAL QR CODE
+    public function closeQrModal()
+    {
+        $this->isQrModalOpen = false;
+        $this->qrUser = null;
+    }
+
     public function closeModal()
     {
         $this->isModalOpen = false;
         $this->isDeleteModalOpen = false;
+        $this->isQrModalOpen = false;
     }
 }

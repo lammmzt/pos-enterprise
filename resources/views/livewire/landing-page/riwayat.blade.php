@@ -23,7 +23,7 @@
             @forelse($pesanans as $order)
             @php
             // Logika Status Berdasarkan Pembayaran & Pesanan
-            $isUnpaid = ($order->status_pembayaran === 'belum_bayar' || $order->status_pembayaran === 'pending');
+            $isUnpaid = ($order->status_pembayaran === 'belum_bayar' || $order->status_pembayaran === 'peroses_bayar');
             $isPaid = ($order->status_pembayaran === 'lunas' || $order->status_pembayaran === 'berhasil');
             $delivered = ($order->status_pembayaran === 'lunas' || $order->status_pesanan === 'delivery');
 
@@ -201,14 +201,15 @@
                 class="p-6 bg-white dark:bg-gray-900 border-t border-gray-50 dark:border-gray-800 rounded-b-[2rem] flex gap-3">
                 @php
                 $isUnpaidModal = ($selectedPesanan->status_pembayaran === 'belum_bayar' ||
-                $selectedPesanan->status_pembayaran === 'pending');
+                $selectedPesanan->status_pembayaran === 'proses_bayar' ||
+                $selectedPesanan->status_pesanan === 'menunggu_pembayaran');
                 @endphp
 
                 @if($isUnpaidModal)
-                <button wire:click="payNow('{{ $selectedPesanan->id_pesanan }}')"
-                    class="flex-1 py-4 font-bold text-white transition-all shadow-xl bg-amber-500 rounded-2xl hover:bg-amber-600 active:scale-95">
+                <a href="{{ route('Payment', ['id' => $selectedPesanan->id_pesanan]) }}" wire:navigate
+                    class="px-4 flex-1 py-4 font-bold text-white transition-all shadow-xl bg-amber-500 rounded-2xl hover:bg-amber-600 active:scale-95">
                     Bayar Sekarang <i class="ml-2 fa-solid fa-arrow-right"></i>
-                </button>
+                </a>
                 @else
                 <button wire:click="reOrder({{ $selectedPesanan->id_pesanan }})"
                     class="flex-1 py-4 font-bold text-white transition-all shadow-xl bg-brand-red rounded-2xl hover:bg-red-700 active:scale-95">
