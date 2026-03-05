@@ -49,6 +49,8 @@ Route::get('/auto-login/{token}', function($token) {
     
     if($user && str_starts_with(strtolower($user->username), 'antrean_')) {
         Auth::login($user);
+        // $request->session()->regenerate();
+        session()->regenerate();
         return redirect()->route('Order')->with('success', 'Berhasil login ke sistem antrean.');
     }
     
