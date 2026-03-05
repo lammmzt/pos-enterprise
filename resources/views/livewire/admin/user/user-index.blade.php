@@ -236,7 +236,7 @@
                             {!! DNS2D::getBarcodeSVG($loginUrl, 'QRCODE', 8, 8, 'black', true) !!}
                             
                             <p class="text-sm font-bold text-gray-900 mt-4">{{ $qrUser->nama }}</p>
-                            <p class="text-[10px] text-gray-500">{{ $qrUser->username }}</p>
+                            <p class="text-[10px] text-gray-500">{{ $qrUser->role }}</p>
                         </div>
                     @endif
                     
