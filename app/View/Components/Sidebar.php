@@ -27,7 +27,7 @@ class Sidebar extends Component
                         'icon' => 'smart-home', 
                         'activePattern' => 'admin.dashboard',
                         'route' => 'admin.dashboard',
-                        'roles' => ['admin', 'owner', 'kasir'], // Semua role bisa lihat
+                        'roles' => ['admin', 'owner', 'kasir'],
                     ],
                 ]
             ],
@@ -38,18 +38,18 @@ class Sidebar extends Component
                         'name' => 'POS Kasir',
                         'icon' => 'device-laptop', 
                         'activePattern' => 'pages.apps.pos',
-                        'roles' => ['admin', 'kasir'], // Owner mungkin tidak perlu buka kasir
+                        'roles' => ['owner', 'kasir'], 
                         'subItems' => [
-                            ['name' => 'Pos', 'route' => 'admin.pos', 'roles' => ['admin', 'kasir']],
-                            ['name' => 'Pesanan Aktif', 'route' => 'admin.pesanan-aktif', 'roles' => ['admin', 'kasir']],
-                            ['name' => 'Riwayat Pesanan', 'route' => 'admin.riwayat-pesanan', 'roles' => ['admin', 'kasir', 'owner']],
+                            ['name' => 'Pos', 'route' => 'admin.pos', 'roles' => ['kasir', 'owner']],
+                            ['name' => 'Pesanan Aktif', 'route' => 'admin.pesanan-aktif', 'roles' => ['kasir', 'owner']],
+                            ['name' => 'Riwayat Pesanan', 'route' => 'admin.riwayat-pesanan', 'roles' => ['kasir', 'owner']],
                         ],
                     ],
                     [
                         'name' => 'Manajemen Produk',
                         'icon' => 'shopping-cart', 
                         'activePattern' => 'ecommerce.*',
-                        'roles' => ['admin', 'owner'], // Kasir tidak bisa atur produk
+                        'roles' => ['admin', 'owner'], 
                         'subItems' => [
                             ['name' => 'Kategori', 'route' => 'admin.kategori', 'roles' => ['admin']],
                             ['name' => 'Produk', 'route' => 'admin.produk', 'roles' => ['admin', 'owner']],
@@ -63,16 +63,16 @@ class Sidebar extends Component
                         'icon' => 'message',
                         'activePattern' => 'admin.testimoni',
                         'route' => 'admin.testimoni',
-                        'roles' => ['admin', 'owner',], // Semua role bisa lihat
+                        'roles' => ['admin', 'owner',], 
                     ],
                     [
                         'name' => 'Laporan',
                         'icon' => 'report',
                         'activePattern' => 'laporan.*',
-                        'roles' => ['admin', 'owner'], // Kasir tidak bisa lihat laporan keuangan
+                        'roles' => ['owner'], 
                         'subItems' => [
-                            ['name' => 'Keuangan', 'route' => 'admin.laporan-keuangan', 'roles' => ['admin', 'owner']],
-                            ['name' => 'Penjualan', 'route' => 'admin.laporan-penjualan', 'roles' => ['admin', 'owner']],
+                            ['name' => 'Keuangan', 'route' => 'admin.laporan-keuangan', 'roles' => ['owner']],
+                            ['name' => 'Penjualan', 'route' => 'admin.laporan-penjualan', 'roles' => ['owner']],
                         ]
                     ],
                 ]
@@ -85,14 +85,14 @@ class Sidebar extends Component
                         'icon' => 'users', 
                         'activePattern' => 'admin.user',
                         'route' => 'admin.user',
-                        'roles' => ['admin'], // Hanya admin yang bisa atur user
+                        'roles' => ['admin', 'owner'], 
                     ],
                     [
                         'name' => 'Pengaturan', 
                         'icon' => 'settings', 
                         'activePattern' => 'admin.pengaturan',
                         'route' => 'admin.pengaturan',
-                        'roles' => ['admin'], // Hanya admin
+                        'roles' => ['owner'], // Hanya owner
                     ],
                 ]
             ],

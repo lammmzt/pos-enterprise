@@ -14,7 +14,16 @@
             <div class="overflow-hidden transition-all bg-white border border-gray-200 shadow-sm dark:bg-gray-900 rounded-3xl dark:border-gray-800">
                 
                 <div class="row">
-                    <div class="flex flex-col items-center justify-end p-4 border-b border-gray-100 col-12 dark:border-gray-800 md:flex-row">
+                    <div class="flex flex-col items-center justify-between p-4 border-b border-gray-100 col-12 dark:border-gray-800 md:flex-row">
+                        
+                        <div>
+                            @if(count($selectedUsers) > 0)
+                                <button wire:click="printSelectedQr" class="px-5 py-2.5 text-sm font-bold text-white transition-all bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-lg shadow-emerald-500/30 flex items-center gap-2 animate-fade-in-up">
+                                    <i class="ti ti-printer"></i> Cetak {{ count($selectedUsers) }} QR Terpilih
+                                </button>
+                            @endif
+                        </div>
+
                         <button wire:click="create" class="px-6 py-3 text-sm font-bold text-white transition-all bg-indigo-600 hover:bg-indigo-700 rounded-xl">
                             <i class="mr-2 ti ti-plus"></i> Tambah Pengguna
                         </button>
@@ -53,6 +62,7 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-gray-100 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-800">
+                                <th class="px-6 py-4 w-12 text-center">#</th> 
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('nama')">
                                     <div class="flex items-center gap-2">Pengguna <i class="opacity-50 ti ti-arrows-sort"></i></div>
                                 </th>
@@ -67,6 +77,13 @@
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                             @forelse ($users as $user)
                                 <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/40 group">
+                                    
+                                    <td class="px-6 py-4 text-center">
+                                        @if(str_starts_with(strtolower($user->username), 'antrean_') && $user->role === 'pelanggan')
+                                            <input type="checkbox" wire:model.live="selectedUsers" value="{{ $user->id_user }}" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer">
+                                        @endif
+                                    </td>
+
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <div class="flex items-center justify-center w-8 h-8 font-bold text-indigo-600 rounded-full bg-indigo-50 dark:bg-indigo-900/30">
@@ -102,7 +119,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-12 font-medium text-center text-gray-400">Tidak ada data yang ditemukan.</td>
+                                    <td colspan="6" class="px-6 py-12 font-medium text-center text-gray-400">Tidak ada data yang ditemukan.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -115,7 +132,6 @@
             </div>
         </section>
     </div>
-
     {{-- MODAL FORM (CREATE / EDIT) - Tetap Sama ... --}}
     <section x-data="{ open: @entangle('isModalOpen') }">
         <template x-teleport="body">
@@ -144,7 +160,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block font-bold text-gray-700 dark:text-gray-300">Password</label>
-                                <input type="password" wire:model="form.password" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white" placeholder="{{ $form->user ? 'Kosongkan jika tidak diganti' : 'Minimal 6 karakter' }}" placeholder="Masukan password"
+                                <input type="password" wire:model="form.password" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white" placeholder="{{ $form->user ? 'Kosongkan jika tidak diganti' : 'Minimal 6 karakter' }}" placeholder="Masukan password">
                                 @error('form.password') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                             </div>
                             <div>
@@ -158,10 +174,14 @@
                             <div>
                                 <label class="block font-bold text-gray-700 dark:text-gray-300">Hak Akses (Role)</label>
                                 <select wire:model="form.role" class="w-full px-4 py-2 mt-1 border-none outline-none bg-gray-50 dark:bg-gray-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white">
-                                    <option value="kasir">Kasir</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="owner">Owner</option>
+                                    <option>--pilih role--</option>
                                     <option value="pelanggan">Pelanggan</option>
+                                    @if(Auth::user()->role == 'owner')
+                                        <option value="kasir">Kasir</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="owner">Owner</option>
+                                    @endif
+                                    @error('form.role') <span class="text-xs text-red-500" >{{ $message }}</span> @enderror
                                 </select>
                             </div>
                             <div>
@@ -213,35 +233,43 @@
         </template>
     </section>
 
-    {{-- MODAL CETAK QR CODE ANTREAN BARU --}}
+    {{-- MODAL CETAK QR CODE ANTREAN BARU (BISA SATU / BANYAK) --}}
     <section x-data="{ open: @entangle('isQrModalOpen') }">
         <template x-teleport="body">
             <div x-show="open" class="fixed inset-0 z-[10003] flex items-center justify-center p-4" x-cloak>
                 <div x-show="open" x-transition.opacity wire:click="closeQrModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
                 
-                <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="relative w-full max-w-sm bg-white dark:bg-gray-900 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-800 shadow-2xl text-center">
+                <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="relative w-full max-w-2xl bg-white dark:bg-gray-900 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-800 shadow-2xl text-center">
                     
                     <h4 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">QR Code Antrean</h4>
-                    <p class="font-medium text-gray-500 dark:text-gray-400 mb-6">Scan QR ini untuk Auto-Login device kasir/pelanggan di outlet.</p>
+                    <p class="font-medium text-gray-500 dark:text-gray-400 mb-6">Pratinjau QR Code yang akan dicetak.</p>
                     
-                    @if($qrUser)
-                        <div id="printable-qr" class="p-6 inline-block bg-white border border-gray-200 rounded-2xl shadow-sm mb-4">
-                            {{-- Generate URL Login. Pastikan Anda punya Route ini di web.php --}}
-                            @php
-                                $loginUrl = url('/auto-login/' . base64_encode($qrUser->username));
-                            @endphp
-                            
-                            {!! DNS2D::getBarcodeSVG($loginUrl, 'QRCODE', 8, 8, 'black', true) !!}
-                            
-                            <p class="text-sm font-bold text-gray-900 mt-4">{{ $qrUser->nama }}</p>
-                            <p class="text-[10px] text-gray-500">{{ $qrUser->role }}</p>
+                    @if(!empty($qrUsersToPrint))
+                        <div class="max-h-[50vh] overflow-y-auto p-2 mb-6">
+                            <div id="printable-area" class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                                
+                                @foreach($qrUsersToPrint as $qUser)
+                                    <div class="qr-card flex flex-col items-center justify-center p-4 bg-white border-2 border-dashed border-gray-300 rounded-2xl dark:border-gray-700 dark:bg-gray-800">
+                                        <h4 class="mb-3 text-sm font-bold text-gray-800 dark:text-white">Scan Auto-Login</h4>
+                                        
+                                        @php
+                                            $loginUrl = url('/auto-login/' . base64_encode($qUser->username));
+                                        @endphp
+                                        {!! DNS2D::getBarcodeSVG($loginUrl, 'QRCODE', 5, 5, 'black', true) !!}
+                                        
+                                        <p class="mt-3 text-sm font-bold text-gray-900 dark:text-white">{{ $qUser->nama }}</p>
+                                        <p class="text-[10px] text-gray-500">{{ $qUser->username }}</p>
+                                    </div>
+                                @endforeach
+
+                            </div>
                         </div>
                     @endif
                     
-                    <div class="flex justify-center gap-3 mt-6">
+                    <div class="flex justify-center gap-3 mt-4 border-t border-gray-100 dark:border-gray-800 pt-6">
                         <button wire:click="closeQrModal" class="px-6 py-2.5 bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 text-sm font-bold rounded-xl hover:bg-gray-200 transition-all">Tutup</button>
                         <button onclick="printQr()" class="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/30">
-                            <i class="ti ti-printer"></i> Cetak QR
+                            <i class="ti ti-printer"></i> Cetak QR ({{ count($qrUsersToPrint) }})
                         </button>
                     </div>
                 </div>
@@ -254,42 +282,78 @@
 @push('scripts')
 <script>
     function printQr() {
-        let qrContainer = document.getElementById('printable-qr');
+        // Ambil elemen HTML yang membungkus semua QR Code
+        let qrContainer = document.getElementById('printable-area');
         if (!qrContainer) return;
         
         let printContents = qrContainer.innerHTML;
         
-        // Membuka jendela khusus print
-        let printWindow = window.open('', '', 'height=600,width=600');
+        // Buka Window Print
+        let printWindow = window.open('', '', 'height=800,width=800');
         printWindow.document.write(`
             <html>
                 <head>
                     <title>Cetak QR Code Antrean</title>
                     <style>
+                        @page { margin: 15mm; }
                         body {
-                            font-family: Arial, sans-serif;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            height: 100vh;
+                            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
                             margin: 0;
-                            text-align: center;
+                            padding: 0;
+                            background: #fff;
+                            color: #000;
                         }
-                        .qr-box {
+                        
+                        /* Layout Grid Multi-Kolom (3 Kolom ke Samping) */
+                        .print-grid {
+                            display: grid;
+                            grid-template-columns: repeat(3, 1fr);
+                            gap: 20px;
+                        }
+
+                        /* Desain Garis Putus-putus Per QR */
+                        .qr-card {
+                            border: 2px dashed #333 !important; 
                             padding: 20px;
-                            border: 2px dashed #ccc;
                             border-radius: 15px;
+                            text-align: center;
+                            background: white;
+                            page-break-inside: avoid; /* Mencegah kepotong di tengah kertas */
                         }
-                        svg {
-                            max-width: 100%;
-                            height: auto;
+
+                        .qr-card h4 { 
+                            margin: 0 0 15px 0; 
+                            font-size: 16px; 
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
                         }
-                        h2 { margin-bottom: 20px; font-size: 18px; }
+                        
+                        .qr-card svg { 
+                            max-width: 100%; 
+                            height: auto; 
+                            margin: 0 auto;
+                        }
+
+                        .qr-card p:nth-of-type(1) { 
+                            margin: 15px 0 5px 0; 
+                            font-size: 16px; 
+                            font-weight: bold; 
+                        }
+                        
+                        .qr-card p:nth-of-type(2) { 
+                            margin: 0; 
+                            font-size: 12px; 
+                            color: #666; 
+                        }
+
+                        /* Hilangkan class tailwind yang mengganggu saat di-print */
+                        .flex, .flex-col, .items-center, .justify-center, .bg-white, .dark\\:bg-gray-800 {
+                            display: block; 
+                        }
                     </style>
                 </head>
                 <body>
-                    <div class="qr-box">
-                        <h2>Scan Untuk Login<br>Sistem Antrean</h2>
+                    <div class="print-grid">
                         ${printContents}
                     </div>
                 </body>
@@ -298,7 +362,6 @@
         printWindow.document.close();
         printWindow.focus();
         
-        // Timeout sedikit untuk memastikan SVG ter-render sblm di-print
         setTimeout(() => {
             printWindow.print();
             printWindow.close();

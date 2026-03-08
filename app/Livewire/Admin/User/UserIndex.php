@@ -29,6 +29,10 @@ class UserIndex extends Component
 
     protected $paginationTheme = 'tailwind';
 
+    // state untuk qrcode 
+    public $selectedUsers = []; 
+    public $qrUsersToPrint = [];
+
     // Reset pagination saat pencarian atau view berubah
     public function updatingSearch() { $this->resetPage(); }
     public function updatingView() { $this->resetPage(); }
@@ -45,14 +49,31 @@ class UserIndex extends Component
 
     public function render()
     {
-        $data['users'] = User::where('nama', 'like', '%' . $this->search . '%')
-            ->orWhere('username', 'like', '%' . $this->search . '%')
-            ->orWhere('alamat', 'like', '%' . $this->search . '%')
-            ->orderBy($this->sortColumn, $this->sortDirection)
-            ->paginate($this->view);
+        // 1. Cek apakah user yang login adalah admin (mengembalikan true/false)
+        $isAdmin = auth()->user()->role === 'admin';
+
+        // 2. Inisialisasi awal query
+        $query = User::query();
+
+        // 3. Jika admin, KUNCI data agar hanya bisa melihat role 'pelanggan'
+        if ($isAdmin) {
+            $query->where('role', 'pelanggan');
+        }
+
+        // 4. Terapkan fitur pencarian (Gunakan Closure / Grouping agar tidak bocor)
+        $query->where(function($q) {
+            $q->where('nama', 'like', '%' . $this->search . '%')
+              ->orWhere('username', 'like', '%' . $this->search . '%')
+              ->orWhere('alamat', 'like', '%' . $this->search . '%');
+        });
+
+        // 5. Eksekusi pengurutan dan paginasi
+        $data['users'] = $query->orderBy($this->sortColumn, $this->sortDirection)
+                               ->paginate($this->view);
             
         $data['title'] = 'Manajemen Pengguna';
         $data['desc_page'] = 'Kelola master data pengguna, hak akses, dan status akun di sini.';
+        
         return view('livewire.admin.user.user-index', $data)->layout('components.layouts.app', $data);
     }
 
@@ -95,15 +116,24 @@ class UserIndex extends Component
     // FUNGSI BARU: MENAMPILKAN MODAL QR CODE
     public function showQrCode(User $user)
     {
-        $this->qrUser = $user;
+        $this->qrUsersToPrint = collect([$user]); // Jadikan collection agar bisa dilooping
         $this->isQrModalOpen = true;
+    }
+
+    public function printSelectedQr()
+    {
+        if (count($this->selectedUsers) > 0) {
+            $this->qrUsersToPrint = User::whereIn('id_user', $this->selectedUsers)->get();
+            $this->isQrModalOpen = true;
+        }
     }
 
     // FUNGSI BARU: MENUTUP MODAL QR CODE
     public function closeQrModal()
     {
         $this->isQrModalOpen = false;
-        $this->qrUser = null;
+        $this->qrUsersToPrint = [];
+        $this->selectedUsers = [];
     }
 
     public function closeModal()

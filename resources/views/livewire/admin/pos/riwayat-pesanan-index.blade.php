@@ -106,9 +106,11 @@
                                         <button wire:click="showDetail({{ $item->id_pesanan }})" title="Lihat Detail Transaksi" class="p-2 text-indigo-500 transition-colors bg-indigo-100 rounded-lg hover:bg-indigo-200 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50">
                                             <i class="ti ti-file-invoice"></i>
                                         </button>
-                                        <button wire:click="cetakUlangStruk({{ $item->id_pesanan }})" title="Cetak Ulang Struk Thermal" class="p-2 text-gray-500 transition-colors bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700">
-                                            <i class="ti ti-printer"></i>
-                                        </button>
+                                        @if($item->status_pesanan != 'menunggu_pembayaran' && $item->status_pesanan != 'dibatalkan')
+                                            <button wire:click="cetakUlangStruk({{ $item->id_pesanan }})" title="Cetak Ulang Struk Thermal" class="p-2 text-gray-500 transition-colors bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700">
+                                                <i class="ti ti-printer"></i>
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -142,9 +144,11 @@
                                 <p class="mt-1 text-xs text-gray-500">{{ $detailPesanan->created_at->format('d F Y, H:i:s') }} | Kasir: {{ $detailPesanan->kasir->nama ?? 'Sistem' }}</p>
                             </div>
                             <div class="flex gap-2">
-                                <button wire:click="cetakUlangStruk({{ $detailPesanan->id_pesanan }})" class="flex items-center gap-2 px-4 py-2 text-xs font-bold text-indigo-600 transition-colors bg-indigo-50 rounded-xl hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400">
-                                    <i class="ti ti-printer"></i> Cetak Struk
-                                </button>
+                                @if($item->status_pesanan != 'menunggu_pembayaran' && $item->status_pesanan != 'dibatalkan')
+                                    <button wire:click="cetakUlangStruk({{ $detailPesanan->id_pesanan }})" class="flex items-center gap-2 px-4 py-2 text-xs font-bold text-indigo-600 transition-colors bg-indigo-50 rounded-xl hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400">
+                                        <i class="ti ti-printer"></i> Cetak Struk
+                                    </button>
+                                @endif
                                 <button wire:click="closeModal" class="p-2 text-gray-400 transition-colors rounded-xl hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"><i class="ti ti-x"></i></button>
                             </div>
                         </div>

@@ -46,7 +46,7 @@ class UserForm extends Form
         $this->nama = $user->nama;
         $this->username = $user->username;
         $this->alamat = $user->alamat ?? '';
-        $this->role = $user->role;
+        $this->role = $user->role ?? 'pelanggan';
         $this->catatan = $user->catatan ?? '';
         $this->no_hp = $user->no_hp ?? '';
         $this->status = $user->status;
