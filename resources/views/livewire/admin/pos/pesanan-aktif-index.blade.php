@@ -29,9 +29,11 @@
                 <div class="p-4 {{ $pesanan->tipe_pesanan === 'delivery' ? 'bg-orange-50 dark:bg-orange-900/20' : 'bg-gray-50 dark:bg-gray-800/50' }} border-b border-gray-100 dark:border-gray-800 flex justify-between items-start">
                     <div>
                         <div class="flex gap-2 mb-2">
-                            <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded-md {{ $pesanan->tipe_pesanan == 'dinein' ? 'bg-blue-100 text-blue-700' : ($pesanan->tipe_pesanan == 'takeaway' ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700') }}">
-                                {{ $pesanan->tipe_pesanan }}
-                            </span>
+                            @if($pesanan->tipe_pesanan != '')
+                                <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded-md {{ $pesanan->tipe_pesanan == 'dinein' ? 'bg-blue-100 text-blue-700' : ($pesanan->tipe_pesanan == 'takeaway' ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700') }}">
+                                    {{ $pesanan->tipe_pesanan }}
+                                </span>
+                           @endif
                             @if($pesanan->status_pembayaran === 'belum_bayar')
                                 <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded-md bg-red-100 text-red-700 animate-pulse">Belum Bayar</span>
                             @elseif($pesanan->status_pembayaran === 'proses_bayar')
@@ -40,7 +42,7 @@
                                 <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded-md bg-emerald-100 text-emerald-700">Lunas</span>
                             @endif
                         </div>
-                        <h3 class="text-sm font-black text-gray-900 dark:text-white">{{ $pesanan->id_pesanan }}</h3>
+                        <h3 class="text-sm font-black text-gray-900 dark:text-white">{{ $pesanan->nomor_invoice }}</h3>
                         <p class="text-xs font-medium text-gray-500">Oleh: <span class="text-gray-900 dark:text-gray-300">{{ $pesanan->pelanggan->nama ?? 'Walk-in' }}</span></p>
                     </div>
                     <div class="text-right">
@@ -52,16 +54,26 @@
                 <div class="flex-1 p-4 space-y-4 overflow-y-auto max-h-[300px]">
                     @if($pesanan->catatan)
                         <div class="p-2 text-xs font-bold text-red-700 border border-red-100 rounded-lg bg-red-50 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50">
-                            <i class="ti ti-alert-circle"></i> Catatan Global: {{ $pesanan->catatan }}
+                            <i class="ti ti-alert-circle"></i> Catatan Pesanan: {{ $pesanan->catatan }}
                         </div>
                     @endif
 
                     @if($pesanan->tipe_pesanan === 'delivery')
                         <div class="p-3 text-xs border border-orange-100 bg-orange-50 dark:bg-orange-900/10 dark:border-orange-800/50 rounded-xl">
                             <span class="font-bold text-orange-800 dark:text-orange-400"><i class="ti ti-truck"></i> Info Pengiriman:</span>
-                            <p class="mt-1 text-gray-600 truncate dark:text-gray-400">{{ $pesanan->link_delivery ?: 'Belum ada alamat/link diset.' }}</p>
+                            <p class="mt-1 text-gray-600 truncate dark:text-gray-400">Alamat : {{ $pesanan->pelanggan->alamat ?? '-' }}</p>
+                            <p class="mt-1 text-gray-600 truncate dark:text-gray-400">No. Wa : {{ $pesanan->pelanggan->no_hp ?? '-' }}</p>
+                            <p class="mt-1 text-gray-600 truncate dark:text-gray-400">Catatan : {{ $pesanan->pelanggan->catatan ?? '-' }}</p>
                         </div>
                     @endif
+
+                    {{-- @if($pesanan->status_pesanan === 'proses')
+                        <div class="p-3 text-xs border border-green-100 bg-green-50 dark:bg-green-900/10 dark:border-green-800/50 rounded-xl">
+                            <span class="font-bold text-green-800 dark:text-green-400"><i class="ti ti-truck"></i> Info Delivery:</span>
+                            <p class="mt-1 text-gray-600 truncate dark:text-gray-400">Link Pengiriman : {{ $pesanan->link_delivery != '' ? '<a href="' . $pesanan->link_delivery . '" target="_blank" class="text-indigo-600 hover:underline">' . $pesanan->link_delivery . '</a>' : '-' }}
+                            </p>
+                        </div>
+                    @endif --}}
 
                     @foreach($pesanan->mangkuk as $index => $mangkuk)
                         <div class="relative p-3 bg-white border border-gray-100 dark:border-gray-700 dark:bg-gray-800 rounded-xl">
@@ -92,19 +104,22 @@
                         <button wire:click="openModalPembayaran({{ $pesanan->id_pesanan }})" class="flex items-center justify-center w-full gap-2 py-2 text-xs font-bold text-white transition-all bg-yellow-500 shadow-sm rounded-xl hover:bg-yellow-600">
                             <i class="ti ti-cash"></i> Konfirmasi Bayar
                         </button>
-                        <button wire:click="openModalBatal({{ $pesanan->id_pesanan }})" class="flex items-center justify-center w-full gap-2 py-2 text-xs font-bold text-white transition-all bg-red-500 shadow-sm rounded-xl hover:bg-red-600">
+                    @endif
+
+                    @if($pesanan->status_pembayaran === 'proses_bayar' || $pesanan->status_pembayaran === 'belum_bayar')
+                         <button wire:click="openModalBatal({{ $pesanan->id_pesanan }})" class="flex items-center justify-center w-full gap-2 py-2 text-xs font-bold text-white transition-all bg-red-500 shadow-sm rounded-xl hover:bg-red-600">
                             <i class="ti ti-shield-question"></i> Batalkan Pesanan & Refund
                         </button>
                     @endif
                     
 
-                    @if($pesanan->tipe_pesanan === 'delivery')
+                    @if($pesanan->tipe_pesanan === 'delivery' && $pesanan->status_pembayaran != 'proses_bayar')
                         <button wire:click="openModalDelivery({{ $pesanan->id_pesanan }}, '{{ $pesanan->link_delivery }}')" class="flex items-center justify-center w-full gap-2 py-2 text-xs font-bold text-indigo-700 transition-all bg-indigo-100 shadow-sm rounded-xl hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400">
                             <i class="ti ti-link"></i> Update Link Pengiriman (Gojek/Grab)
                         </button>
                     @endif
 
-                    @if($pesanan->status_pesanan === 'proses')
+                    @if($pesanan->status_pesanan === 'proses' && $pesanan->tipe_pesanan != 'delivery')
                         <button wire:click="openModalSelesai({{ $pesanan->id_pesanan }})" class="w-full py-2.5 text-sm font-bold text-white transition-all {{ $pesanan->status_pembayaran === 'belum_bayar' ? 'bg-gray-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 shadow-sm hover:shadow' }} rounded-xl flex justify-center items-center gap-2">
                             <i class="ti ti-check"></i> Pesanan Selesai
                         </button>

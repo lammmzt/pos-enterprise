@@ -26,11 +26,18 @@ class AuthLanding extends Component
     public $tempUserId = null;
     public $otpContext = 'registrasi'; // 'registrasi', 'reset_password', atau 'login'
 
+    public function mount()
+    {
+        // jika ada auth
+        if (Auth::check()) {
+            return redirect()->route('Order');
+        }
+    }
+
     public function render()
     {
         $data['title'] = 'Login & Daftar';
         $data['active'] = 'Auth';
-        // jika ada auth
         
         return view('livewire.landing-page.auth', $data)->layout('components.layouts.guest', $data);
     }

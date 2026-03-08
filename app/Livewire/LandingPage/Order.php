@@ -177,7 +177,14 @@ class Order extends Component
         // Pastikan User Login
         if (!Auth::check()) {
             return redirect()->route('Auth')->with('error', 'Silakan login terlebih dahulu untuk memesan.');
+        }else{
+            if(Auth::user()->role != 'pelanggan'){
+                $this->dispatch('toast', type: 'error', message: 'Gagal! Hanya pelanggan yang dapat memesan.');
+                return;
+            }
         }
+
+        
 
         // check apakah ada status pesanan yang belum bayar
         $pesanan = Pesanan::where('id_user', Auth::id())
@@ -292,7 +299,7 @@ class Order extends Component
             });
 
             // Redirect ke halaman Pembayaran denagn livewire
-            $this->redirect(route('Payment', ['id' => $pesananId]));
+            $this->redirect(route('Payment', ['id' => $pesananId]), navigate: true);
 
         } catch (\Exception $e) {
             $this->dispatch('toast', type: 'error', message: 'Terjadi kesalahan sistem: ' . $e->getMessage());

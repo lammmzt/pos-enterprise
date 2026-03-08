@@ -66,9 +66,8 @@ Route::get('/auto-login/{token}', function($token) {
 Route::get('/', Home::class)->name('Home');
 Route::get('Order', Order::class)->name('Order');
 Route::get('/Auth', AuthLanding::class)->name('Auth');
-Route::get('Riwayat', Riwayat::class)->name('Riwayat');
-Route::get('Profile', Profile::class)->name('Profile');
-
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+Route::get('/logoutUser', [AuthController::class, 'logoutUser'])->name('logoutUser')->middleware('auth');
 /*
 |--------------------------------------------------------------------------
 | AREA AUTENTIKASI (Custom murni, tanpa Laravel UI)
@@ -79,8 +78,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'authenticate'])->name('login.process');
 });
 
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
-Route::get('/logoutUser', [AuthController::class, 'logoutUser'])->name('logoutUser')->middleware('auth');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -92,6 +90,8 @@ Route::middleware(['auth', 'role:pelanggan'])->group(function () {
     Route::get('/pesanan-saya', [FrontController::class, 'pesanan'])->name('pelanggan.pesanan');
     Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handler']);
     Route::get('/payment/{id}', Payment::class)->name('Payment');
+    Route::get('Riwayat', Riwayat::class)->name('Riwayat');
+    Route::get('Profile', Profile::class)->name('Profile');
 });
 
 /*
@@ -99,68 +99,50 @@ Route::middleware(['auth', 'role:pelanggan'])->group(function () {
 | AREA BACKEND (Admin, Owner, Kasir)
 |--------------------------------------------------------------------------
 */
-Route::prefix('admin')->middleware(['auth', 'role:admin,owner,kasir'])->group(function () {
-    
-    // Dashboard
-    Route::get('/dashboard', DashboardIndex::class)->name('admin.dashboard');
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+    // =================================================================
+    // 1. AKSES UNTUK SEMUA ROLE (Owner, Admin, Kasir)
+    // =================================================================
+    Route::middleware(['role:owner,admin,kasir'])->group(function () {
+        Route::get('/dashboard', DashboardIndex::class)->name('admin.dashboard');
+    });
+    // =================================================================
+    // 2. AKSES UNTUK OWNER & ADMIN SAJA (Kasir DILARANG masuk)
+    // =================================================================
+    Route::middleware(['role:owner,admin'])->group(function () {
+        // Master Data
+        Route::get('/kategori', KategoriIndex::class)->name('admin.kategori');
+        Route::get('/produk', ProdukIndex::class)->name('admin.produk');
+        Route::get('/pemasok', PemasokIndex::class)->name('admin.pemasok');
+        // Inventaris & Pembelian
+        Route::get('/pembelian', PembelianIndex::class)->name('admin.pembelian');
+        Route::get('/mutasi-stok', MutasiStokIndex::class)->name('admin.mutasi-stok');
+        // data pelanggan
+        Route::get('/user', UserIndex::class)->name('admin.user');
+        // Lain-lain
+        Route::get('/testimoni', TestimoniIndex::class)->name('admin.testimoni');
+    });
+    // =================================================================
+    // 3. AKSES KHUSUS OWNER SAJA (Super Admin)
+    // =================================================================
+    Route::middleware(['role:owner'])->group(function () {
+        Route::get('/pengaturan', PengaturanIndex::class)->name('admin.pengaturan');
+        // Laporan Pendapatan & Keuangan
+        Route::get('/laporan-keuangan', LaporanKeuanganIndex::class)->name('admin.laporan-keuangan');
+        Route::get('/laporan-keuangan/cetak', [LaporanController::class, 'cetakKeuangan'])->name('admin.laporan.cetak');
+        
+        Route::get('/laporan-penjualan', LaporanPenjualanIndex::class)->name('admin.laporan-penjualan');
+        Route::get('/laporan-penjualan/cetak', [LaporanController::class, 'cetakPenjualan'])->name('admin.laporan.penjualan.cetak');
+    });
+    // =================================================================
+    // 4. AKSES KHUSUS OWNER & KASIR
+    // =================================================================
+    Route::middleware(['role:kasir,owner'])->group(function () {
+        // Operasional POS & Pesanan
+        Route::get('/pos', PosIndex::class)->name('admin.pos');
+        Route::get('/pesanan-aktif', PesananAktifIndex::class)->name('admin.pesanan-aktif');
+        Route::get('/pos/struk/{id}', [PosController::class, 'cetakStruk'])->name('admin.pos.struk');
+        Route::get('/riwayat-pesanan', RiwayatPesananIndex::class)->name('admin.riwayat-pesanan');
+    });
 
-    // user
-    Route::get('/user', UserIndex::class)->name('admin.user');
-
-    // pengaturan
-    Route::get('/pengaturan', PengaturanIndex::class)->name('admin.pengaturan');
-
-    // kategori
-    Route::get('/kategori', KategoriIndex::class)->name('admin.kategori');
-
-    // produk
-    Route::get('/produk', ProdukIndex::class)->name('admin.produk');
-
-    // pemasok
-    Route::get('/pemasok', PemasokIndex::class)->name('admin.pemasok');
-
-    // pembelian
-    Route::get('/pembelian', PembelianIndex::class)->name('admin.pembelian');
-
-    // pembelian
-    Route::get('/mutasi-stok', MutasiStokIndex::class)->name('admin.mutasi-stok');
-
-    // pos
-    Route::get('/pos', PosIndex::class)->name('admin.pos');
-    Route::get('/testimoni', TestimoniIndex::class)->name('admin.testimoni');
-    // Route untuk cetak struk POS
-    Route::get('/pos/struk/{id}', [PosController::class, 'cetakStruk'])->name('admin.pos.struk');
-    // pos pesanan
-    Route::get('pesanan-aktif', PesananAktifIndex::class)->name('admin.pesanan-aktif');
-    // pos hisotory
-    Route::get('riwayat-pesanan', RiwayatPesananIndex::class)->name('admin.riwayat-pesanan');
-
-
-    // laporan keuangan
-    Route::get('laporan-keuangan', LaporanKeuanganIndex::class)->name('admin.laporan-keuangan');
-
-    Route::get('laporan-keuangan/cetak', [LaporanController::class, 'cetakKeuangan'])->name('admin.laporan.cetak');
-
-    // Laporan Penjualan (Livewire Dashboard)
-    Route::get('/laporan-penjualan', LaporanPenjualanIndex::class)->name('admin.laporan-penjualan');
-    // Route Cetak Penjualan (Controller)
-    Route::get('/laporan-penjualan/cetak', [LaporanController::class, 'cetakPenjualan'])->name('admin.laporan.penjualan.cetak');
-    // Pesanan Umum
-    // Route::get('/pesanan', [PesananController::class, 'index'])->name('admin.pesanan.index');
-    // Route::get('/pesanan/{id}', [PesananController::class, 'show'])->name('admin.pesanan.show');
-
-    // Area Khusus Admin & Owner
-    // Route::middleware(['role:admin,owner'])->group(function () {
-    //     Route::resource('kategori', KategoriController::class);
-    //     Route::resource('produk', ProdukController::class);
-    //     Route::resource('pemasok', PemasokController::class);
-    //     Route::resource('pembelian', PembelianController::class);
-    //     Route::resource('mutasi-stok', MutasiStokController::class);
-    // });
-
-    // Area Khusus Owner
-    // Route::middleware(['role:owner'])->group(function () {
-    //     Route::get('/laporan/keuangan', [LaporanController::class, 'keuangan'])->name('laporan.keuangan');
-    //     Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok');
-    // });
 });

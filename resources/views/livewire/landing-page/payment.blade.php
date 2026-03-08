@@ -215,7 +215,7 @@
         Alpine.data('paymentTimer', (initialSeconds, initialLockState) => ({
             showPaymentModal: false,
             showQrcodePayment: false,
-            isLocked: initialLockState, // Diambil dari backend PHP
+            isLocked: initialLockState,
             timeLeft: parseInt(initialSeconds, 10), 
             timerInterval: null,
             
@@ -253,10 +253,19 @@
                 this.showPaymentModal = false;
                 this.showQrcodePayment = false;
                 
+                // Tutup Midtrans jika masih terbuka
                 if (window.snap && typeof window.snap.hide === 'function') {
                     window.snap.hide();
                 }
 
+                // PERBAIKAN: PAKSA CEK STATUS KETIKA MODAL DITUTUP DARI UI
+                if (this.$wire) {
+                    this.$wire.checkPaymentStatus();
+                } else {
+                    Livewire.dispatch('check-payment-status');
+                }
+
+                // Kembalikan tampilan kontainer loading
                 setTimeout(() => {
                     let wrapper = document.getElementById('snap-wrapper');
                     if(wrapper) wrapper.innerHTML = `<div id="snap-container" class="flex flex-col items-center justify-center w-full h-full min-h-[450px] gap-3 text-gray-400"><i class="text-3xl fa-solid fa-circle-notch fa-spin text-brand-red"></i></div>`;
@@ -295,15 +304,27 @@
                 window.snap.embed(snapToken, {
                     embedId: 'snap-container',
                     onSuccess: function(result){
-                        alert("Pembayaran Berhasil! Pesanan Anda sedang diproses.");
-                        window.location.href = "{{ route('Order') }}"; 
+                        // Eksekusi fungsi Lunas di Livewire
+                        if(window.Alpine) {
+                            let alpineEl = document.querySelector('[x-data^="paymentTimer"]');
+                            if(alpineEl && Alpine.$data(alpineEl).$wire) {
+                                Alpine.$data(alpineEl).$wire.paymentSuccessCallback();
+                            }
+                        }
                     },
-                    onPending: function(result){ alert("Menunggu pembayaran diselesaikan."); },
+                    onPending: function(result){ 
+                        alert("Menunggu pembayaran diselesaikan."); 
+                        window.dispatchEvent(new CustomEvent('close-payment-modal'));
+                    },
                     onError: function(result){
                         alert("Pembayaran Gagal. Silakan coba metode lain.");
                         window.dispatchEvent(new CustomEvent('close-payment-modal'));
                     },
-                    onClose: function(){ console.log('Menutup iframe midtrans.'); }
+                    onClose: function(){ 
+                        // PERBAIKAN: Saat tombol close (Batal) Midtrans diklik
+                        console.log('Iframe midtrans ditutup, mengecek status aktual...');
+                        window.dispatchEvent(new CustomEvent('close-payment-modal'));
+                    }
                 });
             }, 100);
         });
