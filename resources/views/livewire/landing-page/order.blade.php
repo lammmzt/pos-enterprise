@@ -149,7 +149,7 @@
             
             lg:transform-none lg:translate-y-0
             lg:sticky lg:top-40 lg:right-0 lg:bottom-auto
-            lg:w-[380px] lg:h-[calc(100vh-180px)] lg:max-h-[800px]
+            lg:w-[380px] lg:h-[calc(100vh-180px)] lg:max-h-[600px]
             lg:rounded-2xl lg:shadow-xl lg:border
             lg:z-30 lg:mx-0
         ">
