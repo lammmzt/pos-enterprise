@@ -62,7 +62,7 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-gray-100 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-800">
-                                <th class="px-6 py-4 w-12 text-center">#</th> 
+                                <th class="w-12 px-6 py-4 text-center">#</th> 
                                 <th class="px-6 py-4 font-bold text-gray-400 uppercase transition-colors cursor-pointer hover:text-indigo-600" wire:click="sort('nama')">
                                     <div class="flex items-center gap-2">Pengguna <i class="opacity-50 ti ti-arrows-sort"></i></div>
                                 </th>
@@ -80,7 +80,7 @@
                                     
                                     <td class="px-6 py-4 text-center">
                                         @if(str_starts_with(strtolower($user->username), 'antrean_') && $user->role === 'pelanggan')
-                                            <input type="checkbox" wire:model.live="selectedUsers" value="{{ $user->id_user }}" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer">
+                                            <input type="checkbox" wire:model.live="selectedUsers" value="{{ $user->id_user }}" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded cursor-pointer focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         @endif
                                     </td>
 
@@ -104,7 +104,7 @@
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
                                             @if(str_starts_with(strtolower($user->username), 'antrean_') && $user->role === 'pelanggan')
-                                                <button wire:click="showQrCode({{ $user->id_user }})" title="Cetak QR Antrean" class="p-2 text-emerald-500 transition-colors bg-emerald-100 rounded-lg hover:bg-emerald-200 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50">
+                                                <button wire:click="showQrCode({{ $user->id_user }})" title="Cetak QR Antrean" class="p-2 transition-colors rounded-lg text-emerald-500 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50">
                                                     <i class="ti ti-qrcode"></i>
                                                 </button>
                                             @endif
@@ -242,15 +242,15 @@
                 <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="relative w-full max-w-2xl bg-white dark:bg-gray-900 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-800 shadow-2xl text-center">
                     
                     <h4 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">QR Code Antrean</h4>
-                    <p class="font-medium text-gray-500 dark:text-gray-400 mb-6">Pratinjau QR Code yang akan dicetak.</p>
+                    <p class="mb-6 font-medium text-gray-500 dark:text-gray-400">Pratinjau QR Code yang akan dicetak.</p>
                     
                     @if(!empty($qrUsersToPrint))
                         <div class="max-h-[50vh] overflow-y-auto p-2 mb-6">
                             <div id="printable-area" class="grid grid-cols-2 gap-4 sm:grid-cols-3">
                                 
                                 @foreach($qrUsersToPrint as $qUser)
-                                    <div class="qr-card flex flex-col items-center justify-center p-4 bg-white border-2 border-dashed border-gray-300 rounded-2xl dark:border-gray-700 dark:bg-gray-800">
-                                        <h4 class="mb-3 text-sm font-bold text-gray-800 dark:text-white">Scan Auto-Login</h4>
+                                    <div class="flex flex-col items-center justify-center p-4 bg-white border-2 border-gray-300 border-dashed qr-card rounded-2xl dark:border-gray-700 dark:bg-gray-800">
+                                        <h4 class="mb-3 text-sm font-bold text-gray-800 dark:text-white">Scan Untuk Memesan</h4>
                                         
                                         @php
                                             $loginUrl = url('/auto-login/' . base64_encode($qUser->username));
@@ -266,7 +266,7 @@
                         </div>
                     @endif
                     
-                    <div class="flex justify-center gap-3 mt-4 border-t border-gray-100 dark:border-gray-800 pt-6">
+                    <div class="flex justify-center gap-3 pt-6 mt-4 border-t border-gray-100 dark:border-gray-800">
                         <button wire:click="closeQrModal" class="px-6 py-2.5 bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 text-sm font-bold rounded-xl hover:bg-gray-200 transition-all">Tutup</button>
                         <button onclick="printQr()" class="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/30">
                             <i class="ti ti-printer"></i> Cetak QR ({{ count($qrUsersToPrint) }})
