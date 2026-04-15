@@ -22,15 +22,15 @@ class UserSeeder extends Seeder
         ]);
 
         // 2. Buat Akun Admin Gudang
-        $admin = User::create([
-            'nama' => 'Admin Gudang',
-            'username' => 'admin_gudang',
-            'password' => Hash::make('admin321'),
-            'alamat' => 'Jl. Gudang No. 2',
-            'status' => 'aktif',
-            'role' => 'admin',
-            'catatan' => 'Akun Operasional',
-        ]);
+        // $admin = User::create([
+        //     'nama' => 'Admin Gudang',
+        //     'username' => 'admin_gudang',
+        //     'password' => Hash::make('admin321'),
+        //     'alamat' => 'Jl. Gudang No. 2',
+        //     'status' => 'aktif',
+        //     'role' => 'admin',
+        //     'catatan' => 'Akun Operasional',
+        // ]);
 
         // 3. Buat Akun Kasir Depan
         $kasir = User::create([

@@ -53,7 +53,7 @@ class Sidebar extends Component
                         'subItems' => [
                             ['name' => 'Kategori', 'route' => 'admin.kategori', 'roles' => ['admin']],
                             ['name' => 'Produk', 'route' => 'admin.produk', 'roles' => ['admin', 'owner']],
-                            ['name' => 'Pemasok', 'route' => 'admin.pemasok', 'roles' => ['admin']],
+                            ['name' => 'Pemasok', 'route' => 'admin.pemasok', 'roles' => ['admin', 'owner']],
                             ['name' => 'Pembelian', 'route' => 'admin.pembelian', 'roles' => ['admin', 'owner']],
                             ['name' => 'Mutasi Stok', 'route' => 'admin.mutasi-stok', 'roles' => ['admin', 'owner']],
                         ]
