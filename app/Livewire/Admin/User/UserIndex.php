@@ -50,7 +50,7 @@ class UserIndex extends Component
     public function render()
     {
         // 1. Cek apakah user yang login adalah admin (mengembalikan true/false)
-        $isAdmin = auth()->user()->role === 'admin';
+        $isAdmin = auth()->user()->role === 'kasir';
 
         // 2. Inisialisasi awal query
         $query = User::query();

@@ -15,7 +15,7 @@
                 
                 <div class="row">
                     <div class="flex flex-col items-center justify-end p-4 border-b border-gray-100 col-12 dark:border-gray-800 md:flex-row">
-                        <button wire:click="create" class="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 text-sm font-bold text-white transition-all bg-gray-100  rounded-xl">
+                        <button wire:click="create" class="px-6 py-3 text-sm font-bold text-white transition-all bg-gray-100 bg-indigo-600 hover:bg-indigo-700 rounded-xl">
                             <i class="mr-2 ti ti-plus"></i> Tambah Kategori
                         </button>
                     </div>
@@ -80,9 +80,9 @@
                                             <button wire:click="edit({{ $kategori->id_kategori }})" class="p-2 text-blue-500 transition-colors bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50">
                                                 <i class="ti ti-pencil"></i>
                                             </button>
-                                            <button wire:click="deleteConfirm({{ $kategori->id_kategori }})" class="p-2 text-red-500 transition-colors bg-red-100 rounded-lg hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50">
+                                            {{-- <button wire:click="deleteConfirm({{ $kategori->id_kategori }})" class="p-2 text-red-500 transition-colors bg-red-100 rounded-lg hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50">
                                                 <i class="ti ti-trash"></i>
-                                            </button>
+                                            </button> --}}
                                         </div>
                                     </td>
                                 </tr>
@@ -113,7 +113,7 @@
                 <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="relative w-full max-w-2xl bg-white dark:bg-gray-900 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-800 shadow-2xl">
                     <div class="flex items-center justify-between mb-6">
                         <h4 class="text-xl font-bold text-gray-900 dark:text-white">{{ $form->kategori ? 'Edit Kategori' : 'Tambah Kategori Baru' }}</h4>
-                        <button wire:click="closeModal" class="p-1 text-gray-400 transition-colors rounded-lg hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"><i class="ti ti-x text-lg"></i></button>
+                        <button wire:click="closeModal" class="p-1 text-gray-400 transition-colors rounded-lg hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"><i class="text-lg ti ti-x"></i></button>
                     </div>
                     
                     <form wire:submit="save" class="space-y-4 font-mono text-sm">

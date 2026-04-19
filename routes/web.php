@@ -143,6 +143,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('/pesanan-aktif', PesananAktifIndex::class)->name('admin.pesanan-aktif');
         Route::get('/pos/struk/{id}', [PosController::class, 'cetakStruk'])->name('admin.pos.struk');
         Route::get('/riwayat-pesanan', RiwayatPesananIndex::class)->name('admin.riwayat-pesanan');
+        Route::get('/user', UserIndex::class)->name('admin.user');
     });
 
 });
