@@ -98,10 +98,10 @@
                             @error('password') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                         </div>
 
-                        <div class="flex justify-end mt-2">
+                        {{-- <div class="flex justify-end mt-2">
                             <a href="#" wire:click.prevent="switchTab('forgot')"
                                 class="text-xs font-semibold text-brand-red hover:text-red-700">Lupa Password?</a>
-                        </div>
+                        </div> --}}
 
                         <button type="submit" wire:loading.attr="disabled"
                             class="w-full py-3.5 mt-2 font-bold text-white transition-all shadow-lg rounded-xl bg-brand-red hover:bg-red-700 active:scale-95 shadow-red-500/20 disabled:opacity-50">
