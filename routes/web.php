@@ -64,10 +64,11 @@ Route::get('/auto-login/{token}', function($token) {
 |--------------------------------------------------------------------------
 */
 Route::get('/', Home::class)->name('Home');
-Route::get('Order', Order::class)->name('Order');
 Route::get('/Auth', AuthLanding::class)->name('Auth');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 Route::get('/logoutUser', [AuthController::class, 'logoutUser'])->name('logoutUser')->middleware('auth');
+Route::get('Order', Order::class)->name('Order');
+
 /*
 |--------------------------------------------------------------------------
 | AREA AUTENTIKASI (Custom murni, tanpa Laravel UI)
@@ -87,6 +88,7 @@ Route::middleware('guest')->group(function () {
 */
 Route::middleware(['auth', 'role:pelanggan'])->group(function () {
     Route::get('/profil', [FrontController::class, 'profil'])->name('pelanggan.profil');
+    // Route::get('Order', Order::class)->name('Order');
     Route::get('/pesanan-saya', [FrontController::class, 'pesanan'])->name('pelanggan.pesanan');
     Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handler']);
     Route::get('/payment/{id}', Payment::class)->name('Payment');
@@ -143,6 +145,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('/pesanan-aktif', PesananAktifIndex::class)->name('admin.pesanan-aktif');
         Route::get('/pos/struk/{id}', [PosController::class, 'cetakStruk'])->name('admin.pos.struk');
         Route::get('/riwayat-pesanan', RiwayatPesananIndex::class)->name('admin.riwayat-pesanan');
+        Route::get('/user', UserIndex::class)->name('admin.user');
     });
 
 });

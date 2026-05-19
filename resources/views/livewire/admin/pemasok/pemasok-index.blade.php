@@ -83,9 +83,9 @@
                                             <button wire:click="edit({{ $pemasok->id_pemasok }})" class="p-2 text-blue-500 transition-colors bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50">
                                                 <i class="ti ti-pencil"></i>
                                             </button>
-                                            <button wire:click="deleteConfirm({{ $pemasok->id_pemasok }})" class="p-2 text-red-500 transition-colors bg-red-100 rounded-lg hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50">
+                                            {{-- <button wire:click="deleteConfirm({{ $pemasok->id_pemasok }})" class="p-2 text-red-500 transition-colors bg-red-100 rounded-lg hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50">
                                                 <i class="ti ti-trash"></i>
-                                            </button>
+                                            </button> --}}
                                         </div>
                                     </td>
                                 </tr>

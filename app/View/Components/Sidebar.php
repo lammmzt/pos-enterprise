@@ -40,9 +40,9 @@ class Sidebar extends Component
                         'activePattern' => 'pages.apps.pos',
                         'roles' => ['owner', 'kasir'], 
                         'subItems' => [
-                            ['name' => 'Pos', 'route' => 'admin.pos', 'roles' => ['kasir', 'owner']],
-                            ['name' => 'Pesanan Aktif', 'route' => 'admin.pesanan-aktif', 'roles' => ['kasir', 'owner']],
-                            ['name' => 'Riwayat Pesanan', 'route' => 'admin.riwayat-pesanan', 'roles' => ['kasir', 'owner']],
+                            ['name' => 'Order', 'route' => 'admin.pos', 'roles' => ['kasir']],
+                            ['name' => 'Pesanan Aktif', 'route' => 'admin.pesanan-aktif', 'roles' => ['kasir']],
+                            ['name' => 'Riwayat Pesanan', 'route' => 'admin.riwayat-pesanan', 'roles' => ['kasir']],
                         ],
                     ],
                     [
@@ -51,7 +51,7 @@ class Sidebar extends Component
                         'activePattern' => 'ecommerce.*',
                         'roles' => ['admin', 'owner'], 
                         'subItems' => [
-                            ['name' => 'Kategori', 'route' => 'admin.kategori', 'roles' => ['admin']],
+                            ['name' => 'Kategori', 'route' => 'admin.kategori', 'roles' => ['admin', 'owner']],
                             ['name' => 'Produk', 'route' => 'admin.produk', 'roles' => ['admin', 'owner']],
                             ['name' => 'Pemasok', 'route' => 'admin.pemasok', 'roles' => ['admin', 'owner']],
                             ['name' => 'Pembelian', 'route' => 'admin.pembelian', 'roles' => ['admin', 'owner']],
@@ -85,7 +85,7 @@ class Sidebar extends Component
                         'icon' => 'users', 
                         'activePattern' => 'admin.user',
                         'route' => 'admin.user',
-                        'roles' => ['admin', 'owner'], 
+                        'roles' => ['kasir', 'owner'], 
                     ],
                     [
                         'name' => 'Pengaturan', 
